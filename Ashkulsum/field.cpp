@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "field.h"
 
-FieldEffect::FieldEffect (std::shared_ptr<ProgramFactory> const& programFactory, std::shared_ptr<Texture2> const& texture, std::shared_ptr<Texture2> const& texture2, SamplerState::Filter filter, SamplerState::BoundaryMode mode0, SamplerState::BoundaryMode mode1)
+FieldEffect::FieldEffect (std::shared_ptr<ProgramFactory> const& programFactory, std::shared_ptr<Texture2Array> const& texture, std::shared_ptr<Texture2> const& texture2, SamplerState::Filter filter, SamplerState::BoundaryMode mode0, SamplerState::BoundaryMode mode1)
 	:	m_Texture (texture),
 		m_Texture2 (texture2)
 {
@@ -31,7 +31,7 @@ FieldEffect::FieldEffect (std::shared_ptr<ProgramFactory> const& programFactory,
 	}
 }
 
-std::shared_ptr<Texture2> const& FieldEffect::GetTexture () const
+std::shared_ptr<Texture2Array> const& FieldEffect::GetTexture () const
 {
 	return m_Texture;
 }

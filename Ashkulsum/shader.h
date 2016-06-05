@@ -18,8 +18,9 @@ public:
 	enum 
 	{	UniformBufferShaderDataLookup = 0,               
         TextureSoloShaderDataLookup = 1,       
-        SamplerStateShaderDataLookup = 2,      
-        NUM_LOOKUP_INDICES = 3
+        SamplerStateShaderDataLookup = 2, 
+		TextureArrayShaderDataLookup = 3,
+        NUM_LOOKUP_INDICES = 4
 	};
 	//std::string GetSource () const;
 	//std::string GetName () const;

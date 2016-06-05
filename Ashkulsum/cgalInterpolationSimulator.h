@@ -38,7 +38,7 @@ public:
 	enum 
 	{
 		NUM_GENERATED_POINTS = 0,
-		NUM_INITIALIZATION_POINTS = 1030//845
+		NUM_INITIALIZATION_POINTS = 3225//845
 	};
 
 	void InitThreadPool ();

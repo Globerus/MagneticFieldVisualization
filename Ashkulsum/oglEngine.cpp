@@ -675,12 +675,14 @@ void OpenGLEngine::Enable (Shader const* shader, GLuint program)
 {
 	EnableUniformBuffers (shader, program);
 	EnableTextures (shader, program);
+	EnableTextureArrays (shader, program);
 	EnableSamplers (shader, program);
 }
 
 void OpenGLEngine::Disable (Shader const* shader, GLuint program)
 {
 	DisableSamplers (shader, program);
+	DisableTextureArrays (shader, program);
 	DisableTextures (shader, program);
 	DisableUniformBuffers (shader, program);	
 }
@@ -766,6 +768,60 @@ void OpenGLEngine::DisableTextures (Shader const* shader, GLuint program)
 	for (auto texture = textures.begin (); texture != textures.end (); texture ++)
 	{
 		std::shared_ptr<OGLTextureSolo> oglTex = std::static_pointer_cast<OGLTextureSolo> (Get (texture->object));
+
+		if (oglTex)
+		{
+			auto target = oglTex->GetTarget ();
+
+			auto location = texture->bindPoint;
+			int unit = m_TextureUnitMap.GetUnit (program, location);
+			glActiveTexture (GL_TEXTURE0 + unit);
+			glBindTexture (target, 0);
+			m_TextureUnitMap.ReleaseUnit (unit);
+		}
+	}
+}
+
+
+void OpenGLEngine::EnableTextureArrays (Shader const* shader, GLuint program)
+{
+	auto const textures = shader->GetData (TextureArray::shaderLookUp);
+	for (auto texture = textures.begin (); texture != textures.end (); texture ++)
+	{
+		if (texture->object)
+		{
+			std::shared_ptr<OGLTextureArray> oglTex = std::static_pointer_cast<OGLTextureArray> (Bind (texture->object));
+
+			if (oglTex)
+			{
+
+				auto target = oglTex->GetTarget ();
+				auto oglObject = oglTex->GetOGLDrawObject ();
+
+				auto location = texture->bindPoint;
+				int unit = m_TextureUnitMap.AskConnectionUnit (program, location);
+				glProgramUniform1i (program, location, unit);
+				glActiveTexture (GL_TEXTURE0 + unit);
+				glBindTexture (target, oglObject);
+			}
+			else
+			{
+				fprintf (stderr, "The enable texture arrays method in OpenGLEngine failed, because the binding of the object failed.\n");
+			}
+		}
+		else
+		{
+			fprintf (stderr, "The enable texture arrays method in OpenGLEngine failed, because the object in the buffer is null.\n");
+		}
+	}
+}
+
+void OpenGLEngine::DisableTextureArrays (Shader const* shader, GLuint program)
+{
+	auto const textures = shader->GetData (TextureArray::shaderLookUp);
+	for (auto texture = textures.begin (); texture != textures.end (); texture ++)
+	{
+		std::shared_ptr<OGLTextureArray> oglTex = std::static_pointer_cast<OGLTextureArray> (Get (texture->object));
 
 		if (oglTex)
 		{
@@ -895,6 +951,9 @@ OpenGLEngine::CreateOGLObject const OpenGLEngine::m_CreateOGLObject [DP_NUM_TYPE
 	&OGLTexture2::Create,
 	&OGLTextureRT::Create,
 	&OGLTextureDS::Create,
+	nullptr,
+	nullptr,
+	&OGLTexture2Array::Create,
 	nullptr,
 	&OGLBlendState::Create,
 	&OGLDepthStencilState::Create,

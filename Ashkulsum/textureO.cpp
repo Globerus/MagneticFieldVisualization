@@ -111,6 +111,15 @@ unsigned int Texture::GetDimension (unsigned int i) const
 	return m_LevelDimensions[0][i];
 }
 
+unsigned int Texture::GetDimensionFor(unsigned int level, int i) const
+{
+	return m_LevelDimensions[level][i];
+}
+
+unsigned int Texture::GetNumItems () const
+{
+	return m_NumItems;
+}
 unsigned int Texture::GetNumLevels () const
 {
 	return m_NumLevels;

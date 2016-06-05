@@ -19,6 +19,7 @@
 #include "oglTexture2.h"
 #include "oglTextureRT.h"
 #include "oglTextureDS.h"
+#include "oglTexture2Array.h"
 #include "samplerState.h"
 #include "oglBlendState.h"
 #include "oglDepthStencilState.h"
@@ -111,9 +112,11 @@ public:
 
 	void EnableUniformBuffers (Shader const* shader, GLuint program);
 	void EnableTextures (Shader const* shader, GLuint program);
+	void EnableTextureArrays (Shader const* shader, GLuint program);
 
 	void DisableUniformBuffers (Shader const* shader, GLuint program);
 	void DisableTextures (Shader const* shader, GLuint program);
+	void DisableTextureArrays (Shader const* shader, GLuint program);
 
 	void EnableSamplers (Shader const* shader, GLuint program);
 	void DisableSamplers (Shader const* shader, GLuint program);

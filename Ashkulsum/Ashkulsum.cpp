@@ -502,8 +502,8 @@ InterpolationSimulation::InterpolationSimulation (std::string title, int xOrigin
 	m_CGALInterpolator = std::make_shared<CGALInterpolationSimulator> ();
 
 	InitializeLightNode ();
-	CreateAnimator ();
 	CreateScene ();
+	//CreateAnimator ();
 
 	m_Scene->Update ();
 	m_PVWUpdater.Update ();
@@ -517,7 +517,7 @@ void InterpolationSimulation::CreateAnimator ()
 	{	
 		Transformation localTransform;
   
-		float deg = 360.0f;
+		/*float deg = 360.0f;
 		glm::mat4 rotMatrix = glm::rotate (glm::mat4 (1.0f), deg, glm::vec3 (1.0f, 0.0f, 0.0f));
 
 		std::vector<glm::quat> vq;
@@ -534,7 +534,7 @@ void InterpolationSimulation::CreateAnimator ()
 		localTransform.SetScale (glm::vec3 (1.0f));
 
 		int numTranslations = 0, numRotations = (int)vt.size(), numScales = 0;
-			
+
 		std::shared_ptr<KeyframeAnimator> keyfctrl = std::make_shared<KeyframeAnimator>(
 				0, numTranslations, numRotations, numScales, localTransform);
 
@@ -544,12 +544,44 @@ void InterpolationSimulation::CreateAnimator ()
 			keyfctrl->SetRotations (vq);
 		}
 
+			*/
+		int trn = 160;
+		float dest = -8.0f;
+		glm::vec4 translate = m_Rec->m_LocalT.GetTranslationW0 ();
+		glm::vec4 last = translate + glm::vec4 (0.0f, 0.0f, dest, 0.0f);
+		glm::mat4 rotMatrix = glm::mat4(1.0f);
+		std::vector<glm::vec4> vq;
+		std::vector<float> vt;
+		float step = dest/float(trn);
+
+		for (int i = 0; i < trn; i ++)
+		{
+			glm::vec4 vec = translate + glm::vec4(0.0f, 0.0f, i * step, 1.0f);
+			vq.push_back (vec);
+			//if (i % 3 == 1)
+				vt.push_back ((1.0f/trn)*i);
+		}
+		localTransform.SetTranslation (last);
+		localTransform.SetRotation (rotMatrix);
+		localTransform.SetScale (glm::vec3 (1.0f));
+
+		int numTranslations = (int)vt.size(), numRotations = 0, numScales = 0;
+
+		std::shared_ptr<KeyframeAnimator> keyfctrl = std::make_shared<KeyframeAnimator>(
+				0, numTranslations, numRotations, numScales, localTransform);
+
+		if (numTranslations > 0)
+		{
+			keyfctrl->SetTranslationTimes (vt);
+			keyfctrl->SetTranslations (vq);
+		}
+		
 		m_Animator = keyfctrl;
 		m_Animator->m_Repeat = Animator::RT_CYCLE;
 		m_Animator->m_MinTime = 0.0;
 		m_Animator->m_MaxTime = 1.0;
 		m_Animator->m_Phase = 0.0;
-		m_Animator->m_Frequency = 1.0;
+		m_Animator->m_Frequency = 0.3;
 		m_Animator->m_Active = true;
 	}
 	else
@@ -647,6 +679,7 @@ void InterpolationSimulation::CreateAnimator ()
 			input.close ();
 			}
 		}
+		m_Rec->AttachAnimator (m_Animator);
 }
 
 void InterpolationSimulation::InitializeLightNode ()
@@ -691,14 +724,14 @@ void InterpolationSimulation::InitializeLightNode ()
 			m_Updater (m_GEffectVector[i]->GetVWMatrixUniformBuffer ());
 		}
 
-		/*auto const cameraProjectionMatrix = m_Camera->GetProjectionMatrix ();
+		auto const cameraProjectionMatrix = m_Camera->GetProjectionMatrix ();
 		auto const particlesWorldMatrix = m_Particles->m_WorldT.GetTransformationMatrix ();
 		m_ParticlesEffect->GetProjectionMatrixUniformBuffer () ->SetMember ("projectionMatrix", cameraProjectionMatrix);
 		m_ParticlesEffect->GetViewMatrixUniformBuffer () ->SetMember ("viewMatrix", cameraViewMatrix);
 		m_ParticlesEffect->GetWorldMatrixUniformBuffer () ->SetMember ("worldMatrix", particlesWorldMatrix);
 		m_Updater (m_ParticlesEffect->GetProjectionMatrixUniformBuffer ());
 		m_Updater (m_ParticlesEffect->GetViewMatrixUniformBuffer ());
-		m_Updater (m_ParticlesEffect->GetWorldMatrixUniformBuffer ());*/
+		m_Updater (m_ParticlesEffect->GetWorldMatrixUniformBuffer ());
 	});
 }
 
@@ -963,7 +996,7 @@ void InterpolationSimulation::CreateScene ()
 	m_PVWUpdater.Subscribe (m_LetterZEffect->GetPVWMatrixUniformBuffer (), m_LetterZ->m_WorldT);
 	billBoardZ->AttachChild (m_LetterZ);
 	
-	/*std::vector<glm::vec4> generatedPoints = m_CGALInterpolator->GeneratePoints ();
+	std::vector<glm::vec4> generatedPoints = m_CGALInterpolator->GeneratePoints ();
 
 	std::shared_ptr<Texture2> particleTexture = imageLoader.Load ("data\\textures\\particle.png", true);
 	cylinderTexture->AutoGenerateMipMap ();
@@ -972,53 +1005,62 @@ void InterpolationSimulation::CreateScene ()
 	m_ParticlesEffect = std::make_shared<ParticlesEffect> (m_Factory, scaleTexture, particleTexture, SamplerState::MIN_L_MAG_L_MIP_L, SamplerState::CLAMP, SamplerState::CLAMP);
 	m_Particles->SetVisualEffect (m_ParticlesEffect);
 	billBoardParticles->AttachChild (m_Particles);
-	*/
+	
 
 	////////////////////////////////
-	int xRes = 400, yRes = 400;
+	/*int xRes = 10, yRes = 10, zRes = 10;
 	
-	float* r = new float [xRes * yRes];
+	float* r = new float [xRes * yRes * zRes];
 
-	int xMax = 4, yMax = 4, xMin = -4, yMin = -4;
+	int xMax = 4,yMax = 4, xMin = -4, yMin = -4, zMax =4, zMin = -4;
 	
 	int xDelta = xMax - xMin;
 	int yDelta = yMax - yMin;
+	int zDelta = zMax - zMin;
 
 	float xPixel = float(xDelta)/float(xRes);
 	float yPixel = float(yDelta)/float(yRes);
+	float zPixel = float(zDelta)/float(zRes);
 
-	for (int y = 0; y < yRes; y++)
-		for(int x = 0; x < xRes; x++)
-		{
-			glm::vec3 point (xPixel*x, yPixel*y, 0.0f);
-			m_CGALInterpolator->InterpolateMagForce (point);
-		}
+	for (int z = 0; z < zRes; z++)
+		for (int y = 0; y < yRes; y++)
+			for(int x = 0; x < xRes; x++)
+			{
+				glm::vec3 point (xMin + xPixel*x, yMin + yPixel*y, zMin + zPixel*z);
+				m_CGALInterpolator->InterpolateMagForce (point);
+			}
+
 	std::vector <float> m,q;
-	for (int y = 0; y < yRes; y++)
-		for (int x = 0; x < xRes; x++)
-		{
-			int id = y*yRes + x;
+	for (int z = 0; z < zRes; z++)
+		for (int y = 0; y < yRes; y++)
+			for (int x = 0; x < xRes; x++)
+			{
+				int id = y*yRes + x;
 
-			glm::vec4 val = m_CGALInterpolator->m_Interpolated3DPointMagForceVector[id];
-			r[y*yRes + x] = val.w;
-			m.push_back ( val.w);
-		}
+				glm::vec4 val = m_CGALInterpolator->m_Interpolated3DPointMagForceVector[id];
+				r[z*zRes + y*yRes + x] = val.w;
+				m.push_back ( val.w);
+			}
 
-	for (int y = 0; y < yRes; y++)
-		for (int x = 0; x < xRes; x++)
-		{
-			q.push_back ( r[y*yRes + x]);
-		}
+	for (int z = 0; z < zRes; z++)
+		for (int y = 0; y < yRes; y++)
+			for (int x = 0; x < xRes; x++)
+			{
+				q.push_back ( r[z*zRes + y*yRes + x]);
+			}
 		
-	std::shared_ptr<Texture2> m_Texture = std::make_shared<Texture2> (DP_R8_UNSIGNED_NORM, xRes, yRes);
+	std::shared_ptr<Texture2Array> m_Texture = std::make_shared<Texture2Array> (zRes, DP_R32_FLOAT, xRes, yRes);
+	//m_Texture->AutoGenerateMipMap ();
 	memcpy (m_Texture->GetData(), r, m_Texture->GetNumBytes ());
 
 
 	m_Rec = LoadMesh ("data\\objects\\rectangle.obj");
-	m_RecEffect = std::make_shared<FieldEffect> (m_Factory, m_Texture, scaleTexture, SamplerState::MIN_N_MAG_N_MIP_N, SamplerState::CLAMP, SamplerState::CLAMP);
+	m_Rec->m_LocalT.SetTranslation (glm::vec4 (0.0f, 0.0f, 4.0f, 0.0f));
+	m_RecEffect = std::make_shared<FieldEffect> (m_Factory, m_Texture, scaleTexture, SamplerState::MIN_L_MAG_L_MIP_L, SamplerState::CLAMP, SamplerState::CLAMP);
 	m_Rec->SetVisualEffect (m_RecEffect);
 	m_PVWUpdater.Subscribe (m_RecEffect->GetPVWMatrixUniformBuffer (), m_Rec->m_WorldT);
 	m_Scene->AttachChild (m_Rec);
+	//m_Rec->AttachAnimator (m_Animator);
 	/*std::shared_ptr<Texture2> volumetricLineTexture = imageLoader.Load ("data\\textures\\1d_debug2.png", true);
 	volumetricLineTexture->AutoGenerateMipMap ();
 
@@ -1267,12 +1309,12 @@ void InterpolationSimulation::Render ()
 	DrawShadowPass ();
 
 	m_Engine->ClearBuffers ();
-	m_Engine->Draw (m_Rec);
-	//m_Engine->Draw(m_Cylinder);
-	//m_Engine->Draw(m_Spring);
+	//m_Engine->Draw (m_Rec);
+	m_Engine->Draw(m_Cylinder);
+	m_Engine->Draw(m_Spring);
 
 	m_Engine->SetBlendState (m_BlendState);
-	//m_Engine->Draw(m_Particles);
+	m_Engine->Draw(m_Particles);
 	m_Engine->SetDefaultBlendState ();
 
 	m_Engine->SetBlendState (m_BlendStateLine);
