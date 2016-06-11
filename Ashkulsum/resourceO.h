@@ -27,6 +27,8 @@ public:
 	void CreateStorage ();
 	char const* GetData () const;
 	char* GetData ();
+	
+	void ResetData();
 
 	template <typename T> T const* Get () const;
 	template <typename T> T* Get ();

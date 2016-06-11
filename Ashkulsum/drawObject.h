@@ -40,18 +40,10 @@ public:
 	virtual ~DrawObject ();
 
 	DrawObjectType GetType () const;
-	
-	//bool IsFileSupported (std::string extension);
 protected:
-	//DrawObject (unsigned int numElements, size_t elementSize);
 	DrawObject ();
-	//virtual const std::vector<std::string> SetSupportedExtensions ()=0;
-	//std::vector <std::string> GetSupportedExtensions ();
-
+	
 protected:
 	DrawObjectType m_Type;
-	//DrawObject (const std::vector<std::string> supExt) : m_SupportedExtensions (supExt) {}
-	//const std::vector<std::string> m_SupportedExtensions;
-
 };
 #endif

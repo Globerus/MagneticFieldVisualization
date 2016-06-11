@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "vertexShader.h"
 
-//VertexShader::VertexShader (std::string const& sName, std::string const& sSource)
-	//:	Shader (sName, sSource)
 VertexShader::VertexShader ()
 	:	Shader ()
 {

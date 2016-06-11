@@ -40,8 +40,6 @@ protected:
 	std::shared_ptr<UniformBuffer> m_LightingUniformBuffer;
 	std::shared_ptr<UniformBuffer> m_LightCameraInfoUniformBuffer;
 	std::shared_ptr<UniformBuffer> m_PVWMatrixUniformBuffer;
-	//std::shared_ptr<UniformBuffer> m_WorldMatricesUniformBuffer;
-	//std::shared_ptr<UniformBuffer> m_LightPVWMatrixUniformBuffer;
 };
 
 #endif

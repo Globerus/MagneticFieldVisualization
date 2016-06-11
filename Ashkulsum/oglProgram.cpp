@@ -5,17 +5,7 @@ OGLProgram::~OGLProgram ()
 {
 
 }
-/*
-OGLProgram::OGLProgram (GLuint programHandle, GLuint vShaderHandle,
-        GLuint fShaderHandle)
-		:	m_ProgHandle (programHandle),
-			m_VSHandle (vShaderHandle),
-			m_FSHandle (fShaderHandle),
-			m_Reflector (programHandle)
-{
-	
-}
-*/
+
 OGLProgram::OGLProgram (GLuint programHandle)
 		:	m_ProgHandle (programHandle),
 			m_Reflector (programHandle)

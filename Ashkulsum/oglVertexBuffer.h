@@ -3,7 +3,6 @@
 
 #include "oglBuffer.h"
 #include "vertexBuffer.h"
-//#include "oglInputLayout.h"
 
 class OGLVertexBuffer : public OGLBuffer
 {

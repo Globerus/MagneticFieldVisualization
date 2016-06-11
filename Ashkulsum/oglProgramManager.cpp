@@ -3,7 +3,6 @@
 
 OGLProgramManager::ProgramMap OGLProgramManager::m_ProgramMap;
 
-//void OGLProgramManager::Bind (std::string const sName, std::shared_ptr<OGLProgram> oglProgram)
 void OGLProgramManager::Bind (std::string const sName, std::shared_ptr<GLuint> oglProgram)
 {
 	if (oglProgram)
@@ -18,7 +17,6 @@ bool OGLProgramManager::Unbind (std::string const sName)
 {
 	if (sName != "")
 	{
-		//std::shared_ptr<OGLProgram> oglProgram = nullptr;
 		std::shared_ptr<GLuint> oglProgram = nullptr;
 		if (m_ProgramMap.Remove (sName, oglProgram))
 		{
@@ -38,7 +36,6 @@ void OGLProgramManager::UnbindAll ()
 {
 	if (m_ProgramMap.HasElements ())
 	{
-		//std::vector<std::shared_ptr<OGLProgram>> vProgram;
 		std::vector<std::shared_ptr<GLuint>> vProgram;
 		m_ProgramMap.GatherAll (vProgram);
 		
@@ -51,10 +48,8 @@ void OGLProgramManager::UnbindAll ()
 	}
 }
 
-//std::shared_ptr<OGLProgram> OGLProgramManager::Get (std::string const sName) 
 std::shared_ptr<GLuint> OGLProgramManager::Get (std::string const sName) 
 {
-	//std::shared_ptr<OGLProgram> oglProgram (nullptr);
 	std::shared_ptr<GLuint> oglProgram (nullptr);
 	
 	m_ProgramMap.Get (sName, oglProgram);

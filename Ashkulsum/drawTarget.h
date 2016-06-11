@@ -7,7 +7,6 @@
 class DrawTarget
 {
 public:
-	//virtual ~DrawTarget ();
 	DrawTarget (unsigned int numRenderTargets, ContainerType rtFormat, unsigned int width, unsigned int height, bool hasRTMipmaps,
 		bool createRTStorage, ContainerType dsFormat, bool createDSStorage);
 

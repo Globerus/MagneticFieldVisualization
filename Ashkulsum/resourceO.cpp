@@ -91,3 +91,8 @@ Resource::Usage Resource::GetUsage () const
 {
 	return m_Usage;
 }
+
+void Resource::ResetData()
+{
+    m_Data = (m_Storage.size() > 0 ? m_Storage.data() : nullptr);
+}

@@ -175,6 +175,7 @@ std::shared_ptr<GeometryNode> LoadMesh (std::string const& name)
 	Attributes attrib = ComputeCoords (GeometryNode::TRIANGLEMESH, vAttrib, stream);
 	int numVert = attrib.m_Vertices.size ();
 	std::shared_ptr<VertexBuffer> vBuffer = std::make_shared<VertexBuffer> (vAttrib, numVert, true);
+	vBuffer->SetUsage (Resource::DYNAMIC_UPDATE);
 	
 	struct Vertex
 	{
@@ -255,7 +256,7 @@ std::shared_ptr<GeometryNode> LoadLine (std::string const& name)
 	return line;
 }
 
-std::shared_ptr<GeometryNode> LoadParticles (std::vector<glm::vec4> generatedPoints)
+std::shared_ptr<GeometryNode> LoadParticles (int numInterpolatedPoints)
 {
 	int numVert = 6;
 	glm::vec3 vertices[] = 
@@ -278,11 +279,6 @@ std::shared_ptr<GeometryNode> LoadParticles (std::vector<glm::vec4> generatedPoi
 		glm::vec2(0.0f, 1.0f),
 	};
 
-	//std::shared_ptr<CGALInterpolationSimulator> cgalInterpolationSimulator = std::make_shared<CGALInterpolationSimulator> ();
-
-	//std::vector<glm::vec4> pointVec = cgalInterpolationSimulator->GeneratePoints ();
-	int numParticles = generatedPoints.size ();
-
 	VertexAttributes vAttrib, instancedAttrib;
 	vAttrib.Bind (VA_POSITION, DP_R32G32B32_FLOAT, 0);
 	vAttrib.Bind (VA_TEXCOORD, DP_R32G32_FLOAT, 0);
@@ -303,26 +299,12 @@ std::shared_ptr<GeometryNode> LoadParticles (std::vector<glm::vec4> generatedPoi
 		vertex[i].m_Texcoord = texcoords[i];
 	}
 
-	struct InstancedVertex 
-	{
-		glm::vec2 m_TexCoord;
-		glm::vec3 m_Instance;
-	};
-
 	instancedAttrib.Bind (VA_TEXCOORD, DP_R32G32_FLOAT, 0);
 	instancedAttrib.Bind (VA_INSTANCING, DP_R32G32B32_FLOAT, 0);
 
-	std::shared_ptr<VertexBuffer> instancedBuffer = std::make_shared<VertexBuffer> (instancedAttrib, numParticles, true);
+	std::shared_ptr<VertexBuffer> instancedBuffer = std::make_shared<VertexBuffer> (instancedAttrib, numInterpolatedPoints, true);
 
-	InstancedVertex* instance = instancedBuffer->Get<InstancedVertex> ();
-
-	for (int i =0; i < numParticles; i++)
-	{
-		instance[i].m_Instance = glm::vec3 (generatedPoints[i]);
-		instance[i].m_TexCoord = glm::vec2 (generatedPoints[i].w, 0.0f);
-	}
-
-	std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer> (P_TRIANGLES, numParticles);
+	std::shared_ptr<IndexBuffer> indexBuffer = std::make_shared<IndexBuffer> (P_TRIANGLES, numInterpolatedPoints);
 	
 	std::shared_ptr<GeometryNode> particles = std::make_shared<GeometryNode> ();
 	particles->SetVertexBuffer (vertexBuffer);
@@ -334,12 +316,6 @@ std::shared_ptr<GeometryNode> LoadParticles (std::vector<glm::vec4> generatedPoi
 
 std::shared_ptr<GeometryNode> LoadVolumetricLine (std::vector<glm::vec3> curvePoints, int numSegments)
 {
-	
-	//BezierCurve bezierCurve (points);
-
-
-	//std::vector<glm::vec3> curvePoints = bezierCurve.GenerateBezierCurveLineCoords (numSegments);
-
 	int numVertices = curvePoints.size () * 4;
 	float thickness = 0.2f;
 

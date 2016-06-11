@@ -37,24 +37,3 @@ Node* Node::GetParent ()
 {
 	return m_Parent;
 }
-/*
-void Node::SetDirtyFlag (bool isDirty)
-{
-	m_IsDirty = isDirty;
-}
-
-bool Node::GetDirtyFlag ()
-{
-	return m_IsDirty;
-}
-
-void Node::SetBillboard (bool isBillboard)
-{
-	m_IsBillboard = isBillboard;
-}
-
-bool Node::GetBillboard ()
-{
-	return m_IsBillboard;
-}
-*/

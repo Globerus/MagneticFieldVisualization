@@ -5,6 +5,8 @@
 namespace Maths
 {
 	inline float DegToRad (float angle);
+	inline float RadToDeg (float rad);
+
 	inline glm::vec3 RundKutta (glm::vec3 pos, float dt);
 	const static float PI = 3.14159f;
 }
@@ -13,6 +15,12 @@ inline float Maths::DegToRad (float angle)
 {
 	const float fDegToRad = PI * 2.0f / 360.0f;
 	return angle * fDegToRad;
+}
+
+inline float Maths::RadToDeg (float rad)
+{
+	const float fDegToRad = 360.0f / (PI * 2.0f);
+	return rad * fDegToRad;
 }
 
 inline glm::vec3 Maths::RundKutta (glm::vec3 pos, float dt)

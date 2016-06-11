@@ -14,7 +14,6 @@ public:
 	OGLProgramFactory ();
 
 private:
-	//static std::shared_ptr<OGLProgram> Create (std::string vSource, std::string fSource);
 	virtual std::shared_ptr<Program> CreateSources (std::string const& vsName, std::string const& vsSource,
 													std::string const& fsName, std::string const& fsSource);
 	

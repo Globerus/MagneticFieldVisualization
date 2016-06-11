@@ -36,7 +36,6 @@ DirectionalLightingTextureWithShadowEffect::DirectionalLightingTextureWithShadow
 		m_TexSampler->m_Mode[0] = mode;
 		m_TexSampler->m_Mode[1] = mode;
 		
-		//m_ShadowSampler->m_Filter = SamplerState::MIN_N_MAG_N;
 		m_ShadowSampler->m_Filter = filter;
 		m_ShadowSampler->m_Mode[0] = SamplerState::BORDER;
 		m_ShadowSampler->m_Mode[1] = SamplerState::BORDER;

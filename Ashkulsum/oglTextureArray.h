@@ -7,14 +7,13 @@
 class OGLTextureArray : public OGLTexture
 {
 public:
-
-	//virtual ~OGLTextureArray();
-
 	inline std::shared_ptr<TextureArray> GetTexture () const;
 
 	virtual bool Update ();
 
 	bool Update(int item, int level);
+
+	bool SendToGpu(unsigned int item, unsigned int level);
 
 	virtual bool CanGenerateAutoMipMaps() const = 0;
 

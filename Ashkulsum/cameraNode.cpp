@@ -63,6 +63,8 @@ void CameraNode::SetShadowMapTransformation (glm::vec4 lightDir, std::shared_ptr
 	float fov, ar;
 
 	camera->GetFrustum (fov, ar, dMin, dMax);
+	fov = Maths::DegToRad (fov);
+
 	glm::vec3 zAxis = glm::vec3(glm::normalize (position - lookVector));
 	glm::vec3 xAxis = glm::normalize (glm::cross (glm::vec3 (upVector), zAxis));
 	glm::vec3 yAxis = glm::normalize (glm::cross (xAxis, zAxis));

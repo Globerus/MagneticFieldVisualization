@@ -14,11 +14,12 @@
 #include "directionalLightingTextureEffect.h"
 #include "directionalLightingTextureWithShadowEffect.h"
 #include "volumetricLineEffect.h"
+#include "magneticFieldEffect.h"
 #include "shadowMapEffect.h"
 #include "textEffect.h"
 #include "fontArialW400H16.h"
 #include "fontArialW400H16Bold.h"
-#include "field.h"
+
 
 class InterpolationSimulation : public Window
 {
@@ -26,16 +27,48 @@ public:
 	InterpolationSimulation (std::string title, int xOrigin, int yOrigin, int xSize, int ySize);
 	~InterpolationSimulation ();
 
+	struct FieldParametrization
+	{
+		float m_WorldWidth;
+		float m_WorldHeight;
+		float m_WorldDepth;
+
+		int m_WidthResolution;
+		int m_HeightResolution;
+		int m_DepthResolution;
+
+		int m_NumInterpolatedPoints;
+		int m_NumAnimSteps;
+		int m_StepTime;
+	};
+
+	
+	void InitializeInterpolation ();
+	void InterpolatePoints ();
 	void InitializeCameraNode ();
 	void InitializeLightNode ();
-	void InitializeForceLines (WICImageLoader imageLoader);
+	
+	void InitParticles ();
 
 	void MouseMove(int x, int y);
 	void MouseButton(int button, int state, int x, int y);
 	void Keyboard(unsigned char key, int x, int y);
+	void KeyboardUp(unsigned char key, int x, int y);
+	void SpecialKeyboard(int key, int x, int y);
+	void SpecialKeyboardUp(int key, int x, int y);
 	void Reshape (int w, int h);
 	
-	void CreateAnimator ();
+	void CreateLoadingScreen ();
+
+	void ParametrizeField ();
+	void ParametrizeFieldXAxisMovementAnimation ();
+	void ParametrizeFieldZAxisMovementAnimation ();
+	void ParametrizeFieldXAxisCorrectionMovementAnimation ();
+	void ParametrizeFieldZAxisCorrectionMovementAnimation ();
+
+	void UpdateFieldVisualization ();
+	void UpdateFieldScreenXAxis ();
+	void UpdateFieldScreenZAxis ();
 	void CreateScene ();
 	void DrawShadowPass ();
 	void OnIdle ();
@@ -47,6 +80,9 @@ public:
 	static void MouseMoveCallback (int x, int y);
 	static void MouseButtonCallback (int button, int state, int x, int y);
 	static void KeyboardCallback (unsigned char key, int x, int y);
+	static void KeyboardUpCallback (unsigned char key, int x, int y);
+	static void SpecialKeyboardCallback (int key, int x, int y);
+	static void SpecialKeyboardUpCallback (int key, int x, int y);
 	static void ReshapeCallback (int w, int h);
 
 	void SetCurrentInstance ();
@@ -54,7 +90,18 @@ public:
 private:
 	static InterpolationSimulation* currentInstance;
 	
+	unsigned char m_KeyStates[255];
+	float m_XAccel, m_ZAccel;
+	bool m_XCorrection, m_ZCorrection, m_FieldScreened;
+
 	std::shared_ptr<CGALInterpolationSimulator> m_CGALInterpolator;
+
+	float m_AppTime, m_AppTimeDelta;
+
+	FieldParametrization m_FieldParam;
+
+	boost::thread m_ParallelThread;
+
 	PVWUpdater m_ShadowPVWUpdater;
 
 	std::shared_ptr<BlendState> m_BlendState;
@@ -65,8 +112,6 @@ private:
 	std::shared_ptr<RasterizerState> m_RasterizerStateShadow;
 	std::shared_ptr<RasterizerState> m_RasterizerStateLine;
 
-	std::shared_ptr<KeyframeAnimator> m_Animator;
-	float m_AppTime, m_AppTimeDelta;
 	glm::vec4 m_CameraModelPosition;
 	glm::vec4 m_LightWorldDirection;
 	glm::vec4 m_LightModelDirection;
@@ -75,8 +120,23 @@ private:
 
 	std::shared_ptr<CameraNode> m_LightNode;
 	
-	std::shared_ptr<GeometryNode> m_Rec;
-	std::shared_ptr<FieldEffect> m_RecEffect;
+	std::shared_ptr<Texture2> m_ColorScaleTexture;
+
+	std::shared_ptr<GeometryNode> m_LoadingScreen;
+	std::shared_ptr<Texture2Effect> m_LoadingScreenEffect;
+
+	std::shared_ptr<GeometryNode> m_FieldScreenXAxis;
+	std::shared_ptr<MagneticFieldEffect> m_FieldScreenXAxisEffect;
+	std::shared_ptr<KeyframeAnimator> m_FieldMovementXAxisAnimation;
+
+	std::shared_ptr<GeometryNode> m_FieldScreenZAxis;
+	std::shared_ptr<MagneticFieldEffect> m_FieldScreenZAxisEffect;
+	std::shared_ptr<KeyframeAnimator> m_FieldMovementZAxisAnimation;
+
+	std::shared_ptr<GeometryNode> m_Plane;
+	std::shared_ptr<DirectionalLightingTextureWithShadowEffect> m_PlaneEffect;
+	std::shared_ptr<ShadowMapEffect> m_PlaneShadowMapEffect;
+
 	std::shared_ptr<GeometryNode> m_LineX;
 	std::shared_ptr<NormalEffect> m_LineXEffect;
 	std::shared_ptr<GeometryNode> m_LineY;

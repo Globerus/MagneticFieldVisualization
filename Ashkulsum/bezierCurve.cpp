@@ -39,30 +39,7 @@ glm::vec3 BezierCurve::CalculateBezierPoint (float t)
 
 	return p;
 }
-/*
-glm::vec3 BezierCurve::CalculateQuadraticBezierPoint (float t)
-{
-	float u = 1 - t;
-	float uu = u * u;
-	float tt = t * t;
-	glm::vec3 cP = m_Points[0];
 
-	return ((uu*m_StartPoint) + (2*u*t*cP)  + (tt*m_EndPoint));
-}
-
-glm::vec3 BezierCurve::CalculateCubicBezierPoint (float t)
-{
-	float u = 1 - t;
-	float uu = u * u;
-	float uuu = uu * u;
-	float tt = t * t;
-	float ttt = tt * t;
-	glm::vec3 cP1 = m_ControlPoints[0];
-	glm::vec3 cP2 = m_ControlPoints[1];
-
-	return ((uuu*m_StartPoint) + (3*uu*t*cP1) + (3*u*tt*cP2)  + (ttt*m_EndPoint));
-}
-*/
 float BezierCurve::Factorial(float num)
 {
   if(num <= 1)

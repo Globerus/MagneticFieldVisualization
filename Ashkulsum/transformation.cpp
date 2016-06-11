@@ -182,21 +182,7 @@ Transformation operator* (Transformation const& A, Transformation const& B)
 	
 	return newTransformation;
 }
-/*
-Transformation Transformation::operator* (Transformation const& transformation) 
-{
-	Transformation newTransformation;
-	//newTransformation.m_Rotation = m_Rotation * transformation.m_Rotation;
-	//newTransformation.SetRotation (GetRotation () * transformation.GetRotation ());
-	//newTransformation.SetTranslation (glm::vec4 (GetScale (), 1.0f) * ( GetRotation () * glm::vec4(transformation.GetTranslation (), 0.0f)) + glm::vec4(GetTranslation (), 1.0f));
 
-	//mat = glm::vec4 (transformation.GetScale (),1.0f) *transformation.GetRotation ();
-	newTransformation.m_Scale = m_Scale *  transformation.m_Scale;
-	//newTransformation.m_Translation = m_Translation + transformation.m_Translation;
-	newTransformation.UpdateMatrix ();
-	newTransformation.UpdateInverseMatrix ();
-	return newTransformation;
-}*/
 Transformation Transformation::operator= (Transformation const& transformation)
 {
 	m_Rotation = transformation.m_Rotation;

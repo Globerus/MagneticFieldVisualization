@@ -45,18 +45,6 @@ void OGLDrawTarget::Enable ()
 
 	glDepthRange (0.0, 1.0);
 
-	//glBindTexture (GL_TEXTURE_2D, m_DSTexture->GetOGLDrawObject ());//
-	
-	//glTexImage2D (GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, viewportWidth, viewportHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, 0);//
-	//glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, viewportWidth, viewportHeight, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, 0);//
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-	//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_COMPARE_FUNC, GL_LESS);
-
 	glBindFramebuffer (GL_DRAW_FRAMEBUFFER, m_Framebuffer);
 
 	if (m_DSTexture)
@@ -70,26 +58,6 @@ void OGLDrawTarget::Enable ()
 
 	glDrawBuffer (GL_NONE);
 	glReadBuffer (GL_NONE);
-	/*
-	auto const numTargets = m_Target->GetNumTargets ();
-	std::vector<GLenum> useDrawBuffers (numTargets);
-
-	for (unsigned int i = 0; i < numTargets; i++)
-	{
-		auto colorTarget = GL_COLOR_ATTACHMENT0 + i;
-		useDrawBuffers[i] = colorTarget;
-
-		auto textureRT = m_RTTextures[i];
-		glFramebufferTexture2D (GL_DRAW_FRAMEBUFFER, colorTarget, GL_TEXTURE_2D, textureRT->GetOGLDrawObject (), 0);
-	}
-
-	glDrawBuffers (static_cast<GLsizei> (useDrawBuffers.size ()), useDrawBuffers.data());
-
-	
-
-    if (Status != GL_FRAMEBUFFER_COMPLETE) {
-        fprintf(stderr,"FB error, status: 0x%x\n", Status);
-    }*/
 }
 
 void OGLDrawTarget::Disable ()

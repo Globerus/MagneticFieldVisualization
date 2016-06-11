@@ -33,6 +33,6 @@ Attributes ComputeCoords (int const& primitive, VertexAttributes const& vAttrib,
 std::shared_ptr<GeometryNode> LoadMesh (std::string const& name);
 std::shared_ptr<GeometryNode> LoadLine (std::string const& name);
 std::shared_ptr<GeometryNode> LoadVolumetricLine (std::vector<glm::vec3> points, int numSegments);
-std::shared_ptr<GeometryNode> LoadParticles (std::vector<glm::vec4> generatedPoints);
+std::shared_ptr<GeometryNode> LoadParticles (int interpolatedPoints);
 
 #endif

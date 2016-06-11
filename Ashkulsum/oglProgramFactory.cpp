@@ -23,18 +23,14 @@ std::shared_ptr<Program> OGLProgramFactory::CreateSources (std::string const& vs
 	}
 	
 	std::string name = vsName + fsName;
-	//std::shared_ptr<OGLProgram> oglProgram = OGLProgramManager::Get (name);
+
 	std::shared_ptr<GLuint> pHandle = OGLProgramManager::Get (name);
 	
-	//if (!oglProgram)
 	if (pHandle.get() == 0)
 	{
 		GLuint fHandle = Compile (GL_FRAGMENT_SHADER, fsSource);
 		GLuint vHandle = Compile (GL_VERTEX_SHADER, vsSource);
 
-		
-
-		//GLuint pHandle = glCreateProgram ();
 		pHandle = std::make_shared<GLuint> (glCreateProgram ());
 
 		glAttachShader (*pHandle.get(), vHandle);
@@ -53,7 +49,6 @@ std::shared_ptr<Program> OGLProgramFactory::CreateSources (std::string const& vs
 		OGLProgramManager::Bind (name, pHandle);
 	}
 
-	//oglProgram = std::make_shared<OGLProgram> (pHandle, vHandle, fHandle);
 	std::shared_ptr<OGLProgram> oglProgram = std::make_shared<OGLProgram> (*pHandle.get());
 	OGLReflection const& reflector = oglProgram->GetReflector ();
 		
@@ -61,50 +56,10 @@ std::shared_ptr<Program> OGLProgramFactory::CreateSources (std::string const& vs
 		
 	oglProgram->SetVertexShader (std::make_shared<VertexShader> (reflector));
 	oglProgram->SetFragmentShader (std::make_shared<FragmentShader> (reflector));
-		
-	//OGLProgramManager::Bind (name, oglProgram);
-	
 
 	return oglProgram;
 }
-/*
-std::shared_ptr<OGLProgram> OGLProgramFactory::Create (std::string vSource, std::string fSource)
-{
-	if (vSource == "")
-	{
-		fprintf (stderr, "The source of the vertex shader is missing !");
-		return nullptr;
-	}
 
-	GLuint vShaderHandle = Compile (GL_VERTEX_SHADER, vSource);
-
-	if (fSource == "")
-	{
-		fprintf (stderr, "The source of the fragment shader is missing !");
-		return nullptr;
-	}
-
-	GLuint fShaderHandle = Compile (GL_FRAGMENT_SHADER, fSource);
-
-	GLuint programHandle = glCreateProgram ();
-
-	glAttachShader (programHandle, vShaderHandle);
-	glAttachShader (programHandle, fShaderHandle);
-
-	bool status = Link (programHandle);
-
-	glDetachShader (programHandle, vShaderHandle);
-	glDetachShader (programHandle, fShaderHandle);
-
-	if (!status)
-	{
-		glDeleteProgram (programHandle);
-		return nullptr;
-	}
-
-	std::shared_ptr<OGLProgram> program = std::make_shared<OGLProgram> (programHandle, vShaderHandle, fShaderHandle);
-}
-*/
 GLuint OGLProgramFactory::Compile (GLenum type, std::string source)
 {
 	const char* cSource = source.c_str ();

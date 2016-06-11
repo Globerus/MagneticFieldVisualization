@@ -43,32 +43,6 @@ std::shared_ptr<Program> ProgramFactory::CreateFromFiles (std::string const& vsF
 
 	return CreateSources (vsFilename, vsSource, fsFilename, fsSource);
 }
-/*
-std::shared_ptr<Program> ProgramFactory::CreateSources (std::string const& vsName, std::string const& vsSource,
-													std::string const& fsName, std::string const& fsSource)
-{
-	std::shared_ptr<VertexShader> vShader;
-	std::shared_ptr<FragmentShader> fShader;
-
-	if (vsSource != "" && fsSource != "")
-	{
-		return nullptr;
-	}
-	
-	vShader.reset (new VertexShader (vsName, vsSource));
-	
-	fShader.reset (new FragmentShader (fsName, fsSource));
-	
-	std::shared_ptr<Program> program = std::make_shared<Program> ();
-
-	program->SetVertexShader (vShader);
-	program->SetFragmentShader (fShader);
-	
-	std::string progName = vsName + fsName;
-	program->SetProgramName (progName);
-
-	return program;
-}*/
 
 std::string ProgramFactory::GetStringFromFile (std::string const& sFilename)
 {
@@ -78,16 +52,6 @@ std::string ProgramFactory::GetStringFromFile (std::string const& sFilename)
 	shaderData << stream.rdbuf();  //Loads the entire string into a string stream.
 	stream.close();
 	source = shaderData.str();
-/*const std::string &shaderString = shaderData.str();
-	if (stream)
-	{
-		std::string line;
-		while (getline (stream, line))
-		{
-			if (line != "")
-				source += line + "\\n ";
-		}
-	}
-	*/
+
 	return source;
 }

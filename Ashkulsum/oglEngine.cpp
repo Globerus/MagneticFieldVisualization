@@ -14,7 +14,7 @@ OpenGLEngine::~OpenGLEngine ()
 void OpenGLEngine::Initialize ()
 {
 	m_ClearDepth = 1.0f;
-	m_ClearColor = glm::vec4 (0.5f, 0.5f, 0.5f, 1.0f);
+	m_ClearColor = glm::vec4 (0.0f, 0.0f, 0.0f, 1.0f);
 	SetViewport (glm::vec4 (0.0f, 0.0f, 0.0f, 0.0f));
 	SetDepthRange (0.0f, 1.0f);
 
@@ -123,6 +123,11 @@ void OpenGLEngine::SetCullFrontFace ()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CW);
+}
+
+std::shared_ptr<Font> const& OpenGLEngine::GetFont ()
+{
+	return m_ActiveFont;
 }
 
 void OpenGLEngine::SetFont (std::shared_ptr<Font> const& font)
@@ -916,6 +921,30 @@ bool OpenGLEngine::Update (std::shared_ptr<TextureSolo> const& texture, int leve
 	return oglTexture->Update (level);
 }
 
+bool OpenGLEngine::Update (std::shared_ptr<TextureArray> const& texture)
+{
+	if (!texture->GetData ())
+	{
+		fprintf(stderr, "The update method in OpenGLEngine failed, because there is no loaded data for the textureArray.\n");
+		texture->CreateStorage ();
+	}
+
+	auto oglTexture = std::static_pointer_cast<OGLTextureArray> (Bind (texture));
+	return oglTexture->Update ();
+}
+
+bool OpenGLEngine::Update (std::shared_ptr<TextureArray> const& texture, unsigned int numItem, unsigned int level)
+{
+	if (!texture->GetData ())
+	{
+		fprintf(stderr, "The update method in OpenGLEngine failed, because there is no loaded data for the textureArray.\n");
+		texture->CreateStorage ();
+	}
+
+	auto oglTexture = std::static_pointer_cast<OGLTextureArray> (Bind (texture));
+	return oglTexture->Update (numItem, level);
+}
+
 void OpenGLEngine::Enable (std::shared_ptr<DrawTarget> const& dTarget)
 {
 	auto oglTarget = std::static_pointer_cast<OGLDrawTarget> (Bind (dTarget)); 
@@ -965,79 +994,3 @@ OpenGLEngine::CreateOGLObject const OpenGLEngine::m_CreateOGLObject [DP_NUM_TYPE
 };
 
 OpenGLEngine::CreateOGLDrawTarget const OpenGLEngine::m_CreateOGLDrawTarget  = &OGLDrawTarget::Create;
-/*
-bool OpenGLEngine::SubscribeAsDrawObject (std::shared_ptr<GeometryNode> node)
-{
-	if (node->m_IsDrawable)
-	{
-		m_DrawingSet.push_back (node);
-		return true;
-	}
-
-	return false;
-}
-
-bool OpenGLEngine::UnsubscribeDrawObject (std::shared_ptr<GeometryNode> node)
-{
-	if (node->m_IsDrawable)
-	{
-		int pos = std::find (m_DrawingSet.begin (), m_DrawingSet.end (), node) - m_DrawingSet.begin ();
-		if (pos <= m_DrawingSet.size ())
-		{
-				m_DrawingSet.erase (m_DrawingSet.begin () + pos);
-				return true;
-		}
-	}
-
-	return false;
-}
-
-std::vector<std::shared_ptr<GeometryNode>> OpenGLEngine::GetDrawingSet ()
-{
-	return m_DrawingSet;
-}
-
-bool OpenGLEngine::MapViewport (std::shared_ptr<GeometryNode> geometryNode, glm::vec4 viewPort)
-{
-	if (geometryNode)
-	{
-		m_MapVP.Insert (geometryNode.get(), viewPort);
-		return true;
-	}
-
-	return false;
-}
-
-bool OpenGLEngine::GetMappedViewport (std::shared_ptr<GeometryNode> geometryNode, glm::vec4& viewPort)
-{
-	if (m_MapVP.Get (geometryNode.get(), viewPort))
-	{
-		return true;
-	}
-
-	return false;
-}
-
-bool OpenGLEngine::UnmapViewport (std::shared_ptr<GeometryNode> geometryNode)
-{
-	if(m_MapVP.Exists (geometryNode.get()))
-	{
-		glm::vec4 viewPort;
-		m_MapVP.Remove (geometryNode.get(), viewPort);
-		return true;
-	}
-
-	return false;
-}
-
-bool OpenGLEngine::RemapViewport (std::shared_ptr<GeometryNode> geometryNode, glm::vec4 viewPort)
-{
-	if (m_MapVP.Exists (geometryNode.get()))
-	{
-		if (m_MapVP.Update (geometryNode.get(), viewPort))
-		{
-			return true;
-		}
-	}
-	return false;
-}*/

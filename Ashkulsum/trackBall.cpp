@@ -16,7 +16,6 @@ TrackBall::TrackBall ()
 		m_Valid (false),
 		m_ZoomActive (false)
 {
-	//m_Root = std::make_shared<GroupNode> ();
 	m_InitialOrientation = m_Camera->GetPosition ();
 }
 
@@ -31,18 +30,10 @@ TrackBall::TrackBall (int xSize, int ySize, std::shared_ptr<Camera> camera)
 		m_ZoomActive (false)
 {
 	Set (xSize, ySize, camera);
-	//m_Root = std::make_shared<GroupNode> ();
 	m_InitialOrientation = m_Camera->GetPosition ();
 	UpdateOrientation ();
 }
-/*
-void TrackBall::Attach (std::shared_ptr<Node> const& node)
-{
-	if (m_Valid && node)
-	{
-		m_Root->AttachChild (node);
-	}
-}*/
+
 
 void TrackBall::Set (int xSize, int ySize, std::shared_ptr<Camera> camera)
 {
@@ -120,8 +111,8 @@ void TrackBall::UpdateOrientation ()
 	}
 	
 
-	//m_InitialOrientation.y = glm::clamp(m_InitialOrientation.y , -60.9f, 60.9f);
-	m_InitialOrientation.z = glm::clamp(m_InitialOrientation.z, 1.0f, 25.0f);
+	m_InitialOrientation.y = glm::clamp(m_InitialOrientation.y , -60.9f, 0.9f);
+	m_InitialOrientation.z = glm::clamp(m_InitialOrientation.z, 10.0f, 25.0f);
 
 	glm::vec4 lookVector = m_Camera->GetLookVector ();
 	glm::vec4 upVector = m_Camera->GetUpVector ();
@@ -136,11 +127,5 @@ void TrackBall::UpdateOrientation ()
 	glm::vec3 dirToCamera(fSinTheta * fCosPhi, fCosTheta, fSinTheta * fSinPhi);
 	glm::vec4 result ((dirToCamera * m_InitialOrientation.z) + glm::vec3 (lookVector), 1.0f);
 
-	m_Camera->SetFrame (result, lookVector, upVector);
-	//m_Root->Update ();	
+	m_Camera->SetFrame (result, lookVector, upVector);	
 }
-/*
-void TrackBall::Update (float appTime)
-{
-	m_Root->Update (appTime);
-}*/

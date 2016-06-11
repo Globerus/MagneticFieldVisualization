@@ -2,7 +2,6 @@
 #ifndef WIC_IMAGE_LOADER_H
 #define WIC_IMAGE_LOADER_H
 
-//#include "wicImageFactorySingleton.h"
 #include <atlbase.h>
 #include <wincodec.h>
 #include "texture2.h"

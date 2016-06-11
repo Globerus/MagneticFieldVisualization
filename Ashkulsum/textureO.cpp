@@ -67,6 +67,13 @@ Texture::Texture (unsigned int numItems, ContainerType format, unsigned int numD
 			}
 		}
 	}
+	else
+    {
+        for (unsigned int item = 1; item < m_NumItems; ++item)
+        {
+            m_LevelOffset[item][0] = item * m_LevelNumBytes[0];
+        }
+    }
 }
 
 unsigned int Texture::GetAllElements (unsigned int numItems, int dim0, int dim1, int dim2, bool hasMipMap)
@@ -114,6 +121,11 @@ unsigned int Texture::GetDimension (unsigned int i) const
 unsigned int Texture::GetDimensionFor(unsigned int level, int i) const
 {
 	return m_LevelDimensions[level][i];
+}
+
+unsigned int Texture::GetNumBytesFor (unsigned int level) const
+{
+	return m_LevelNumBytes[level];
 }
 
 unsigned int Texture::GetNumItems () const

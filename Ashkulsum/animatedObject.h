@@ -9,7 +9,9 @@ class AnimatedObject
 {
 public:	
 	AnimatedObject ();
-	void AttachAnimator ( std::shared_ptr<Animator> animator);
+	void AttachAnimator (std::shared_ptr<Animator> animator);
+	void DetachAnimator (std::shared_ptr<Animator> animator);
+	void DetachAllAnimators ();
 
 	bool UpdateAnimators (float appTime);
 protected:

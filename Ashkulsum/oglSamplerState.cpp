@@ -10,13 +10,6 @@ OGLSamplerState::OGLSamplerState (std::shared_ptr<const SamplerState> samplerSta
 	glSamplerParameteri (m_OGLObject, GL_TEXTURE_WRAP_T, m_TableMode[samplerState->m_Mode[1]]);
 	glSamplerParameteri (m_OGLObject, GL_TEXTURE_WRAP_R, m_TableMode[samplerState->m_Mode[2]]);
 
-	if (samplerState->m_Comparison != SamplerState::NEVER)
-	{
-		//glSamplerParameteri(m_OGLObject,GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
-		//glSamplerParameteri(m_OGLObject,GL_TEXTURE_COMPARE_FUNC, m_TableCompare[samplerState->m_Comparison]);
-	}
-	//glSamplerParameteri(m_OGLObject, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	//glSamplerParameteri(m_OGLObject, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	float borderColor[] =	{	
 								samplerState->m_BorderColor[0],
 								samplerState->m_BorderColor[1],

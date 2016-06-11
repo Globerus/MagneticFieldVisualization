@@ -9,6 +9,8 @@ TextEffect::TextEffect (std::shared_ptr<ProgramFactory> const& programFactory, s
 
 	std::string pathVertShader = pathDir + "data\\shaders\\Text.vert";
 	std::string pathFragShader = pathDir + "data\\shaders\\Text.frag";
+
+
 	m_Program = programFactory->CreateFromFiles (pathVertShader, pathFragShader);
 
 	if (m_Program)

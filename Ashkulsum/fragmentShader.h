@@ -6,7 +6,6 @@
 class FragmentShader : public Shader
 {
 public:
-	//FragmentShader (std::string const& sName, std::string const& sSource);
 	FragmentShader ();
 
 	FragmentShader (OGLReflection const& reflector);

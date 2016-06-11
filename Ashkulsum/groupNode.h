@@ -3,7 +3,6 @@
 
 #include "node.h"
 #include <vector>
-//#include <boost\enable_shared_from_this.hpp>
 
 class GroupNode : public Node
 {

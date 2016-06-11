@@ -6,7 +6,6 @@
 #include "samplerState.h"
 #include "programFactory.h"
 #include "pathEnvironment.h"
-//#include "wicImageLoader.h"
 
 class Texture2Effect : public VisualEffect
 {

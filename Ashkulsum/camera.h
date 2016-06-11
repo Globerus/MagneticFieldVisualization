@@ -3,20 +3,12 @@
 
 #include "include.h"
 #include "maths.h"
-//#include <glload\gl_3_3.h>
-//#include <glload\gl_load.hpp>
-//#include <glutil\glutil.h>
-//#include <glm\gtc\matrix_transform.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-//#include <assert.h>
 
 class Camera
 {
 public:
 	~Camera ();
 	Camera (bool isPerspective);
-
-	//static float DegToRad(float fAngDeg);
 
 	enum {
 		DMIN = 0,  // near
@@ -79,43 +71,4 @@ protected:
 
 };
 
-
-/*
-class Camera 
-{
-public:
-	Camera () {};
-	Camera (glm::vec3 cameraPosition, glm::vec3 lookDirection, glm::vec3 UpDirection);
-	
-	~Camera () {};
-
-	float DegToRad(float fAngDeg);
-	float CalcFrustumScale(float fFovDeg);
-
-	glm::vec3 ResolveCamPosition();
-	glm::mat4 CalcLookAtMatrix (const glm::vec3 &cameraPosition, const glm::vec3 &lookDirection, const glm::vec3 &uPDirection);
-	glm::mat4 CalcProjectionMatrix(float fzNear, float fzFar, float angle);
-
-	void SetCameraPosition (glm::vec3 cameraPosition);
-	void SetLookDirection (glm::vec3 lookDirection);
-	void SetUpDirection (glm::vec3 upDirection);
-	void SetNearPlane (float nearPlane);
-	void SetFarPlane (float farPlane);
-	void SetAngle (float angle);
-
-	glm::vec3 GetCameraPosition ();
-	glm::vec3 GetLookDirection ();
-	glm::vec3 GetUpDirection ();
-	float GetNearPlane ();
-	float GetFarPlane ();
-	float GetAngle ();
-
-private:
-	glm::vec3 m_CameraPosition;
-	glm::vec3 m_LookDirection;
-	glm::vec3 m_UpDirection;
-
-	float m_Near, m_Far, m_Angle;
-
-};*/
 #endif

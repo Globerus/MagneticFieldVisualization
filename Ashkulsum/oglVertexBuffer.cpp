@@ -5,28 +5,6 @@ OGLVertexBuffer::OGLVertexBuffer (std::shared_ptr<const VertexBuffer> vBuffer)
 	:	OGLBuffer (vBuffer, GL_ARRAY_BUFFER)
 {
 	Initialize ();
-	
-	/*glBindBuffer (m_Type, m_OGLObject);
-	VertexAttributes const& vAttrib = vBuffer->GetVertexAttrib ();
-
-	unsigned int numAttrib = vAttrib.GetNumAttrib ();
-
-	for (int i = 0; i< (int)numAttrib; i++)
-	{
-		ContainerType type = vAttrib.GetContainerType (i);
-		int offset = vAttrib.GetOffset(i);
-		
-		int numElements = DataAttributes::GetNumElement (type);	
-		GLenum channelType = m_ChannelType[DataAttributes::GetElementType (type)];
-		size_t vertSize = vAttrib.GetVertexSize ();
-
-		glEnableVertexAttribArray (i);
-
-		glVertexAttribPointer (i, numElements, channelType, GL_FALSE, vertSize, (void*)offset);
-			
-	}
-	
-	glBindBuffer (m_Type, 0);*/
 }
 
 std::shared_ptr<OGLDrawObject> OGLVertexBuffer::Create (std::shared_ptr<const DrawObject> vBuffer)

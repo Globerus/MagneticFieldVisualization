@@ -18,6 +18,7 @@ public:
 	void SetColor (glm::vec4 color);
 
 private:
+
 	std::shared_ptr<UniformBuffer> m_Translate;
 	std::shared_ptr<UniformBuffer> m_Color;
 	std::shared_ptr<SamplerState> m_Sampler;

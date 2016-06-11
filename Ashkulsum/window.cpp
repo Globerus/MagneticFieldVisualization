@@ -47,36 +47,6 @@ void Window::SetWindowSize (int xSize, int ySize)
 	m_WindowSize.m_XSize = xSize;
 	m_WindowSize.m_YSize = ySize;
 }
-/*
-bool Window::OnKeyPress (unsigned char key, int x, int y)
-{
-	if (key == VK_ESCAPE)
-	{
-		PostQuitMessage (0);
-		return true;
-	}
-
-	return false;
-}
-
-void Window::OnRepeat ()
-{
-
-}
-
-bool Window::Resize (int xSize, int ySize)
-{
-	if(m_WindowSize.m_XSize != xSize || m_WindowSize.m_YSize != ySize)
-	{
-		m_WindowSize.m_XSize = xSize;
-		m_WindowSize.m_YSize = ySize;
-
-		return true;
-	}
-
-	return false;
-}
-*/
 
 void Window::SwapBuffers ()
 {
@@ -87,11 +57,3 @@ void Window::Destroy ()
 {
 	glutDestroyWindow(m_WindowContext);
 }
-
-//bool Window::IsDestroyed ()
-//{
-	//if (glfwWindowShouldClose(m_WindowContext))
-	//	return true;
-
-	//return false;
-//}

@@ -84,8 +84,6 @@ bool KeyframeAnimator::Update(float appTime)
     glm::mat4 rot;
     float scale;
 
-    // The logic here checks for equal-time arrays to minimize the number of
-    // times GetKeyInfo is called.
     if (m_NumCommonTimes > 0)
     {
         GetKeyInfo(ctrlTime, m_NumCommonTimes, m_CommonTimes.data(), m_CLastIndex,
@@ -220,7 +218,6 @@ glm::mat4 KeyframeAnimator::GetRotate(float normTime, int i0, int i1)
 	float f0, f1;
 	if (cosA < (float)1)
     {
-        // The angle A is in (0,pi/2].
         float A = acos(cosA);
         float invSinA = ((float)1) / sin(A);
         f0 = sin(((float)1 - normTime) * A) * invSinA;
@@ -228,7 +225,6 @@ glm::mat4 KeyframeAnimator::GetRotate(float normTime, int i0, int i1)
     }
     else
     {
-        // The angle theta is 0.
         f0 = (float)1 - normTime;
         f1 = (float)normTime;
     }

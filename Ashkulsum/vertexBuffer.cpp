@@ -7,7 +7,6 @@ VertexBuffer::VertexBuffer (VertexAttributes const& vAttrib, unsigned int numVer
 {	
 	m_Type = DP_VERTEX_BUFFER;
 	SetNumActiveElements (numVertices);
-	//memset (m_Data, 0, m_NumBytes);
 }
 
 VertexAttributes const& VertexBuffer::GetVertexAttrib () const

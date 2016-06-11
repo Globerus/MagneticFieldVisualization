@@ -21,13 +21,7 @@ Camera::Camera (bool isPerspective)
 		SetFrustum (0.0f, 100.0f, -10.0f, 10.0f, -10.0f, 10.0f);
 	}
 }
-/*
-float Camera::DegToRad(float fAngDeg)
-{
-	const float fDegToRad = 3.14159f * 2.0f / 360.0f;
-	return fAngDeg * fDegToRad;
-}
-*/
+
 void Camera::SetFrame (glm::vec4 const& position, glm::vec4 const& lookVector, glm::vec4 const& upVector)
 {	
 	SetPosition (position);
@@ -213,9 +207,11 @@ bool Camera::GetFrustum (float & fov, float & aspectRatio, float & dMin, float &
         && m_Frustum[UMIN] == -m_Frustum[UMAX])
     {
         float tmp = (m_Frustum[UMAX] / m_Frustum[DMIN]);
-        fov = 2.0f * (atan(tmp));
+		fov = 2.0f * atan(tmp);
+		fov = Maths::RadToDeg (fov);
         aspectRatio = m_Frustum[RMAX] / m_Frustum[UMAX];
         dMin = m_Frustum[DMIN];
+
         dMax = m_Frustum[DMAX];
         return true;
     }
@@ -236,14 +232,5 @@ void Camera::OnFrustumChange ()
 
 void Camera::UpdatePVMatrix ()
 {
-	//glutil::MatrixStack s;
-	//s.Scale (3.0f);
-	//s.RotateX (90.0f);
-	//s.Translate (1.0f, 0.0f, 0.0f);
-	//glm::mat4 p = glm::perspective ( 45.0f, 1.0f, 1.0f, 1000.0f);
-	//glm::mat4 p = glm::ortho ( -1.0f, 1.0f, -1.0f, 1.0f, -10.0f, 100.0f);
-	//glm::mat4 l = glm::lookAt ((glm::vec3)m_Position, glm::vec3 (0.0f, 0.4f, 0.0f), glm::vec3 (0.0f, 1.0f, 0.0f));
-	//glm::mat4 ProjectionViewMatrix = p * l;
-	//m_ProjectionViewMatrix = p * l;
 	m_ProjectionViewMatrix = m_ProjectionMatrix * m_ViewMatrix;
 }

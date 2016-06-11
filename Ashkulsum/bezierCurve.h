@@ -17,8 +17,6 @@ public:
 	glm::vec3 CalculateBezierPoint (float t);
 	float Factorial(float num);
 	float Choose(float a, float b);
-	//glm::vec3 CalculateQuadraticBezierPoint (float t);
-	//glm::vec3 CalculateCubicBezierPoint (float t);
 
 private:
 	std::vector<glm::vec3> m_Points;

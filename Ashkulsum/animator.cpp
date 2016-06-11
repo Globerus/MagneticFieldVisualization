@@ -42,7 +42,6 @@ double Animator::GetControlTime(double appTime)
 
     if (m_Repeat == RT_CLAMP)
     {
-        // Clamp the time to the [min,max] interval.
         if (controlTime < m_MinTime)
         {
             return m_MinTime;
@@ -65,19 +64,15 @@ double Animator::GetControlTime(double appTime)
             return m_MinTime + fractionTime*timeRange;
         }
 
-        // repeat == RT_CYCLE
         if (static_cast<int>(integerTime) & 1)
         {
-            // Go backward in time.
             return m_MaxTime - fractionTime * timeRange;
         }
         else
         {
-            // Go forward in time.
             return m_MinTime + fractionTime * timeRange;
         }
     }
 
-    // The minimum and maximum times are the same, so return the minimum.
     return m_MinTime;
 }

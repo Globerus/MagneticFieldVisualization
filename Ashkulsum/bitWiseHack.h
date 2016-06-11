@@ -1,5 +1,3 @@
-//#ifndef BITWISE_HACK_H
-//#define BITWISE_HACK_H
 #include <stdint.h>
 
 inline uint32_t RoundDownToPowerOfTwo(uint32_t value)
@@ -29,4 +27,3 @@ inline uint32_t Log2OfPowerOfTwo(uint32_t powerOfTwo)
     log2 |= ((powerOfTwo & 0xCCCCCCCCu) != 0) << 1;
     return log2;
 }
-//#endif

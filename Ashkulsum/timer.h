@@ -6,31 +6,19 @@
 class Timer
 {
 public:
-	Timer (int64_t frequency = 30);
-
-    int64_t GetMilliseconds();
+	Timer ();
 
 	void Reset();
-	void Measure();
-
-	inline void UpdateFrameCount();
-
-    // Report the rates.
-    double GetFramesPerSecond() const;
-    double GetSecondsPerFrame() const;
-    int64_t GetMillisecondsPerFrame() const;
+   
+	int64_t GetMilliseconds();
+	double GetSeconds();
 
 private:
 	int64_t GetTicks();
 
-	int64_t m_Frequency, m_CallCount, m_PerformanceFrequency;
-	int64_t m_FrameCount, m_AccumulatedFrameCount, m_AccumulatedTime;
-	int64_t m_Time0, m_Time1;
+	int64_t m_Frequency;
+	double m_InverseFrequency;
+	int64_t m_InitialTicks;
 };
-
-void Timer::UpdateFrameCount ()
-{
-    ++m_FrameCount;
-}
 
 #endif

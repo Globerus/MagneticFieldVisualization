@@ -48,7 +48,6 @@ void OGLTexture2::LoadTextureLevel (unsigned int level, void const* data)
 	{
 		auto dim0 = texture->GetDimension (0);
 		auto dim1 = texture->GetDimension (1);
-		//glTexImage2D (m_Target, level, m_ExternalFormat, dim0, dim1, 0, m_ExternalFormat, m_ExternalType, 0);
 		glTexSubImage2D(m_Target, level, 0, 0, dim0, dim1, m_ExternalFormat, m_ExternalType, data);
 	}
 }

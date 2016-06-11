@@ -19,6 +19,7 @@ public:
 	unsigned int GetNumDimensions () const;
 	unsigned int GetDimension (unsigned int i) const;
 	unsigned int GetDimensionFor(unsigned int level, int i) const;
+	unsigned int GetNumBytesFor (unsigned int level) const;
 	unsigned int GetNumItems () const;
 	unsigned int GetNumLevels () const;
 

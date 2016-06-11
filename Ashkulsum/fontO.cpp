@@ -66,16 +66,13 @@ Font::Font (std::shared_ptr<ProgramFactory> programFactory, unsigned int width, 
 
 void Font::SetStringData (int viewPortWidth, int viewPortHeight, int x, int y, glm::vec4 const& color, std::string const& message)
 {
-	// Get texel translation units, depends on viewport width and height.
-    float const vdx = 1.0f/static_cast<float>(viewPortWidth);
+	float const vdx = 1.0f/static_cast<float>(viewPortWidth);
     float const vdy = 1.0f/static_cast<float>(viewPortHeight);
 
-    // Get texture information.
     float tw = static_cast<float>(m_Texture->GetWidth());
     float th = static_cast<float>(m_Texture->GetHeight());
 
-    // Get vertex buffer information.
-	unsigned int vertexSize = m_VertexBuffer->GetVertexAttrib().GetVertexSize();
+    unsigned int vertexSize = m_VertexBuffer->GetVertexAttrib().GetVertexSize();
 	char* data = m_VertexBuffer->GetData ();
 
     float x0 = 0.0f;
@@ -83,55 +80,40 @@ void Font::SetStringData (int viewPortWidth, int viewPortHeight, int x, int y, g
         static_cast<unsigned int>(message.length()), m_MaxMessageLength);
     for (unsigned int i = 0; i < length; ++i)
     {
-        // Get character data.
         char c = message[i];
         float const tx0 = m_CharacterData[c];
 		float const tx1 = tx0 + m_CharacterWidth[c];
-       //float const tx1 = m_CharacterData[c + 1];
-		//float const tx0 = 0.0f;
-		//float const tx1 = 1.0f;
-        float charWidthM1 = (tx1 - tx0)*tw;// - 1.0f;  // in pixels
+       
+        float charWidthM1 = (tx1 - tx0)*tw;
 
-        // 0 -- 2   4 -- 6  ...
-        // | \  |   | \  | 
-        // |  \ |   |  \ | 
-        // 1 -- 3   5 -- 7  ...
         float* v0 = reinterpret_cast<float*>(data + (4*i+0)*vertexSize);
         float* v1 = reinterpret_cast<float*>(data + (4 * i + 1)*vertexSize);
         float* v2 = reinterpret_cast<float*>(data + (4 * i + 2)*vertexSize);
         float* v3 = reinterpret_cast<float*>(data + (4 * i + 3)*vertexSize);
 
-        // Set bottom left vertex y coordinate.
         v1[1] = vdy*th;
             
-        // Set x-coordinates.
         float x1 = x0 + charWidthM1*vdx;
         v0[0] = x0;
         v1[0] = x0;
         v2[0] = x1;
         v3[0] = x1;
 
-        // Set bottom right-side y-coordinate.
         v3[1] = vdy*th;
 
-        // Set the four texture x-coordinates.  The y-coordinates were set in
-        // the constructor.
         v0[2] = tx0;
         v1[2] = tx0;
         v2[2] = tx1;
         v3[2] = tx1;
 
-        // Update left x coordinate for next quad
         x0 = x1;
     }
 
-    // Update the number of triangles that should be drawn.
-    m_VertexBuffer->SetNumActiveElements(4*length);
-    m_IndexBuffer->SetNumActivePrimitives(6*length);
+	m_VertexBuffer->SetNumActiveElements(4*length);
+	m_IndexBuffer->SetNumActivePrimitives(6*length);
 
-    // Set effect parameters.
-    float trnX = vdx*static_cast<float>(x);
-    float trnY = vdy*static_cast<float>(y);
-    m_TextEffect->SetTranslate(trnX, trnY);
-    m_TextEffect->SetColor(color);
+	float trnX = vdx*static_cast<float>(x);
+	float trnY = vdy*static_cast<float>(y);
+	m_TextEffect->SetTranslate(trnX, trnY);
+	m_TextEffect->SetColor(color);
 }

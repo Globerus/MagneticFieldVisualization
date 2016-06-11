@@ -56,13 +56,6 @@ std::shared_ptr<VisualEffect> const& GeometryNode::GetVisualEffect () const
 
 bool GeometryNode::UpdateModelNormals ()
 {
-	
-	//std::vector <glm::vec3> faceNormals;
-	//std::vector<glm::vec3> vertexNormals;
-
-	//std::vector<glm::vec3> vertices = m_VertexBuffer->GetVertices ();
-	//std::vector<VertexBuffer::Vertex> vertexBuffer = m_VertexBuffer->GetVertexData ();
-	//std::vector<VertexBuffer::Vertex> vertexBuffer = m_VertexBuffer->GetVertexBuffer ();
 	int type = m_IndexBuffer->GetPrimitiveType ();
 
 	if (type != P_TRIANGLES)
@@ -72,7 +65,6 @@ bool GeometryNode::UpdateModelNormals ()
 	}
 
 	VertexAttributes vAttrib = m_VertexBuffer->GetVertexAttrib ();
-	//std::vector<glm::vec3> vertexBuffer = m_VertexBuffer->GetVertexData<glm::vec3> (VA_POSITION);
 	std::set<ContainerType> setTypes;
 	setTypes.insert (DP_R32G32B32_FLOAT);
 	setTypes.insert (DP_R32G32_FLOAT);
@@ -148,82 +140,4 @@ bool GeometryNode::UpdateModelNormals ()
 	}
 
 	return true;
-	//std::vector <unsigned int> indices = m_IndexBuffer->GetIndexData<unsigned int> ();
-	//std::vector<unsigned int> indices = m_IndexBuffer->GetIndexData ();
-	//std::vector<short> indices = m_IndexBuffer->GetIndices ();
-
-	/*
-	if (P_TRIANGLES == type)
-	{
-		//if (!vertices.empty () && !indices.empty ())
-		if (!vertexBuffer.empty () && !indices.empty ())
-		{
-			//faceNormals.resize(vertices.size(), glm::vec3(0.0f));
-			std::vector<short> nb_seen;
-			//nb_seen.resize(vertices.size(), 0);
-			nb_seen.resize(vertexBuffer.size(), 0);
-			for (unsigned int i = 0; i < indices.size(); i+=3) 
-			{
-				unsigned short ia = indices[i];
-				unsigned short ib = indices[i+1];
-				unsigned short ic = indices[i+2];
-				//glm::vec3 cross = glm::cross(glm::vec3(vertices[ib]) - glm::vec3(vertices[ia]),
-				//					 glm::vec3(vertices[ic]) - glm::vec3(vertices[ia]));
-				glm::vec3 cross = glm::cross(glm::vec3(vertexBuffer[ib]) - glm::vec3(vertexBuffer[ia]),
-					glm::vec3(vertexBuffer[ic]) - glm::vec3(vertexBuffer[ia]));
-				glm::vec3 normal = glm::normalize(cross);
-				int v[3]; v[0] = ia; v[1] = ib; v[2] = ic;
-				for (int j = 0; j < 3; j++) 
-				{
-					unsigned short cur_v = v[j];
-					nb_seen[cur_v]++;
-					if (nb_seen[cur_v] == 1) 
-					{
-						faceNormals[cur_v] = normal;
-						//vertexBuffer[cur_v].m_FaceNormal = normal;
-					} else 
-					{
-					// average
-						
-						faceNormals[cur_v].x = faceNormals[cur_v].x * (1.0f - 1.0f/nb_seen[cur_v]) + normal.x * 1.0f/nb_seen[cur_v];
-						faceNormals[cur_v].y = faceNormals[cur_v].y * (1.0f - 1.0f/nb_seen[cur_v]) + normal.y * 1.0f/nb_seen[cur_v];
-						faceNormals[cur_v].z = faceNormals[cur_v].z * (1.0f - 1.0f/nb_seen[cur_v]) + normal.z * 1.0f/nb_seen[cur_v];		
-						faceNormals[cur_v] = glm::normalize(faceNormals[cur_v]);
-						
-						/*vertexBuffer[cur_v].m_FaceNormal.x = vertexBuffer[cur_v].m_FaceNormal.x * (1.0f - 1.0f/nb_seen[cur_v]) + normal.x * 1.0f/nb_seen[cur_v];
-						vertexBuffer[cur_v].m_FaceNormal.y = vertexBuffer[cur_v].m_FaceNormal.y * (1.0f - 1.0f/nb_seen[cur_v]) + normal.y * 1.0f/nb_seen[cur_v];
-						vertexBuffer[cur_v].m_FaceNormal.z = vertexBuffer[cur_v].m_FaceNormal.z * (1.0f - 1.0f/nb_seen[cur_v]) + normal.z * 1.0f/nb_seen[cur_v];		
-						vertexBuffer[cur_v].m_FaceNormal = glm::normalize(vertexBuffer[cur_v].m_FaceNormal);
-						*/
-					/*}
-				}
-			}
-
-			for( unsigned int v=0; v<indices.size(); v+=3 )
-			{
-				// For each vertex of the triangle
-				for ( unsigned int i=0; i<3; i+=1 )
-				{
-					unsigned int vertexIndex = indices[v+i];
-					glm::vec3 normal = faceNormals[vertexIndex];
-					//glm::vec3 normal = vertexBuffer[vertexIndex].m_FaceNormal;
-					m_VertexBuffer->SetVertexData<glm::vec3> (vAttrib.GetVertexSize (), vAttrib.GetAttributeSize (VA_NORMAL), normal); 
-					//vertexBuffer[vertexIndex].m_VertexNormal = normal;
-					//vertexNormals.push_back(normal);
-				}
-			}
-
-			
-		} 
-		else
-		{
-			throw std::invalid_argument ("Error while generating the face normals for");
-		}
-
-	}
-	*/
-	//m_VertexBuffer->SetVertexData (vertexBuffer);
-	//m_VertexBuffer->SetVertexBuffer (vertexBuffer);
-	//m_VertexBuffer->SetFaceNormals (faceNormals);
-	//m_VertexBuffer->SetVertexNormals (vertexNormals);
 }

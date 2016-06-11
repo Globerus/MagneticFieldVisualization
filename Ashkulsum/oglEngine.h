@@ -5,7 +5,7 @@
 #include "programBlockIndexMap.h"
 #include "geometryNode.h"
 #include "billBoardNode.h"
-#include "oglContainerObjectManager.h"
+#include "oglVertexArrayObject.h"
 #include "oglVertexBuffer.h"
 #include "oglIndexBuffer.h"
 #include "oglProgramManager.h"
@@ -64,6 +64,7 @@ public:
 	void ClearDepthBuffer ();
 	void ClearBuffers ();
 	
+	std::shared_ptr<Font> const& GetFont ();
 	void SetFont (std::shared_ptr<Font> const& font);
 
 	void SetBlendState (std::shared_ptr<BlendState> const& blendState);
@@ -124,6 +125,8 @@ public:
 	bool Update (std::shared_ptr<Buffer> const& buffer);
 	bool Update (std::shared_ptr<TextureSolo> const& texture);
 	bool Update (std::shared_ptr<TextureSolo> const& texture, int level);
+	bool Update (std::shared_ptr<TextureArray> const& texture);
+	bool Update(std::shared_ptr<TextureArray> const& textureArray, unsigned int item, unsigned int level);
 
 private:
 	void Initialize ();

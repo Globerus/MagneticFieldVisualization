@@ -7,7 +7,6 @@
 class VertexShader : public Shader
 {
 public:
-	//VertexShader (std::string const& sName, std::string const& sSource);
 	VertexShader ();
 
 	VertexShader (OGLReflection const& reflector);

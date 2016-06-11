@@ -3,188 +3,29 @@
 
 
 CGALInterpolationSimulator::CGALInterpolationSimulator ()
-	:	m_Work (m_IOService),
-		m_Radius (5.0f),
-		m_MaxMagFieldForce (15.0f)
+	:	m_MaxMagFieldForce (15.0f),
+		m_InterpolationDone (true)
 {
 	for (unsigned int i =0; i < NUM_INITIALIZATION_POINTS; i++)
 	{
 		glm::vec3 point (m_Initialization3DPointList[3*i], m_Initialization3DPointList[3*i+1], m_Initialization3DPointList[3*i+2]);
 		Point3D cgalPoint (point.x, point.y, point.z);
 		m_DelaunayTriangulation3D.insert (cgalPoint);
-		m_Initial3DPointMagForceMap[cgalPoint] = m_InitializationMagForceList[i];
-		//float interpolatedAngleRad = Maths::DegToRad (m_InitializationDirVecList[i]);
-		//float sin = std::sin (interpolatedAngleRad);
-		//float cos = std::cos (interpolatedAngleRad);
-		//m_Initial3DPointDirVecMap[cgalPoint] = glm::vec2(cos, sin);
-		//m_Initial3DPointDirVecMap[cgalPoint] = m_InitializationDirVecList[i];
-		m_Interpolated3DPointMagForceVector.push_back (glm::vec4(point, m_InitializationMagForceList[i]/m_MaxMagFieldForce));
 	}
-	/*
-	int sample_size = 4;
-    std::vector<Point3D> points;
-    points.reserve(sample_size);
-
-	DelaunayTriangulation3D w;
-
-	Point3D a (-1.0f, 1.0f, 0.0f);
-	Point3D b (1.0f, 1.0f, 0.0f);
-	Point3D c (-1.0f, -1.0f, 0.0f);
-	Point3D d (1.0f, -1.0f, 0.0f);
-	Point3D e (-1.0f, 1.0f, 1.0f);
-	Point3D f (1.0f, 1.0f, 1.0f);
-	Point3D g (-1.0f, -1.0f, 1.0f);
-	Point3D h (1.0f, -1.0f, 1.0f);
-
-	m_DelaunayTriangulation3D.insert (a);
-	m_DelaunayTriangulation3D.insert (b);
-	m_DelaunayTriangulation3D.insert (c);
-	m_DelaunayTriangulation3D.insert (d);
-	m_DelaunayTriangulation3D.insert (e);
-	m_DelaunayTriangulation3D.insert (f);
-	m_DelaunayTriangulation3D.insert (g);
-	m_DelaunayTriangulation3D.insert (h);
-
-	
-
-	glm::vec3 q = glm::normalize (glm::vec3(a.x(), a.y (), a.z()));
-
-					   
-    //value_map_t F;
-
-	glm::vec3 val1 = glm::vec3 (0.0f, -1.0f, 0.0f);
-	glm::vec3 val2 = glm::vec3 (1.5f, 2.0f, 0.0f);
-	glm::vec3 val3 = glm::vec3 (0.0f, 2.0f, 0.0f);
-	glm::vec3 val4 = glm::vec3 (2.0f, -2.0f, 0.0f);
-	glm::vec3 val5 = glm::vec3 (0.0f, 2.0f, 1.0f);
-	glm::vec3 val6 = glm::vec3 (1.5f, 2.0f, 1.0f);
-	glm::vec3 val7 = glm::vec3 (0.0f, 2.0f, 1.0f);
-	glm::vec3 val8 = glm::vec3 (2.0f, -2.0f, 1.0f);
-
-	/*val1 = glm::normalize (val1);
-	val2 = glm::normalize (val2);
-	val3 = glm::normalize (val3);
-	val4 = glm::normalize (val4);
-	val5 = glm::normalize (val5);
-	val6 = glm::normalize (val6);
-	val7 = glm::normalize (val7);
-	val8 = glm::normalize (val8);*/
-/*
-	m_Vec3DMap.insert (std::make_pair (a, val1));
-	m_Vec3DMap.insert (std::make_pair (b, val2));
-	m_Vec3DMap.insert (std::make_pair (c, val3));
-	m_Vec3DMap.insert (std::make_pair (d, val4));
-	m_Vec3DMap.insert (std::make_pair (e, val5));
-	m_Vec3DMap.insert (std::make_pair (f, val6));
-	m_Vec3DMap.insert (std::make_pair (g, val7));
-	m_Vec3DMap.insert (std::make_pair (h, val8));
-
-	std::vector<glm::vec3> o;
-	//o.push_back (result);
-
-	o = GenerateStreamLine (20, 0.1f, glm::vec3 (-0.9f, -0.9f, 0.1f));
-	/*Point3D my (-0.9f, -0.9f, 0.1f);
-	for (int i = 1 ; i < 5; i++)
-	{	
-		float dt = 0.3f;
-		CoordType norm;
-		VertexHandleVector vertexHandleVector;
-		CGAL::sibson_natural_neighbor_coordinates_3 (w, my, std::back_inserter(vertexHandleVector), norm);
-	
-		glm::vec3 result (0);
-		for (int j =0; j < vertexHandleVector.size (); j++)
-		{
-			auto point = vertexHandleVector[j].first->point();
-			auto weight = (float)vertexHandleVector[j].second;
-			auto val = F[point];
-			val.x = val.x - point.x();
-			val.y = val.y - point.y();
-			val.z = val.z - point.z();
-			result += ((weight/(float)norm) * val);
-		}
-		//result = glm::normalize (result);
-		//glm::vec3 d = Maths::RundKutta (result, 0.3f);
-
-		glm::vec3 k1 = dt * result;
-		Point3D vp2 (my.x () + 0.5f*k1.x, my.y () + 0.5f*k1.y, my.z () + 0.5f*k1.z);
-		
-		CoordType norm2;
-		VertexHandleVector vertexHandleVector2;
-		CGAL::sibson_natural_neighbor_coordinates_3 (w, vp2, std::back_inserter(vertexHandleVector2), norm2);
-	
-		glm::vec3 result2 (0);
-		for (int j =0; j < vertexHandleVector.size (); j++)
-		{
-			auto point = vertexHandleVector2[j].first->point();
-			auto weight = (float)vertexHandleVector2[j].second;
-			auto val = F[point];
-			val.x = val.x - point.x();
-			val.y = val.y - point.y();
-			val.z = val.z - point.z();
-			result2 += ((weight/(float)norm2) * val);
-		}
-
-		glm::vec3 k2 = dt * result2;
-		Point3D vp3 (my.x () + 0.5f*k2.x, my.y () + 0.5f*k2.y, my.z () + 0.5f*k2.z);
-		
-		CoordType norm3;
-		VertexHandleVector vertexHandleVector3;
-		CGAL::sibson_natural_neighbor_coordinates_3 (w, vp3, std::back_inserter(vertexHandleVector3), norm3);
-	
-		glm::vec3 result3 (0);
-		for (int j =0; j < vertexHandleVector.size (); j++)
-		{
-			auto point = vertexHandleVector3[j].first->point();
-			auto weight = (float)vertexHandleVector3[j].second;
-			auto val = F[point];
-			val.x = val.x - point.x();
-			val.y = val.y - point.y();
-			val.z = val.z - point.z();
-			result3 += ((weight/(float)norm3) * val);
-		}
-
-		glm::vec3 k3 = dt * result3;
-		Point3D vp4 (my.x () + k3.x, my.y () + k3.y, my.z () + k3.z);
-		
-		CoordType norm4;
-		VertexHandleVector vertexHandleVector4;
-		CGAL::sibson_natural_neighbor_coordinates_3 (w, vp4, std::back_inserter(vertexHandleVector4), norm4);
-	
-		glm::vec3 result4 (0);
-		for (int j =0; j < vertexHandleVector.size (); j++)
-		{
-			auto point = vertexHandleVector4[j].first->point();
-			auto weight = (float)vertexHandleVector4[j].second;
-			auto val = F[point];
-			val.x = val.x - point.x();
-			val.y = val.y - point.y();
-			val.z = val.z - point.z();
-			result4 += ((weight/(float)norm4) * val);
-		}
-
-		glm::vec3 k4 = dt * result4;
-
-		float dtSixth = dt/6;
-
-		glm::vec3 final = glm::vec3 (my.x(), my.y(), my.z()) + dtSixth * (k1 + 2.0f * (k2 + k3) + k4);
-
-		my = Point3D(final.x,final.y,final.z);
-
-		o.push_back (glm::vec3 (my.x(), my.y (), my.z ()));
-	}*/
-
-	//InitThreadPool ();
+	m_InterpolatedGLMPointMagForceVector.resize (NUM_SETS);
 }
 
-void CGALInterpolationSimulator::InitThreadPool ()
+void CGALInterpolationSimulator::InitializeMagForceValues (int segmentSet)
 {
-	for (unsigned int r= 0; r< boost::thread::hardware_concurrency(); r++)
+	for (unsigned int i =0; i < NUM_INITIALIZATION_POINTS; i++)
 	{
-		m_Pool.create_thread (boost::bind (&boost::asio::io_service::run, &m_IOService));
+		glm::vec3 point (m_Initialization3DPointList[3*i], m_Initialization3DPointList[3*i+1], m_Initialization3DPointList[3*i+2]);
+		Point3D cgalPoint (point.x, point.y, point.z);
+		m_Initial3DPointMagForceMap[cgalPoint] = m_InitializationMagForceList[segmentSet][i];
 	}
-}
+};
 
-void CGALInterpolationSimulator::InterpolateMagForce (glm::vec3 & point)
+void CGALInterpolationSimulator::InterpolateMagForce (int segmentSet, glm::vec3 point)
 {
 	CoordType norm;
 	VertexHandleVector vertexHandleVector;
@@ -192,158 +33,58 @@ void CGALInterpolationSimulator::InterpolateMagForce (glm::vec3 & point)
 
 	Point3D cgalPoint (point.x, point.y, point.z);
 
-	CGAL::sibson_natural_neighbor_coordinates_3 (m_DelaunayTriangulation3D, cgalPoint, std::back_inserter(vertexHandleVector), norm);
+	m_LastVisitedCell = m_DelaunayTriangulation3D.locate (cgalPoint, m_LastVisitedCell);
 	
- 	if (norm > 0.0f)
+	CGAL::sibson_natural_neighbor_coordinates_3 (m_DelaunayTriangulation3D, cgalPoint, std::back_inserter(vertexHandleVector), norm, m_LastVisitedCell);
+
+	for (unsigned int i = 0; i < vertexHandleVector.size (); i++)
 	{
-		for (unsigned int i = 0; i < vertexHandleVector.size (); i++)
-		{
-			Point3D cgalP = vertexHandleVector[i].first->point();
-			point3DVector.push_back (std::make_pair (cgalP, vertexHandleVector[i].second));
-		}
-
-		CoordType interpolationResult = CGAL::linear_interpolation (point3DVector.begin(), point3DVector.end(), norm, ValueAccess(m_Initial3DPointMagForceMap));
-
-		boost::unique_lock <boost::mutex> uniqueLock (m_Mutex);
-		m_Interpolated3DPointMagForceVector.push_back (glm::vec4 (point, (CGAL::to_double (interpolationResult)/ m_MaxMagFieldForce)));
-		uniqueLock.unlock ();
-		
-	}
-}
-
-glm::vec3 CGALInterpolationSimulator::InterpolateDirVec (glm::vec3 & point)
-{
-	glm::vec3 dirVector(0);
-
-	Point3D cgalPoint (point.x, point.y, point.z);
-	CoordType norm;
-	VertexHandleVector vertexHandleVector;
-	Point3DVector point3DVector;
-
-	CGAL::sibson_natural_neighbor_coordinates_3 (m_DelaunayTriangulation3D, cgalPoint, std::back_inserter(vertexHandleVector), norm);
-	
-	if (norm > 0.0f)
-	{
-		for (unsigned int i = 0; i < vertexHandleVector.size (); i++)
-			{
-				Point3D cgalP = vertexHandleVector[i].first->point();
-				point3DVector.push_back (std::make_pair (cgalP, vertexHandleVector[i].second));
-			}
-
-		dirVector = WeightedVectorLinearInterpolation (cgalPoint, vertexHandleVector, norm);
-		//CoordType interpolationResult = CGAL::linear_interpolation (point3DVector.begin(), point3DVector.end(), norm, ValueAccess(m_Initial3DPointDirVecMap));
-	
-		//float interpolatedAngleRad = Maths::DegToRad ((float)CGAL::to_double (interpolationResult));
-		//float sin = std::sin (interpolatedAngleRad);
-		//float cos = std::cos (interpolatedAngleRad);
-
-		//dirVector = glm::normalize(glm::vec3 (point.x*cos, sin, point.z*cos));
-	//glm::vec3 interpolatedVector = WeightedVectorLinearInterpolation (cgalPoint, vertexHandleVector, norm);
-	}
-	return dirVector;
-}
-
-std::vector<glm::vec4> CGALInterpolationSimulator::GeneratePoints ()
-{
-	InitThreadPool ();
-
-	CGAL::Random_points_in_ball_d<Point> generator (3, m_Radius);
-
-	for (int i = 0; i < NUM_GENERATED_POINTS; i++)
-	{
-		Point point = *generator++;
-		glm::vec3 vec (point.x (), point.y (), point.z ());
-		if (/*point.x () > 3.2f || point.y () > 2.4f || point.z () > 3.2f || point.x () < -3.2f || point.y () < -2.4f ||*/ point.z () >= 0.0f)
-			m_IOService.post(boost::bind (&CGALInterpolationSimulator::InterpolateMagForce, this, vec));
+		Point3D cgalP = vertexHandleVector[i].first->point();
+		point3DVector.push_back (std::make_pair (cgalP, vertexHandleVector[i].second));
 	}
 
-	m_IOService.stop ();
-	m_Pool.join_all ();
-
-	return m_Interpolated3DPointMagForceVector;
-}
-
-glm::vec3 CGALInterpolationSimulator::WeightedVectorLinearInterpolation (Point3D point, VertexHandleVector vector, CoordType norm)
-{
-	glm::vec2 accum (0);
-	glm::vec3 result (0);
-
-	for (unsigned int i =0; i < vector.size (); i++)
-		{
-			auto point = vector[i].first->point();
-			auto weight = (float)vector[i].second;
-			auto val = m_Initial3DPointDirVecMap[point];
-			//auto dir =  val - glm::vec3 (point.x (), point.y (), point.z ());
-			accum += ((weight/(float)norm) * val);
-		}
-	float x = point.x() == 0.0f ? 0 : accum.x;
-	float y = accum.y;
-	float z = point.z() == 0.0f ? 0 : accum.x;
-	result = glm::vec3 (x, y, z);
-	//result = glm::vec3 (accum.x, accum.y, accum.x);
-	return result;
-}
-
-glm::vec3 CGALInterpolationSimulator::RungeKutta4 (float dt, glm::vec3 & point)
-{
-		glm::vec3 b = InterpolateDirVec (point);
-		glm::vec3 k1 = dt * b;
-		float a = atan2 (b.y, b.x)* 180.0f/3.14f;
-		glm::vec3 k2 = dt * InterpolateDirVec (point + 0.5f * k1);
-		glm::vec3 k3 = dt * InterpolateDirVec (point + 0.5f * k2);
-		glm::vec3 k4 = dt * InterpolateDirVec (point + k3);
-
-		float dtSixth = dt/6;
-
-		glm::vec3 res = point + dtSixth * (k1 + 2.0f * (k2 + k3) + k4);
-
-		return res;
-		//boost::unique_lock <boost::mutex> uniqueLock (m_Mutex);
-		//m_StreamLineVertices[id] = res;
-		//uniqueLock.unlock ();
-}
-
-std::vector<glm::vec3> CGALInterpolationSimulator::GenerateStreamLine (int numSegments, float dt, glm::vec3 point)
-{
-	std::vector<glm::vec3> result;
-
-	glm::vec3 procPoint = point;
-
-	int numSteps = (int)numSegments/dt;
-
-	/*std::function<glm::vec3 (glm::vec3)> func = [this] (glm::vec3 const& p) -> glm::vec3
-	{
-		Point3D cgalPoint (p.x, p.y, p.z);
-		CoordType norm;
-		VertexHandleVector vertexHandleVector;
-		CGAL::sibson_natural_neighbor_coordinates_3 (m_DelaunayTriangulation3D, cgalPoint, std::back_inserter(vertexHandleVector), norm);
+	CoordType interpolationResult = CGAL::linear_interpolation (point3DVector.begin(), point3DVector.end(), norm, ValueAccess(m_Initial3DPointMagForceMap));
 	
-		glm::vec3 vector (0);
-		vector = WeightedVectorLinearInterpolation (cgalPoint, vertexHandleVector, norm);
-		return vector;
-	};*/
-	//InitThreadPool ();
-	result.push_back (point);
-	for (int i =0; i < numSteps; i++)
-	{
-		//m_IOService.post(boost::bind (&CGALInterpolationSimulator::RungeKutta4, this, i, dt, point));
-		glm::vec3 newPoint = RungeKutta4 (dt, procPoint);
-		result.push_back (newPoint);
-		procPoint = newPoint;
-	}
+	m_InterpolatedGLMPointMagForceVector[segmentSet].push_back (glm::vec4 ( point, CGAL::to_double (interpolationResult)/ m_MaxMagFieldForce));
 
-	//m_IOService.stop ();
-	//m_Pool.join_all ();
-
-	//for (int i= 0; i < numSteps; i++)
-	//{
-	//	result.push_back (m_StreamLineVertices[i]);
-	//}
-
-	return result;
 }
 
-float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALIZATION_POINTS*3] = 
+CGALInterpolationSimulator::GLMPointMap CGALInterpolationSimulator::GetInterpolatedGLMPointMagForceMap () const
+{
+	return m_InterpolatedGLMPointMagForceMap;
+}
+
+std::vector<std::vector<glm::vec4>> CGALInterpolationSimulator::GetInterpolatedGLMPointMagForceVector () const
+{
+	return m_InterpolatedGLMPointMagForceVector;
+}
+
+void CGALInterpolationSimulator::SetInterpolatedGLMPointMagForceVector (std::vector<std::vector<glm::vec4>> data)
+{
+	m_InterpolatedGLMPointMagForceVector = data;
+}
+
+CGALInterpolationSimulator::Point3DMap CGALInterpolationSimulator::GetInitial3DPointMagForceMap () const
+{
+	return m_Initial3DPointMagForceMap;
+}
+
+void CGALInterpolationSimulator::SetInitial3DPointMagForceMap (Point3DMap pointMap)
+{
+	m_Initial3DPointMagForceMap = pointMap;
+}
+
+void CGALInterpolationSimulator::SetInterpolationDone (bool status)
+{
+	m_InterpolationDone = status;
+}
+
+bool CGALInterpolationSimulator::GetInterpolationDone () const
+{
+	return m_InterpolationDone;
+}
+
+float const CGALInterpolationSimulator::m_Initialization3DPointList [NUM_INITIALIZATION_POINTS*3] = 
 {
 	// Inner magnet top//
 	0.0f, 1.0f, 0.0f,
@@ -675,228 +416,110 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.70f, -1.76f, -0.70f,
 	0.98f, -1.76f, -0.98f,
 
-	// Inner green - x axis//
-
+	//Green - x axis//
 	2.0f, 0.0f, 0.0f, 
-	2.0f, 0.25f, 0.0f, 
-	2.0f, 0.5f, 0.0f, 
-	2.0f, 0.75f, 0.0f, 
-	2.0f, 1.0f, 0.0f,
-	2.0f, 1.25f, 0.0f,
-	2.0f, 1.5f, 0.0f,
 	1.94f, 1.76f, 0.0f,
 	1.73f, 2.0f, 0.0f,
 	1.4f, 2.2f, 0.0f,
 	1.0f, 2.37f, 0.0f,
 	0.52f, 2.47f, 0.0f,
 	0.0f, 2.5f, 0.0f, 
-
 	-0.52f, 2.47f, 0.0f, 
 	-1.0f, 2.37f, 0.0f, 
 	-1.4f, 2.2f, 0.0f, 
 	-1.73f, 2.0f, 0.0f, 
 	-1.94f, 1.76f, 0.0f, 
-	-2.0f, 1.5f, 0.0f, 
-	-2.0f, 1.25f, 0.0f,
-	-2.0f, 1.0f, 0.0f,
-	-2.0f, 0.75f, 0.0f,
-	-2.0f, 0.5f, 0.0f,
-	-2.0f, 0.25f, 0.0f,
-	-2.0f, 0.0f, 0.0f,
 
-	-2.0f, -0.25f, 0.0f,
-	-2.0f, -0.5f, 0.0f,
-	-2.0f, -0.75f, 0.0f,
-	-2.0f, -1.0f, 0.0f,
-	-2.0f, -1.25f, 0.0f,
-	-2.0f, -1.5f, 0.0f, 
+	-2.0f, 0.0f, 0.0f,
 	-1.94f, -1.76f, 0.0f, 
 	-1.73f, -2.0f, 0.0f, 
 	-1.4f, -2.2f, 0.0f, 
 	-1.0f, -2.37f, 0.0f, 
 	-0.52f, -2.47f, 0.0f, 
 	0.0f, -2.5f, 0.0f,
-
 	0.52f, -2.47f, 0.0f, 
 	1.0f, -2.37f, 0.0f, 
 	1.4f, -2.2f, 0.0f, 
 	1.73f, -2.0f, 0.0f,
 	1.94f, -1.76f, 0.0f, 
-	2.0f, -1.5f, 0.0f,
-	2.0f, -1.25f, 0.0f,
-	2.0f, -1.0f, 0.0f,
-	2.0f, -0.75f, 0.0f,
-	2.0f, -0.5f, 0.0f,
-	2.0f, -0.25f, 0.0f,
 
-	// Inner green - z axis//
+	//Green - z axis//
 	0.0f, 0.0f, 2.0f, 
-	0.0f, 0.25f, 2.0f, 
-	0.0f, 0.5f, 2.0f, 
-	0.0f, 0.75f, 2.0f, 
-	0.0f, 1.0f, 2.0f,
-	0.0f, 1.25f, 2.0f,
-	0.0f, 1.5f, 2.0f,
 	0.0f, 1.76f, 1.94f,
 	0.0f, 2.0f, 1.73f,
 	0.0f, 2.2f, 1.4f,
 	0.0f, 2.37f, 1.0f,
 	0.0f, 2.47f, 0.52f,
-
 	0.0f, 2.47f, -0.52f, 
 	0.0f, 2.37f, -1.0f, 
 	0.0f, 2.2f, -1.4f, 
 	0.0f, 2.0f, -1.73f, 
-	0.0f, 1.76f, -1.94f, 
-	0.0f, 1.5f, -2.0f, 
-	0.0f, 1.25f, -2.0f,
-	0.0f, 1.0f, -2.0f,
-	0.0f, 0.75f, -2.0f,
-	0.0f, 0.5f, -2.0f,
-	0.0f, 0.25f, -2.0f,
-	0.0f, 0.0f, -2.0f,
+	0.0f, 1.76f, -1.94f,
 
-	0.0f, -0.25f, -2.0f,
-	0.0f, -0.5f, -2.0f,
-	0.0f, -0.75f, -2.0f,
-	0.0f, -1.0f, -2.0f,
-	0.0f, -1.25f, -2.0f,
-	0.0f, -1.5f, -2.0f, 
+	0.0f, 0.0f, -2.0f,
 	0.0f, -1.76f, -1.94f, 
 	0.0f, -2.0f, -1.73f, 
 	0.0f, -2.2f, -1.4f, 
 	0.0f, -2.37f, -1.0f, 
 	0.0f, -2.47f, -0.52f, 
-
 	0.0f, -2.47f, 0.52f, 
 	0.0f, -2.37f, 1.0f, 
 	0.0f, -2.2f, 1.4f, 
 	0.0f, -2.0f, 1.73f,
 	0.0f, -1.76f, 1.94f, 
-	0.0f, -1.5f, 2.0f,
-	0.0f, -1.25f, 2.0f,
-	0.0f, -1.0f, 2.0f,
-	0.0f, -0.75f, 2.0f,
-	0.0f, -0.5f, 2.0f,
-	0.0f, -0.25f, 2.0f,
 
-	// Inner green - +x -z axis//
+	//Green - x -z axis//
 	1.4f, 0.0f, 1.4f, 
-	1.4f, 0.25f, 1.4f, 
-	1.4f, 0.5f, 1.4f, 
-	1.4f, 0.75f, 1.4f, 
-	1.4f, 1.0f, 1.4f, 
-	1.4f, 1.25f, 1.4f, 
-	1.4f, 1.5f, 1.4f, 
 	1.36f, 1.76f, 1.36f, 
 	1.22f, 2.0f, 1.22f, 
 	0.98f, 2.2f, 0.98f, 
 	0.7f, 2.37f, 0.7f, 
-	0.36f, 2.47f, 0.36f, 
-	
+	0.36f, 2.47f, 0.36f, 	
 	-0.36f, 2.47f, -0.36f, 
 	-0.7f, 2.37f, -0.7f, 
 	-0.98f, 2.2f, -0.98f, 
 	-1.22f, 2.0f, -1.22f, 
 	-1.36f, 1.76f, -1.36f, 
-	-1.4f, 1.5f, -1.4f, 
-	-1.4f, 1.25f, -1.4f, 
-	-1.4f, 1.0f, -1.4f, 
-	-1.4f, 0.75f, -1.4f, 
-	-1.4f, 0.5f, -1.4f, 
-	-1.4f, 0.25f, -1.4f, 
+	
 	-1.4f, 0.0f, -1.4f, 
-
-	-1.4f, 0.0f, -1.4f, 
-	-1.4f, -0.25f, -1.4f, 
-	-1.4f, -0.5f, -1.4f, 
-	-1.4f, -0.75f, -1.4f, 
-	-1.4f, -1.0f, -1.4f, 
-	-1.4f, -1.25f, -1.4f, 
-	-1.4f, -1.5f, -1.4f, 
 	-1.36f, -1.76f, -1.36f, 
 	-1.22f, -2.0f, -1.22f, 
 	-0.98f, -2.2f, -0.98f, 
 	-0.7f, -2.37f, -0.7f, 
 	-0.36f, -2.47f, -0.36f,
-
 	0.36f, -2.47f, 0.36f, 
 	0.7f, -2.37f, 0.7f, 
 	0.98f, -2.2f, 0.98f, 
 	1.22f, -2.0f, 1.22f, 
 	1.36f, -1.76f, 1.36f, 
-	1.4f, -1.5f, 1.4f, 
-	1.4f, -1.25f, 1.4f, 
-	1.4f, -1.0f, 1.4f, 
-	1.4f, -0.75f, 1.4f, 
-	1.4f, -0.5f, 1.4f, 
-	1.4f, -0.25f, 1.4f, 
-	1.4f, 0.0f, 1.4f,
 
-	//Inner green - -x -z axis
-
+	//Green - -x -z axis
 	-1.4f, 0.0f, 1.4f, 
-	-1.4f, 0.25f, 1.4f, 
-	-1.4f, 0.5f, 1.4f, 
-	-1.4f, 0.75f, 1.4f, 
-	-1.4f, 1.0f, 1.4f, 
-	-1.4f, 1.25f, 1.4f, 
-	-1.4f, 1.5f, 1.4f, 
 	-1.36f, 1.76f, 1.36f, 
 	-1.22f, 2.0f, 1.22f, 
 	-0.98f, 2.2f, 0.98f, 
 	-0.7f, 2.37f, 0.7f, 
-	-0.36f, 2.47f, 0.36f, 
-	
+	-0.36f, 2.47f, 0.36f, 	
 	0.36f, 2.47f, -0.36f, 
 	0.7f, 2.37f, -0.7f, 
 	0.98f, 2.2f, -0.98f, 
 	1.22f, 2.0f, -1.22f, 
 	1.36f, 1.76f, -1.36f, 
-	1.4f, 1.5f, -1.4f, 
-	1.4f, 1.25f, -1.4f, 
-	1.4f, 1.0f, -1.4f, 
-	1.4f, 0.75f, -1.4f, 
-	1.4f, 0.5f, -1.4f, 
-	1.4f, 0.25f, -1.4f, 
-	1.4f, 0.0f, -1.4f, 
-
-	-1.4f, 0.0f, 1.4f, 
-	-1.4f, -0.25f, 1.4f, 
-	-1.4f, -0.5f, 1.4f, 
-	-1.4f, -0.75f, 1.4f, 
-	-1.4f, -1.0f, 1.4f, 
-	-1.4f, -1.25f, 1.4f, 
-	-1.4f, -1.5f, 1.4f, 
+	
+	1.4f, 0.0f, -1.4f,  
 	-1.36f, -1.76f, 1.36f, 
 	-1.22f, -2.0f, 1.22f, 
 	-0.98f, -2.2f, 0.98f, 
 	-0.7f, -2.37f, 0.7f, 
-	-0.36f, -2.47f, 0.36f,
-	
+	-0.36f, -2.47f, 0.36f,	
 	0.36f, -2.47f, -0.36f, 
 	0.7f, -2.37f, -0.7f, 
 	0.98f, -2.2f, -0.98f, 
 	1.22f, -2.0f, -1.22f, 
 	1.36f, -1.76f, -1.36f, 
-	1.4f, -1.5f, -1.4f, 
-	1.4f, -1.25f, -1.4f, 
-	1.4f, -1.0f, -1.4f, 
-	1.4f, -0.75f, -1.4f, 
-	1.4f, -0.5f, -1.4f, 
-	1.4f, -0.25f, -1.4f, 
-	1.4f, 0.0f, -1.4f, 
  
-
-
-	//Inner green 2 - x axis
-
+	//Green 2 - x axis
 	2.5f, 0.0f, 0.0f, 
-	2.5f, 0.25f, 0.0f, 
-	2.5f, 0.5f, 0.0f, 
-	2.5f, 0.75f, 0.0f, 
-	2.5f, 1.0f, 0.0f, 
-	2.5f, 1.25f, 0.0f, 
 	2.46202f, 1.68412f, 0.0f, 
 	2.34923f, 2.10505f, 0.0f, 
 	2.16506f, 2.5f, 0.0f, 
@@ -906,7 +529,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.85505f, 3.59923f, 0.0f, 
 	0.43412f, 3.71202f, 0.0f, 
 	-1.09278e-007f, 3.75f, 0.0f,
-
 	-0.43412f, 3.71202f, 0.0f, 
 	-0.855051f, 3.59923f, 0.0f, 
 	-1.25f, 3.41506f, 0.0f, 
@@ -915,18 +537,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.16506f, 2.5f, 0.0f, 
 	-2.34923f, 2.10505f, 0.0f, 
 	-2.46202f, 1.68412f, 0.0f, 
-	-2.5f, 1.25f, 0.0f, 
-	-2.5f, 1.0f, 0.0f, 
-	-2.5f, 0.75f, 0.0f, 
-	-2.5f, 0.5f, 0.0f, 
-	-2.5f, 0.25f, 0.0f, 
+	 
 	-2.5f, 0.0f, 0.0f, 
-
-	-2.5f, -0.25f, 0.0f, 
-	-2.5f, -0.5f, 0.0f, 
-	-2.5f, -0.75f, 0.0f, 
-	-2.5f, -1.0f, 0.0f, 
-	-2.5f, -1.25f, 0.0f, 
 	-2.46202f, -1.68412f, 0.0f, 
 	-2.34923f, -2.10505f, 0.0f, 
 	-2.16506f, -2.5f, 0.0f, 
@@ -936,7 +548,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-0.85505f, -3.59923f, 0.0f, 
 	-0.43412f, -3.71202f, 0.0f, 
 	2.98122e-008f, -3.75f, 0.0f, 
-
 	0.43412f, -3.71202f, 0.0f, 
 	0.85505f, -3.59923f, 0.0f, 
 	1.25f, -3.41506f, 0.0f, 
@@ -945,19 +556,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.16506f, -2.5f, 0.0f, 
 	2.34923f, -2.10505f, 0.0f, 
 	2.46202f, -1.68412f, 0.0f, 
-	2.5f, -1.25f, 0.0f, 
-	2.5f, -1.0f, 0.0f, 
-	2.5f, -0.75f, 0.0f, 
-	2.5f, -0.5f, 0.0f, 
-	2.5f, -0.25f, 0.0f, 
  
-	//Inner green 2 - z axis
+	//Green 2 - z axis
 	0.0f, 0.0f, 2.5f, 
-	0.0f, 0.25f, 2.5f, 
-	0.0f, 0.5f, 2.5f, 
-	0.0f, 0.75f, 2.5f, 
-	0.0f, 1.0f, 2.5f, 
-	0.0f, 1.25f, 2.5f, 
 	0.0f, 1.68412f, 2.46202f, 
 	0.0f, 2.10505f, 2.34923f, 
 	0.0f, 2.5f, 2.16506f, 
@@ -966,7 +567,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 3.41506f, 1.25f, 
 	0.0f, 3.59923f, 0.85505f, 
 	0.0f, 3.71202f, 0.43412f, 
-
 	0.0f, 3.71202f, -0.43412f, 
 	0.0f, 3.59923f, -0.855051f, 
 	0.0f, 3.41506f, -1.25f, 
@@ -975,18 +575,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 2.5f, -2.16506f, 
 	0.0f, 2.10505f, -2.34923f, 
 	0.0f, 1.68412f, -2.46202f, 
-	0.0f, 1.25f, -2.5f, 
-	0.0f, 1.0f, -2.5f, 
-	0.0f, 0.75f, -2.5f, 
-	0.0f, 0.5f, -2.5f, 
-	0.0f, 0.25f, -2.5f, 
+	
 	0.0f, 0.0f, -2.5f, 
-
-	0.0f, -0.25f, -2.5f, 
-	0.0f, -0.5f, -2.5f, 
-	0.0f, -0.75f, -2.5f, 
-	0.0f, -1.0f, -2.5f, 
-	0.0f, -1.25f, -2.5f, 
 	0.0f, -1.68412f, -2.46202f, 
 	0.0f, -2.10505f, -2.34923f, 
 	0.0f, -2.5f, -2.16506f, 
@@ -995,7 +585,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -3.41506f, -1.25f, 
 	0.0f, -3.59923f, -0.85505f, 
 	0.0f, -3.71202f, -0.43412f, 
-
 	0.0f, -3.71202f, 0.43412f, 
 	0.0f, -3.59923f, 0.85505f, 
 	0.0f, -3.41506f, 1.25f, 
@@ -1004,19 +593,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -2.5f, 2.16506f, 
 	0.0f, -2.10505f, 2.34923f, 
 	0.0f, -1.68412f, 2.46202f, 
-	0.0f, -1.25f, 2.5f, 
-	0.0f, -1.0f, 2.5f, 
-	0.0f, -0.75f, 2.5f, 
-	0.0f, -0.5f, 2.5f, 
-	0.0f, -0.25f, 2.5f,
 
-	//Inner green 2 - x -z axis
+	//Green 2 - x -z axis
 	-1.75f, 0.0f, 1.75f, 
-	-1.75f, 0.25f, 1.75f, 
-	-1.75f, 0.5f, 1.75f, 
-	-1.75f, 0.75f, 1.75f, 
-	-1.75f, 1.0f, 1.75f, 
-	-1.75f, 1.25f, 1.75f, 
 	-1.72341f, 1.68412f, 1.72341f, 
 	-1.64446f, 2.10505f, 1.64446f, 
 	-1.51554f, 2.5f, 1.51554f, 
@@ -1025,7 +604,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-0.875f, 3.41506f, 0.875f, 
 	-0.598535f, 3.59923f, 0.598535f, 
 	-0.303884f, 3.71202f, 0.303884f, 
-
 	0.303884f, 3.71202f, -0.303884f, 
 	0.598535f, 3.59923f, -0.598535f, 
 	0.875f, 3.41506f, -0.875f, 
@@ -1033,19 +611,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.34058f, 2.85697f, -1.34058f, 
 	1.51554f, 2.5f, -1.51554f, 
 	1.64446f, 2.10505f, -1.64446f, 
-	1.72341f, 1.68412f, -1.72341f, 
-	1.75f, 1.25f, -1.75f, 
-	1.75f, 1.0f, -1.75f, 
-	1.75f, 0.75f, -1.75f, 
-	1.75f, 0.5f, -1.75f, 
-	1.75f, 0.25f, -1.75f, 
+	1.72341f, 1.68412f, -1.72341f,  
+	
 	1.75f, 0.0f, -1.75f, 
-
-	1.75f, -0.25f, -1.75f, 
-	1.75f, -0.5f, -1.75f, 
-	1.75f, -0.75f, -1.75f, 
-	1.75f, -1.0f, -1.75f, 
-	1.75f, -1.25f, -1.75f, 
 	1.72341f, -1.68412f, -1.72341f, 
 	1.64446f, -2.10505f, -1.64446f, 
 	1.51554f, -2.5f, -1.51554f, 
@@ -1054,7 +622,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.875f, -3.41506f, -0.875f, 
 	0.598535f, -3.59923f, -0.598535f, 
 	0.303884f, -3.71202f, -0.303884f, 
-
 	-0.303884f, -3.71202f, 0.303884f, 
 	-0.598535f, -3.59923f, 0.598535f, 
 	-0.875f, -3.41506f, 0.875f, 
@@ -1063,19 +630,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.51554f, -2.5f, 1.51554f, 
 	-1.64446f, -2.10505f, 1.64446f, 
 	-1.72341f, -1.68412f, 1.72341f, 
-	-1.75f, -1.25f, 1.75f, 
-	-1.75f, -1.0f, 1.75f, 
-	-1.75f, -0.75f, 1.75f, 
-	-1.75f, -0.5f, 1.75f, 
-	-1.75f, -0.25f, 1.75f, 
  
-	//Inner green 2 - -x -z axis
+	//Green 2 - -x -z axis
 	1.75f, 0.0f, 1.75f, 
-	1.75f, 0.25f, 1.75f, 
-	1.75f, 0.5f, 1.75f, 
-	1.75f, 0.75f, 1.75f, 
-	1.75f, 1.0f, 1.75f, 
-	1.75f, 1.25f, 1.75f, 
 	1.72341f, 1.68412f, 1.72341f, 
 	1.64446f, 2.10505f, 1.64446f, 
 	1.51554f, 2.5f, 1.51554f, 
@@ -1084,7 +641,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.875f, 3.41506f, 0.875f, 
 	0.598535f, 3.59923f, 0.598535f, 
 	0.303884f, 3.71202f, 0.303884f, 
-
 	-0.303884f, 3.71202f, -0.303884f, 
 	-0.598535f, 3.59923f, -0.598535f, 
 	-0.875f, 3.41506f, -0.875f, 
@@ -1093,18 +649,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.51554f, 2.5f, -1.51554f, 
 	-1.64446f, 2.10505f, -1.64446f, 
 	-1.72341f, 1.68412f, -1.72341f, 
-	-1.75f, 1.25f, -1.75f, 
-	-1.75f, 1.0f, -1.75f, 
-	-1.75f, 0.75f, -1.75f, 
-	-1.75f, 0.5f, -1.75f, 
-	-1.75f, 0.25f, -1.75f, 
-	-1.75f, 0.0f, -1.75f, 
 
-	-1.75f, -0.25f, -1.75f, 
-	-1.75f, -0.5f, -1.75f, 
-	-1.75f, -0.75f, -1.75f, 
-	-1.75f, -1.0f, -1.75f, 
-	-1.75f, -1.25f, -1.75f, 
+	-1.75f, 0.0f, -1.75f, 
 	-1.72341f, -1.68412f, -1.72341f, 
 	-1.64446f, -2.10505f, -1.64446f, 
 	-1.51554f, -2.5f, -1.51554f, 
@@ -1113,7 +659,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-0.875f, -3.41506f, -0.875f, 
 	-0.598535f, -3.59923f, -0.598535f, 
 	-0.303884f, -3.71202f, -0.303884f, 
-
 	0.303884f, -3.71202f, 0.303884f, 
 	0.598535f, -3.59923f, 0.598535f, 
 	0.875f, -3.41506f, 0.875f, 
@@ -1122,22 +667,10 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.51554f, -2.5f, 1.51554f, 
 	1.64446f, -2.10505f, 1.64446f, 
 	1.72341f, -1.68412f, 1.72341f, 
-	1.75f, -1.25f, 1.75f, 
-	1.75f, -1.0f, 1.75f, 
-	1.75f, -0.75f, 1.75f, 
-	1.75f, -0.5f, 1.75f, 
-	1.75f, -0.25f, 1.75f, 
 
 
-	//Inner green 3 - x axis
-
+	//Green 3 - x axis
 	3.0f, 0.0f, 0.0f, 
-	3.0f, 0.25f, 0.0f, 
-	3.0f, 0.5f, 0.0f, 
-	3.0f, 0.75f, 0.0f, 
-	3.0f, 1.0f, 0.0f, 
-	3.0f, 1.25f, 0.0f, 
-	3.0f, 1.5f, 0.0f, 
 	2.95442f, 2.02094f, 0.0f, 
 	2.81908f, 2.52606f, 0.0f, 
 	2.59808f, 3.0f, 0.0f, 
@@ -1147,7 +680,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.02606f, 4.31908f, 0.0f, 
 	0.520944f, 4.45442f, 0.0f, 
 	-1.31134e-007f, 4.5f, 0.0f, 
-
 	-0.520945f, 4.45442f, 0.0f, 
 	-1.02606f, 4.31908f, 0.0f, 
 	-1.5f, 4.09808f, 0.0f, 
@@ -1156,20 +688,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.59808f, 3.0f, 0.0f, 
 	-2.81908f, 2.52606f, 0.0f, 
 	-2.95442f, 2.02094f, 0.0f, 
-	-3.0f, 1.5f, 0.0f, 
-	-3.0f, 1.25f, 0.0f, 
-	-3.0f, 1.0f, 0.0f, 
-	-3.0f, 0.75f, 0.0f, 
-	-3.0f, 0.5f, 0.0f, 
-	-3.0f, 0.25f, 0.0f, 
+	
 	-3.0f, 0.0f, 0.0f, 
-
-	-3.0f, -0.25f, 0.0f, 
-	-3.0f, -0.5f, 0.0f, 
-	-3.0f, -0.75f, 0.0f, 
-	-3.0f, -1.0f, 0.0f, 
-	-3.0f, -1.25f, 0.0f, 
-	-3.0f, -1.5f, 0.0f, 
 	-2.95442f, -2.02094f, 0.0f, 
 	-2.81908f, -2.52606f, 0.0f, 
 	-2.59808f, -3.0f, 0.0f, 
@@ -1179,7 +699,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.02606f, -4.31908f, 0.0f, 
 	-0.520944f, -4.45442f, 0.0f, 
 	3.57746e-008f, -4.5f, 0.0f,
-
 	0.520944f, -4.45442f, 0.0f, 
 	1.02606f, -4.31908f, 0.0f, 
 	1.5f, -4.09808f, 0.0f, 
@@ -1188,22 +707,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.59808f, -3.0f, 0.0f, 
 	2.81908f, -2.52606f, 0.0f, 
 	2.95442f, -2.02094f, 0.0f, 
-	3.0f, -1.5f, 0.0f, 
-	3.0f, -1.25f, 0.0f, 
-	3.0f, -1.0f, 0.0f, 
-	3.0f, -0.75f, 0.0f, 
-	3.0f, -0.5f, 0.0f, 
-	3.0f, -0.25f, 0.0f,
 
-	//Inner green 3 - z axis
-
-	0.0f, 0.0f, 3.0f, 
-	0.0f, 0.25f, 3.0f, 
-	0.0f, 0.5f, 3.0f, 
-	0.0f, 0.75f, 3.0f, 
-	0.0f, 1.0f, 3.0f, 
-	0.0f, 1.25f, 3.0f, 
-	0.0f, 1.5f, 3.0f, 
+	//Green 3 - z axis
+	0.0f, 0.0f, 3.0f,  
 	0.0f, 2.02094f, 2.95442f, 
 	0.0f, 2.52606f, 2.81908f, 
 	0.0f, 3.0f, 2.59808f, 
@@ -1212,7 +718,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 4.09808f, 1.5f, 
 	0.0f, 4.31908f, 1.02606f, 
 	0.0f, 4.45442f, 0.520944f,
-
 	0.0f, 4.45442f, -0.520945f, 
 	0.0f, 4.31908f, -1.02606f, 
 	0.0f, 4.09808f, -1.5f, 
@@ -1221,20 +726,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 3.0f, -2.59808f, 
 	0.0f, 2.52606f, -2.81908f, 
 	0.0f, 2.02094f, -2.95442f, 
-	0.0f, 1.5f, -3.0f, 
-	0.0f, 1.25f, -3.0f, 
-	0.0f, 1.0f, -3.0f, 
-	0.0f, 0.75f, -3.0f, 
-	0.0f, 0.5f, -3.0f, 
-	0.0f, 0.25f, -3.0f, 
-	0.0f, 0.0f, -3.0f, 
 
-	0.0f, -0.25f, -3.0f, 
-	0.0f, -0.5f, -3.0f, 
-	0.0f, -0.75f, -3.0f, 
-	0.0f, -1.0f, -3.0f, 
-	0.0f, -1.25f, -3.0f, 
-	0.0f, -1.5f, -3.0f, 
+	0.0f, 0.0f, -3.0f, 
 	0.0f, -2.02094f, -2.95442f, 
 	0.0f, -2.52606f, -2.81908f, 
 	0.0f, -3.0f, -2.59808f, 
@@ -1243,7 +736,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -4.09808f, -1.5f, 
 	0.0f, -4.31908f, -1.02606f, 
 	0.0f, -4.45442f, -0.520944f, 
-
 	0.0f, -4.45442f, 0.520944f, 
 	0.0f, -4.31908f, 1.02606f, 
 	0.0f, -4.09808f, 1.5f, 
@@ -1252,21 +744,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -3.0f, 2.59808f, 
 	0.0f, -2.52606f, 2.81908f, 
 	0.0f, -2.02094f, 2.95442f, 
-	0.0f, -1.5f, 3.0f, 
-	0.0f, -1.25f, 3.0f, 
-	0.0f, -1.0f, 3.0f, 
-	0.0f, -0.75f, 3.0f, 
-	0.0f, -0.5f, 3.0f, 
-	0.0f, -0.25f, 3.0f,
 
-	//Inner green 3 - x - z axis
+	//Green 3 - x - z axis
 	2.1f, 0.0f, 2.1f, 
-	2.1f, 0.25f, 2.1f, 
-	2.1f, 0.5f, 2.1f, 
-	2.1f, 0.75f, 2.1f, 
-	2.1f, 1.0f, 2.1f, 
-	2.1f, 1.25f, 2.1f, 
-	2.1f, 1.5f, 2.1f, 
 	2.0681f, 2.02094f, 2.0681f, 
 	1.97335f, 2.52606f, 1.97335f, 
 	1.81865f, 3.0f, 1.81865f, 
@@ -1275,7 +755,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.05f, 4.09808f, 1.05f, 
 	0.718242f, 4.31908f, 0.718242f, 
 	0.364661f, 4.45442f, 0.364661f, 
-
 	-0.364661f, 4.45442f, -0.364661f, 
 	-0.718242f, 4.31908f, -0.718242f, 
 	-1.05f, 4.09808f, -1.05f, 
@@ -1284,20 +763,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.81865f, 3.0f, -1.81865f, 
 	-1.97335f, 2.52606f, -1.97335f, 
 	-2.0681f, 2.02094f, -2.0681f, 
-	-2.1f, 1.5f, -2.1f, 
-	-2.1f, 1.25f, -2.1f, 
-	-2.1f, 1.0f, -2.1f, 
-	-2.1f, 0.75f, -2.1f, 
-	-2.1f, 0.5f, -2.1f, 
-	-2.1f, 0.25f, -2.1f, 
-	-2.1f, 0.0f, -2.1f, 
 
-	-2.1f, -0.25f, -2.1f, 
-	-2.1f, -0.5f, -2.1f, 
-	-2.1f, -0.75f, -2.1f, 
-	-2.1f, -1.0f, -2.1f, 
-	-2.1f, -1.25f, -2.1f, 
-	-2.1f, -1.5f, -2.1f, 
+	-2.1f, 0.0f, -2.1f,  
 	-2.0681f, -2.02094f, -2.0681f, 
 	-1.97335f, -2.52606f, -1.97335f, 
 	-1.81865f, -3.0f, -1.81865f, 
@@ -1306,7 +773,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.05f, -4.09808f, -1.05f, 
 	-0.718242f, -4.31908f, -0.718242f, 
 	-0.364661f, -4.45442f, -0.364661f, 
-
 	0.364661f, -4.45442f, 0.364661f, 
 	0.718242f, -4.31908f, 0.718242f, 
 	1.05f, -4.09808f, 1.05f, 
@@ -1315,21 +781,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.81865f, -3.0f, 1.81865f, 
 	1.97335f, -2.52606f, 1.97335f, 
 	2.0681f, -2.02094f, 2.0681f, 
-	2.1f, -1.5f, 2.1f, 
-	2.1f, -1.25f, 2.1f, 
-	2.1f, -1.0f, 2.1f, 
-	2.1f, -0.75f, 2.1f, 
-	2.1f, -0.5f, 2.1f, 
-	2.1f, -0.25f, 2.1f,
 
-	//Inner green 3 - - x - z axis
+	//Green 3 - - x - z axis
 	 -2.1f, 0.0f, 2.1f, 
-	-2.1f, 0.25f, 2.1f, 
-	-2.1f, 0.5f, 2.1f, 
-	-2.1f, 0.75f, 2.1f, 
-	-2.1f, 1.0f, 2.1f, 
-	-2.1f, 1.25f, 2.1f, 
-	-2.1f, 1.5f, 2.1f, 
 	-2.0681f, 2.02094f, 2.0681f, 
 	-1.97335f, 2.52606f, 1.97335f, 
 	-1.81865f, 3.0f, 1.81865f, 
@@ -1338,7 +792,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.05f, 4.09808f, 1.05f, 
 	-0.718242f, 4.31908f, 0.718242f, 
 	-0.364661f, 4.45442f, 0.364661f, 
-
 	0.364661f, 4.45442f, -0.364661f, 
 	0.718242f, 4.31908f, -0.718242f, 
 	1.05f, 4.09808f, -1.05f, 
@@ -1347,20 +800,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.81865f, 3.0f, -1.81865f, 
 	1.97335f, 2.52606f, -1.97335f, 
 	2.0681f, 2.02094f, -2.0681f, 
-	2.1f, 1.5f, -2.1f, 
-	2.1f, 1.25f, -2.1f, 
-	2.1f, 1.0f, -2.1f, 
-	2.1f, 0.75f, -2.1f, 
-	2.1f, 0.5f, -2.1f, 
-	2.1f, 0.25f, -2.1f, 
+	 
 	2.1f, 0.0f, -2.1f, 
-
-	2.1f, -0.25f, -2.1f, 
-	2.1f, -0.5f, -2.1f, 
-	2.1f, -0.75f, -2.1f, 
-	2.1f, -1.0f, -2.1f, 
-	2.1f, -1.25f, -2.1f, 
-	2.1f, -1.5f, -2.1f, 
 	2.0681f, -2.02094f, -2.0681f, 
 	1.97335f, -2.52606f, -1.97335f, 
 	1.81865f, -3.0f, -1.81865f, 
@@ -1369,7 +810,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.05f, -4.09808f, -1.05f, 
 	0.718242f, -4.31908f, -0.718242f, 
 	0.364661f, -4.45442f, -0.364661f, 
-
 	-0.364661f, -4.45442f, 0.364661f, 
 	-0.718242f, -4.31908f, 0.718242f, 
 	-1.05f, -4.09808f, 1.05f, 
@@ -1378,23 +818,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.81865f, -3.0f, 1.81865f, 
 	-1.97335f, -2.52606f, 1.97335f, 
 	-2.0681f, -2.02094f, 2.0681f, 
-	-2.1f, -1.5f, 2.1f, 
-	-2.1f, -1.25f, 2.1f, 
-	-2.1f, -1.0f, 2.1f, 
-	-2.1f, -0.75f, 2.1f, 
-	-2.1f, -0.5f, 2.1f, 
-	-2.1f, -0.25f, 2.1f, 
 
-	//Inner green 4 - x axis
-
+	//Green 4 - x axis
 	3.5f, 0.0f, 0.0f, 
-	3.5f, 0.25f, 0.0f, 
-	3.5f, 0.5f, 0.0f, 
-	3.5f, 0.75f, 0.0f, 
-	3.5f, 1.0f, 0.0f, 
-	3.5f, 1.25f, 0.0f, 
-	3.5f, 1.5f, 0.0f, 
-	3.5f, 1.75f, 0.0f, 
 	3.44683f, 2.35777f, 0.0f, 
 	3.28892f, 2.94707f, 0.0f, 
 	3.03109f, 3.5f, 0.0f, 
@@ -1404,7 +830,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.19707f, 5.03892f, 0.0f, 
 	0.607768f, 5.19683f, 0.0f, 
 	-1.5299e-007f, 5.25f, 0.0f, 
-
 	-0.607769f, 5.19683f, 0.0f, 
 	-1.19707f, 5.03892f, 0.0f, 
 	-1.75f, 4.78109f, 0.0f, 
@@ -1413,22 +838,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.03109f, 3.5f, 0.0f, 
 	-3.28892f, 2.94707f, 0.0f, 
 	-3.44683f, 2.35777f, 0.0f, 
-	-3.5f, 1.75f, 0.0f, 
-	-3.5f, 1.5f, 0.0f, 
-	-3.5f, 1.25f, 0.0f, 
-	-3.5f, 1.0f, 0.0f, 
-	-3.5f, 0.75f, 0.0f, 
-	-3.5f, 0.5f, 0.0f, 
-	-3.5f, 0.25f, 0.0f, 
-	-3.5f, 0.0f, 0.0f, 
-
-	-3.5f, -0.25f, 0.0f, 
-	-3.5f, -0.5f, 0.0f, 
-	-3.5f, -0.75f, 0.0f, 
-	-3.5f, -1.0f, 0.0f, 
-	-3.5f, -1.25f, 0.0f, 
-	-3.5f, -1.5f, 0.0f, 
-	-3.5f, -1.75f, 0.0f, 
+	 
+	-3.5f, 0.0f, 0.0f,  
 	-3.44683f, -2.35777f, 0.0f, 
 	-3.28892f, -2.94707f, 0.0f, 
 	-3.03109f, -3.5f, 0.0f, 
@@ -1438,7 +849,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.19707f, -5.03892f, 0.0f, 
 	-0.607768f, -5.19683f, 0.0f, 
 	4.17371e-008f, -5.25f, 0.0f, 
-
 	0.607769f, -5.19683f, 0.0f, 
 	1.19707f, -5.03892f, 0.0f, 
 	1.75f, -4.78109f, 0.0f, 
@@ -1447,24 +857,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.03109f, -3.5f, 0.0f, 
 	3.28892f, -2.94707f, 0.0f, 
 	3.44683f, -2.35777f, 0.0f, 
-	3.5f, -1.75f, 0.0f, 
-	3.5f, -1.5f, 0.0f, 
-	3.5f, -1.25f, 0.0f, 
-	3.5f, -1.0f, 0.0f, 
-	3.5f, -0.75f, 0.0f, 
-	3.5f, -0.5f, 0.0f, 
-	3.5f, -0.25f, 0.0f, 
 
-	//Inner green 4 - z axis
-
+	//Green 4 - z axis
 	0.0f, 0.0f, 3.5f, 
-	0.0f, 0.25f, 3.5f, 
-	0.0f, 0.5f, 3.5f, 
-	0.0f, 0.75f, 3.5f, 
-	0.0f, 1.0f, 3.5f, 
-	0.0f, 1.25f, 3.5f, 
-	0.0f, 1.5f, 3.5f, 
-	0.0f, 1.75f, 3.5f, 
 	0.0f, 2.35777f, 3.44683f, 
 	0.0f, 2.94707f, 3.28892f, 
 	0.0f, 3.5f, 3.03109f, 
@@ -1473,7 +868,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 4.78109f, 1.75f, 
 	0.0f, 5.03892f, 1.19707f, 
 	0.0f, 5.19683f, 0.607768f, 
-
 	0.0f, 5.19683f, -0.607769f, 
 	0.0f, 5.03892f, -1.19707f, 
 	0.0f, 4.78109f, -1.75f, 
@@ -1482,22 +876,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 3.5f, -3.03109f, 
 	0.0f, 2.94707f, -3.28892f, 
 	0.0f, 2.35777f, -3.44683f, 
-	0.0f, 1.75f, -3.5f, 
-	0.0f, 1.5f, -3.5f, 
-	0.0f, 1.25f, -3.5f, 
-	0.0f, 1.0f, -3.5f, 
-	0.0f, 0.75f, -3.5f, 
-	0.0f, 0.5f, -3.5f, 
-	0.0f, 0.25f, -3.5f, 
+	
 	0.0f, 0.0f, -3.5f, 
-
-	0.0f, -0.25f, -3.5f, 
-	0.0f, -0.5f, -3.5f, 
-	0.0f, -0.75f, -3.5f, 
-	0.0f, -1.0f, -3.5f, 
-	0.0f, -1.25f, -3.5f, 
-	0.0f, -1.5f, -3.5f, 
-	0.0f, -1.75f, -3.5f, 
 	0.0f, -2.35777f, -3.44683f, 
 	0.0f, -2.94707f, -3.28892f, 
 	0.0f, -3.5f, -3.03109f, 
@@ -1506,7 +886,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -4.78109f, -1.75f, 
 	0.0f, -5.03892f, -1.19707f, 
 	0.0f, -5.19683f, -0.607768f,
-
 	0.0f, -5.19683f, 0.607769f, 
 	0.0f, -5.03892f, 1.19707f, 
 	0.0f, -4.78109f, 1.75f, 
@@ -1515,23 +894,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -3.5f, 3.03109f, 
 	0.0f, -2.94707f, 3.28892f, 
 	0.0f, -2.35777f, 3.44683f, 
-	0.0f, -1.75f, 3.5f, 
-	0.0f, -1.5f, 3.5f, 
-	0.0f, -1.25f, 3.5f, 
-	0.0f, -1.0f, 3.5f, 
-	0.0f, -0.75f, 3.5f, 
-	0.0f, -0.5f, 3.5f, 
-	0.0f, -0.25f, 3.5f, 
 
-	//Inner green 4 - x - z axis
-	2.45f, 0.0f, 2.45f, 
-	2.45f, 0.25f, 2.45f, 
-	2.45f, 0.5f, 2.45f, 
-	2.45f, 0.75f, 2.45f, 
-	2.45f, 1.0f, 2.45f, 
-	2.45f, 1.25f, 2.45f, 
-	2.45f, 1.5f, 2.45f, 
-	2.45f, 1.75f, 2.45f, 
+	//Green 4 - x - z axis
+	2.45f, 0.0f, 2.45f,  
 	2.41278f, 2.35777f, 2.41278f, 
 	2.30225f, 2.94707f, 2.30225f, 
 	2.12176f, 3.5f, 2.12176f, 
@@ -1540,7 +905,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.225f, 4.78109f, 1.225f, 
 	0.837949f, 5.03892f, 0.837949f, 
 	0.425438f, 5.19683f, 0.425438f, 
-
 	-0.425438f, 5.19683f, -0.425438f, 
 	-0.83795f, 5.03892f, -0.83795f, 
 	-1.225f, 4.78109f, -1.225f, 
@@ -1549,22 +913,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.12176f, 3.5f, -2.12176f, 
 	-2.30225f, 2.94707f, -2.30225f, 
 	-2.41278f, 2.35777f, -2.41278f, 
-	-2.45f, 1.75f, -2.45f, 
-	-2.45f, 1.5f, -2.45f, 
-	-2.45f, 1.25f, -2.45f, 
-	-2.45f, 1.0f, -2.45f, 
-	-2.45f, 0.75f, -2.45f, 
-	-2.45f, 0.5f, -2.45f, 
-	-2.45f, 0.25f, -2.45f, 
-	-2.45f, 0.0f, -2.45f, 
 
-	-2.45f, -0.25f, -2.45f, 
-	-2.45f, -0.5f, -2.45f, 
-	-2.45f, -0.75f, -2.45f, 
-	-2.45f, -1.0f, -2.45f, 
-	-2.45f, -1.25f, -2.45f, 
-	-2.45f, -1.5f, -2.45f, 
-	-2.45f, -1.75f, -2.45f, 
+	-2.45f, 0.0f, -2.45f, 
 	-2.41278f, -2.35777f, -2.41278f, 
 	-2.30225f, -2.94707f, -2.30225f, 
 	-2.12176f, -3.5f, -2.12176f, 
@@ -1573,7 +923,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.225f, -4.78109f, -1.225f, 
 	-0.837949f, -5.03892f, -0.837949f, 
 	-0.425438f, -5.19683f, -0.425438f, 
-
 	0.425438f, -5.19683f, 0.425438f, 
 	0.837949f, -5.03892f, 0.837949f, 
 	1.225f, -4.78109f, 1.225f, 
@@ -1581,24 +930,10 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.87681f, -3.99976f, 1.87681f, 
 	2.12176f, -3.5f, 2.12176f, 
 	2.30225f, -2.94707f, 2.30225f, 
-	2.41278f, -2.35777f, 2.41278f, 
-	2.45f, -1.75f, 2.45f, 
-	2.45f, -1.5f, 2.45f, 
-	2.45f, -1.25f, 2.45f, 
-	2.45f, -1.0f, 2.45f, 
-	2.45f, -0.75f, 2.45f, 
-	2.45f, -0.5f, 2.45f, 
-	2.45f, -0.25f, 2.45f, 
+	2.41278f, -2.35777f, 2.41278f,  
 
-	//Inner green 4 - - x - z axis
+	//Green 4 - - x - z axis
 	-2.45f, 0.0f, 2.45f, 
-	-2.45f, 0.25f, 2.45f, 
-	-2.45f, 0.5f, 2.45f, 
-	-2.45f, 0.75f, 2.45f, 
-	-2.45f, 1.0f, 2.45f, 
-	-2.45f, 1.25f, 2.45f, 
-	-2.45f, 1.5f, 2.45f, 
-	-2.45f, 1.75f, 2.45f, 
 	-2.41278f, 2.35777f, 2.41278f, 
 	-2.30225f, 2.94707f, 2.30225f, 
 	-2.12176f, 3.5f, 2.12176f, 
@@ -1607,7 +942,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.225f, 4.78109f, 1.225f, 
 	-0.837949f, 5.03892f, 0.837949f, 
 	-0.425438f, 5.19683f, 0.425438f, 
-
 	0.425438f, 5.19683f, -0.425438f, 
 	0.83795f, 5.03892f, -0.83795f, 
 	1.225f, 4.78109f, -1.225f, 
@@ -1616,22 +950,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.12176f, 3.5f, -2.12176f, 
 	2.30225f, 2.94707f, -2.30225f, 
 	2.41278f, 2.35777f, -2.41278f, 
-	2.45f, 1.75f, -2.45f, 
-	2.45f, 1.5f, -2.45f, 
-	2.45f, 1.25f, -2.45f, 
-	2.45f, 1.0f, -2.45f, 
-	2.45f, 0.75f, -2.45f, 
-	2.45f, 0.5f, -2.45f, 
-	2.45f, 0.25f, -2.45f, 
-	2.45f, 0.0f, -2.45f, 
-
-	2.45f, -0.25f, -2.45f, 
-	2.45f, -0.5f, -2.45f, 
-	2.45f, -0.75f, -2.45f, 
-	2.45f, -1.0f, -2.45f, 
-	2.45f, -1.25f, -2.45f, 
-	2.45f, -1.5f, -2.45f, 
-	2.45f, -1.75f, -2.45f, 
+	
+	2.45f, 0.0f, -2.45f,  
 	2.41278f, -2.35777f, -2.41278f, 
 	2.30225f, -2.94707f, -2.30225f, 
 	2.12176f, -3.5f, -2.12176f, 
@@ -1640,7 +960,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.225f, -4.78109f, -1.225f, 
 	0.837949f, -5.03892f, -0.837949f, 
 	0.425438f, -5.19683f, -0.425438f, 
-
 	-0.425438f, -5.19683f, 0.425438f, 
 	-0.837949f, -5.03892f, 0.837949f, 
 	-1.225f, -4.78109f, 1.225f, 
@@ -1649,25 +968,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.12176f, -3.5f, 2.12176f, 
 	-2.30225f, -2.94707f, 2.30225f, 
 	-2.41278f, -2.35777f, 2.41278f, 
-	-2.45f, -1.75f, 2.45f, 
-	-2.45f, -1.5f, 2.45f, 
-	-2.45f, -1.25f, 2.45f, 
-	-2.45f, -1.0f, 2.45f, 
-	-2.45f, -0.75f, 2.45f, 
-	-2.45f, -0.5f, 2.45f, 
-	-2.45f, -0.25f, 2.45f,
 
-	//Inner green 5 - x axis
-
+	//Green 5 - x axis
 	4.0f, 0.0f, 0.0f, 
-	4.0f, 0.25f, 0.0f, 
-	4.0f, 0.5f, 0.0f, 
-	4.0f, 0.75f, 0.0f, 
-	4.0f, 1.0f, 0.0f, 
-	4.0f, 1.25f, 0.0f, 
-	4.0f, 1.5f, 0.0f, 
-	4.0f, 1.75f, 0.0f, 
-	4.0f, 2.0f, 0.0f, 
 	3.93923f, 2.69459f, 0.0f, 
 	3.75877f, 3.36808f, 0.0f, 
 	3.4641f, 4.0f, 0.0f, 
@@ -1677,7 +980,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.36808f, 5.75877f, 0.0f, 
 	0.694592f, 5.93923f, 0.0f, 
 	-1.74846e-007f, 6.0f, 0.0f, 
-
 	-0.694593f, 5.93923f, 0.0f, 
 	-1.36808f, 5.75877f, 0.0f, 
 	-2.0f, 5.4641f, 0.0f, 
@@ -1686,24 +988,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.4641f, 4.0f, 0.0f, 
 	-3.75877f, 3.36808f, 0.0f, 
 	-3.93923f, 2.69459f, 0.0f, 
-	-4.0f, 2.0f, 0.0f, 
-	-4.0f, 1.75f, 0.0f, 
-	-4.0f, 1.5f, 0.0f, 
-	-4.0f, 1.25f, 0.0f, 
-	-4.0f, 1.0f, 0.0f, 
-	-4.0f, 0.75f, 0.0f, 
-	-4.0f, 0.5f, 0.0f, 
-	-4.0f, 0.25f, 0.0f, 
+	
 	-4.0f, 0.0f, 0.0f, 
-
-	-4.0f, -0.25f, 0.0f, 
-	-4.0f, -0.5f, 0.0f, 
-	-4.0f, -0.75f, 0.0f, 
-	-4.0f, -1.0f, 0.0f, 
-	-4.0f, -1.25f, 0.0f, 
-	-4.0f, -1.5f, 0.0f, 
-	-4.0f, -1.75f, 0.0f, 
-	-4.0f, -2.0f, 0.0f, 
 	-3.93923f, -2.69459f, 0.0f, 
 	-3.75877f, -3.36808f, 0.0f, 
 	-3.4641f, -4.0f, 0.0f, 
@@ -1713,7 +999,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.36808f, -5.75877f, 0.0f, 
 	-0.694593f, -5.93923f, 0.0f, 
 	4.76995e-008f, -6.0f, 0.0f,
-
 	0.694593f, -5.93923f, 0.0f, 
 	1.36808f, -5.75877f, 0.0f, 
 	2.0f, -5.4641f, 0.0f, 
@@ -1721,27 +1006,10 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.06418f, -4.57115f, 0.0f, 
 	3.4641f, -4.0f, 0.0f, 
 	3.75877f, -3.36808f, 0.0f, 
-	3.93923f, -2.69459f, 0.0f, 
-	4.0f, -2.0f, 0.0f, 
-	4.0f, -1.75f, 0.0f, 
-	4.0f, -1.5f, 0.0f, 
-	4.0f, -1.25f, 0.0f, 
-	4.0f, -1.0f, 0.0f, 
-	4.0f, -0.75f, 0.0f, 
-	4.0f, -0.5f, 0.0f, 
-	4.0f, -0.25f, 0.0f, 
+	3.93923f, -2.69459f, 0.0f,  
 
-	//Inner green 5 - z axis
-
+	//Green 5 - z axis
 	0.0f, 0.0f, 4.0f, 
-	0.0f, 0.25f, 4.0f, 
-	0.0f, 0.5f, 4.0f, 
-	0.0f, 0.75f, 4.0f, 
-	0.0f, 1.0f, 4.0f, 
-	0.0f, 1.25f, 4.0f, 
-	0.0f, 1.5f, 4.0f, 
-	0.0f, 1.75f, 4.0f, 
-	0.0f, 2.0f, 4.0f, 
 	0.0f, 2.69459f, 3.93923f, 
 	0.0f, 3.36808f, 3.75877f, 
 	0.0f, 4.0f, 3.4641f, 
@@ -1750,7 +1018,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 5.4641f, 2.0f, 
 	0.0f, 5.75877f, 1.36808f, 
 	0.0f, 5.93923f, 0.694592f, 
-
 	0.0f, 5.93923f, -0.694593f, 
 	0.0f, 5.75877f, -1.36808f, 
 	0.0f, 5.4641f, -2.0f, 
@@ -1759,24 +1026,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 4.0f, -3.4641f, 
 	0.0f, 3.36808f, -3.75877f, 
 	0.0f, 2.69459f, -3.93923f, 
-	0.0f, 2.0f, -4.0f, 
-	0.0f, 1.75f, -4.0f, 
-	0.0f, 1.5f, -4.0f, 
-	0.0f, 1.25f, -4.0f, 
-	0.0f, 1.0f, -4.0f, 
-	0.0f, 0.75f, -4.0f, 
-	0.0f, 0.5f, -4.0f, 
-	0.0f, 0.25f, -4.0f, 
+	
 	0.0f, 0.0f, -4.0f, 
-
-	0.0f, -0.25f, -4.0f, 
-	0.0f, -0.5f, -4.0f, 
-	0.0f, -0.75f, -4.0f, 
-	0.0f, -1.0f, -4.0f, 
-	0.0f, -1.25f, -4.0f, 
-	0.0f, -1.5f, -4.0f, 
-	0.0f, -1.75f, -4.0f, 
-	0.0f, -2.0f, -4.0f, 
 	0.0f, -2.69459f, -3.93923f, 
 	0.0f, -3.36808f, -3.75877f, 
 	0.0f, -4.0f, -3.4641f, 
@@ -1785,7 +1036,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -5.4641f, -2.0f, 
 	0.0f, -5.75877f, -1.36808f, 
 	0.0f, -5.93923f, -0.694593f,
-
 	0.0f, -5.93923f, 0.694593f, 
 	0.0f, -5.75877f, 1.36808f, 
 	0.0f, -5.4641f, 2.0f, 
@@ -1794,25 +1044,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -4.0f, 3.4641f, 
 	0.0f, -3.36808f, 3.75877f, 
 	0.0f, -2.69459f, 3.93923f, 
-	0.0f, -2.0f, 4.0f, 
-	0.0f, -1.75f, 4.0f, 
-	0.0f, -1.5f, 4.0f, 
-	0.0f, -1.25f, 4.0f, 
-	0.0f, -1.0f, 4.0f, 
-	0.0f, -0.75f, 4.0f, 
-	0.0f, -0.5f, 4.0f, 
-	0.0f, -0.25f, 4.0f,
 
-	//Inner green 5 - x - z axis
+	//Green 5 - x - z axis
 	2.8f, 0.0f, 2.8f, 
-	2.8f, 0.25f, 2.8f, 
-	2.8f, 0.5f, 2.8f, 
-	2.8f, 0.75f, 2.8f, 
-	2.8f, 1.0f, 2.8f, 
-	2.8f, 1.25f, 2.8f, 
-	2.8f, 1.5f, 2.8f, 
-	2.8f, 1.75f, 2.8f, 
-	2.8f, 2.0f, 2.8f, 
 	2.75746f, 2.69459f, 2.75746f, 
 	2.63114f, 3.36808f, 2.63114f, 
 	2.42487f, 4.0f, 2.42487f, 
@@ -1821,7 +1055,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.4f, 5.4641f, 1.4f, 
 	0.957656f, 5.75877f, 0.957656f, 
 	0.486215f, 5.93923f, 0.486215f, 
-
 	-0.486215f, 5.93923f, -0.486215f, 
 	-0.957657f, 5.75877f, -0.957657f, 
 	-1.4f, 5.4641f, -1.4f, 
@@ -1830,24 +1063,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.42487f, 4.0f, -2.42487f, 
 	-2.63114f, 3.36808f, -2.63114f, 
 	-2.75746f, 2.69459f, -2.75746f, 
-	-2.8f, 2.0f, -2.8f, 
-	-2.8f, 1.75f, -2.8f, 
-	-2.8f, 1.5f, -2.8f, 
-	-2.8f, 1.25f, -2.8f, 
-	-2.8f, 1.0f, -2.8f, 
-	-2.8f, 0.75f, -2.8f, 
-	-2.8f, 0.5f, -2.8f, 
-	-2.8f, 0.25f, -2.8f, 
-	-2.8f, 0.0f, -2.8f, 
-
-	-2.8f, -0.25f, -2.8f, 
-	-2.8f, -0.5f, -2.8f, 
-	-2.8f, -0.75f, -2.8f, 
-	-2.8f, -1.0f, -2.8f, 
-	-2.8f, -1.25f, -2.8f, 
-	-2.8f, -1.5f, -2.8f, 
-	-2.8f, -1.75f, -2.8f, 
-	-2.8f, -2.0f, -2.8f, 
+	
+	-2.8f, 0.0f, -2.8f,  
 	-2.75746f, -2.69459f, -2.75746f, 
 	-2.63114f, -3.36808f, -2.63114f, 
 	-2.42487f, -4.0f, -2.42487f, 
@@ -1856,7 +1073,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.4f, -5.4641f, -1.4f, 
 	-0.957656f, -5.75877f, -0.957656f, 
 	-0.486215f, -5.93923f, -0.486215f, 
-
 	0.486215f, -5.93923f, 0.486215f, 
 	0.957656f, -5.75877f, 0.957656f, 
 	1.4f, -5.4641f, 1.4f, 
@@ -1865,25 +1081,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.42487f, -4.0f, 2.42487f, 
 	2.63114f, -3.36808f, 2.63114f, 
 	2.75746f, -2.69459f, 2.75746f, 
-	2.8f, -2.0f, 2.8f, 
-	2.8f, -1.75f, 2.8f, 
-	2.8f, -1.5f, 2.8f, 
-	2.8f, -1.25f, 2.8f, 
-	2.8f, -1.0f, 2.8f, 
-	2.8f, -0.75f, 2.8f, 
-	2.8f, -0.5f, 2.8f, 
-	2.8f, -0.25f, 2.8f, 
 
-	//Inner green 5 - - x - z axis
+	//Green 5 - - x - z axis
 	-2.8f, 0.0f, 2.8f, 
-	-2.8f, 0.25f, 2.8f, 
-	-2.8f, 0.5f, 2.8f, 
-	-2.8f, 0.75f, 2.8f, 
-	-2.8f, 1.0f, 2.8f, 
-	-2.8f, 1.25f, 2.8f, 
-	-2.8f, 1.5f, 2.8f, 
-	-2.8f, 1.75f, 2.8f, 
-	-2.8f, 2.0f, 2.8f, 
 	-2.75746f, 2.69459f, 2.75746f, 
 	-2.63114f, 3.36808f, 2.63114f, 
 	-2.42487f, 4.0f, 2.42487f, 
@@ -1892,7 +1092,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.4f, 5.4641f, 1.4f, 
 	-0.957656f, 5.75877f, 0.957656f, 
 	-0.486215f, 5.93923f, 0.486215f, 
-
 	0.486215f, 5.93923f, -0.486215f, 
 	0.957657f, 5.75877f, -0.957657f, 
 	1.4f, 5.4641f, -1.4f, 
@@ -1901,24 +1100,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.42487f, 4.0f, -2.42487f, 
 	2.63114f, 3.36808f, -2.63114f, 
 	2.75746f, 2.69459f, -2.75746f, 
-	2.8f, 2.0f, -2.8f, 
-	2.8f, 1.75f, -2.8f, 
-	2.8f, 1.5f, -2.8f, 
-	2.8f, 1.25f, -2.8f, 
-	2.8f, 1.0f, -2.8f, 
-	2.8f, 0.75f, -2.8f, 
-	2.8f, 0.5f, -2.8f, 
-	2.8f, 0.25f, -2.8f, 
-	2.8f, 0.0f, -2.8f, 
-
-	2.8f, -0.25f, -2.8f, 
-	2.8f, -0.5f, -2.8f, 
-	2.8f, -0.75f, -2.8f, 
-	2.8f, -1.0f, -2.8f, 
-	2.8f, -1.25f, -2.8f, 
-	2.8f, -1.5f, -2.8f, 
-	2.8f, -1.75f, -2.8f, 
-	2.8f, -2.0f, -2.8f, 
+	
+	2.8f, 0.0f, -2.8f,  
 	2.75746f, -2.69459f, -2.75746f, 
 	2.63114f, -3.36808f, -2.63114f, 
 	2.42487f, -4.0f, -2.42487f, 
@@ -1927,7 +1110,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.4f, -5.4641f, -1.4f, 
 	0.957656f, -5.75877f, -0.957656f, 
 	0.486215f, -5.93923f, -0.486215f, 
-
 	-0.486215f, -5.93923f, 0.486215f, 
 	-0.957656f, -5.75877f, 0.957656f, 
 	-1.4f, -5.4641f, 1.4f, 
@@ -1936,27 +1118,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.42487f, -4.0f, 2.42487f, 
 	-2.63114f, -3.36808f, 2.63114f, 
 	-2.75746f, -2.69459f, 2.75746f, 
-	-2.8f, -2.0f, 2.8f, 
-	-2.8f, -1.75f, 2.8f, 
-	-2.8f, -1.5f, 2.8f, 
-	-2.8f, -1.25f, 2.8f, 
-	-2.8f, -1.0f, 2.8f, 
-	-2.8f, -0.75f, 2.8f, 
-	-2.8f, -0.5f, 2.8f, 
-	-2.8f, -0.25f, 2.8f, 
 
-	// Inner blue - x axis
-
+	//Blue - x axis
 	4.4f, 0.0f, 0.0f, 
-	4.4f, 0.25f, 0.0f, 
-	4.4f, 0.5f, 0.0f, 
-	4.4f, 0.75f, 0.0f, 
-	4.4f, 1.0f, 0.0f, 
-	4.4f, 1.25f, 0.0f, 
-	4.4f, 1.5f, 0.0f, 
-	4.4f, 1.75f, 0.0f, 
-	4.4f, 2.0f, 0.0f, 
-	4.4f, 2.2f, 0.0f, 
 	4.33315f, 2.96405f, 0.0f, 
 	4.13465f, 3.70489f, 0.0f, 
 	3.81051f, 4.4f, 0.0f, 
@@ -1966,7 +1130,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.50489f, 6.33465f, 0.0f, 
 	0.764052f, 6.53315f, 0.0f, 
 	-1.9233e-007f, 6.6f, 0.0f,
-
 	-0.764052f, 6.53315f, 0.0f, 
 	-1.50489f, 6.33465f, 0.0f, 
 	-2.2f, 6.01051f, 0.0f, 
@@ -1975,26 +1138,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.81051f, 4.4f, 0.0f, 
 	-4.13465f, 3.70489f, 0.0f, 
 	-4.33315f, 2.96405f, 0.0f, 
-	-4.4f, 2.2f, 0.0f, 
-	-4.4f, 2.0f, 0.0f,
-	-4.4f, 1.75f, 0.0f, 
-	-4.4f, 1.5f, 0.0f,
-	-4.4f, 1.25f, 0.0f,
-	-4.4f, 1.0f, 0.0f,
-	-4.4f, 0.75f, 0.0f, 
-	-4.4f, 0.5f, 0.0f,
-	-4.4f, 0.25f, 0.0f, 
+	
 	-4.4f, 0.0f, 0.0f, 
-
-	-4.4f, -0.25f, 0.0f, 
-	-4.4f, -0.5f, 0.0f, 
-	-4.4f, -0.75f, 0.0f, 
-	-4.4f, -1.0f, 0.0f, 
-	-4.4f, -1.25f, 0.0f, 
-	-4.4f, -1.5f, 0.0f, 
-	-4.4f, -1.75f, 0.0f, 
-	-4.4f, -2.0f, 0.0f, 
-	-4.4f, -2.2f, 0.0f, 
 	-4.33315f, -2.96405f, 0.0f, 
 	-4.13465f, -3.70489f, 0.0f, 
 	-3.81051f, -4.4f, 0.0f, 
@@ -2004,7 +1149,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.50489f, -6.33465f, 0.0f, 
 	-0.764052f, -6.53315f, 0.0f, 
 	5.24695e-008f, -6.6f, 0.0f, 
-
 	0.764052f, -6.53315f, 0.0f, 
 	1.50489f, -6.33465f, 0.0f, 
 	2.2f, -6.01051f, 0.0f, 
@@ -2013,28 +1157,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.81051f, -4.4f, 0.0f, 
 	4.13465f, -3.70489f, 0.0f, 
 	4.33315f, -2.96405f, 0.0f,
-	4.4f, -2.2f, 0.0f, 
-	4.4f, -2.0f, 0.0f,
-	4.4f, -1.75f, 0.0f,
-	4.4f, -1.5f, 0.0f,
-	4.4f, -1.25f, 0.0f,
-	4.4f, -1.0f, 0.0f,
-	4.4f, -0.75f, 0.0f, 
-	4.4f, -0.5f, 0.0f, 
-	4.4f, -0.25f, 0.0f, 
 
-	// Inner blue - z axis
-
+	//Blue - z axis
 	0.0f, 0.0f, 4.4f, 
-	0.0f, 0.25f, 4.4f, 
-	0.0f, 0.5f, 4.4f, 
-	0.0f, 0.75f, 4.4f, 
-	0.0f, 1.0f, 4.4f, 
-	0.0f, 1.25f, 4.4f, 
-	0.0f, 1.5f, 4.4f, 
-	0.0f, 1.75f, 4.4f, 
-	0.0f, 2.0f, 4.4f, 
-	0.0f, 2.2f, 4.4f, 
 	0.0f, 2.96405f, 4.33315f, 
 	0.0f, 3.70489f, 4.13465f, 
 	0.0f, 4.4f, 3.81051f, 
@@ -2043,7 +1168,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 6.01051f, 2.2f, 
 	0.0f, 6.33465f, 1.50489f, 
 	0.0f, 6.53315f, 0.764052f,
-
 	0.0f, 6.53315f, -0.764052f, 
 	0.0f, 6.33465f, -1.50489f, 
 	0.0f, 6.01051f, -2.2f, 
@@ -2052,26 +1176,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 4.4f, -3.81051f, 
 	0.0f, 3.70489f, -4.13465f, 
 	0.0f, 2.96405f, -4.33315f, 
-	0.0f, 2.2f, -4.4f, 
-	0.0f, 2.0f, -4.4f,
-	0.0f, 1.75f, -4.4f, 
-	0.0f, 1.5f, -4.4f,
-	0.0f, 1.25f, -4.4f,
-	0.0f, 1.0f, -4.4f,
-	0.0f, 0.75f, -4.4f, 
-	0.0f, 0.5f, -4.4f,
-	0.0f, 0.25f, -4.4f, 
+	
 	0.0f, 0.0f, -4.4f, 
-
-	0.0f, -0.25f, -4.4f, 
-	0.0f, -0.5f, -4.4f, 
-	0.0f, -0.75f, -4.4f, 
-	0.0f, -1.0f, -4.4f, 
-	0.0f, -1.25f, -4.4f, 
-	0.0f, -1.5f, -4.4f, 
-	0.0f, -1.75f, -4.4f, 
-	0.0f, -2.0f, -4.4f, 
-	0.0f, -2.2f, -4.4f, 
 	0.0f, -2.96405f, -4.33315f, 
 	0.0f, -3.70489f, -4.13465f, 
 	0.0f, -4.4f, -3.81051f, 
@@ -2080,7 +1186,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -6.01051f, -2.2f, 
 	0.0f, -6.33465f, -1.50489f, 
 	0.0f, -6.53315f, -0.764052f,
-
 	0.0f, -6.53315f, 0.764052f, 
 	0.0f, -6.33465f, 1.50489f, 
 	0.0f, -6.01051f, 2.2f, 
@@ -2089,27 +1194,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -4.4f, 3.81051f, 
 	0.0f, -3.70489f, 4.13465f, 
 	0.0f, -2.96405f, 4.33315f,
-	0.0f, -2.2f, 4.4f, 
-	0.0f, -2.0f, 4.4f,
-	0.0f, -1.75f, 4.4f,
-	0.0f, -1.5f, 4.4f,
-	0.0f, -1.25f, 4.4f,
-	0.0f, -1.0f, 4.4f,
-	0.0f, -0.75f, 4.4f, 
-	0.0f, -0.5f, 4.4f, 
-	0.0f, -0.25f, 4.4f, 
 
-	// Inner blue - x - z axis
-	3.08f, 0.0f, 3.08f, 
-	3.08f, 0.25f, 3.08f, 
-	3.08f, 0.5f, 3.08f, 
-	3.08f, 0.75f, 3.08f, 
-	3.08f, 1.0f, 3.08f, 
-	3.08f, 1.25f, 3.08f, 
-	3.08f, 1.5f, 3.08f, 
-	3.08f, 1.75f, 3.08f, 
-	3.08f, 2.0f, 3.08f, 
-	3.08f, 2.2f, 3.08f, 
+	//Blue - x - z axis
+	3.08f, 0.0f, 3.08f,  
 	3.03321f, 2.96405f, 3.03321f, 
 	2.89425f, 3.70489f, 2.89425f, 
 	2.66736f, 4.4f, 2.66736f, 
@@ -2118,7 +1205,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.54f, 6.01051f, 1.54f, 
 	1.05342f, 6.33465f, 1.05342f, 
 	0.534836f, 6.53315f, 0.534836f, 
-
 	-0.534836f, 6.53315f, -0.534836f, 
 	-1.05342f, 6.33465f, -1.05342f, 
 	-1.54f, 6.01051f, -1.54f, 
@@ -2127,26 +1213,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.66736f, 4.4f, -2.66736f, 
 	-2.89425f, 3.70489f, -2.89425f, 
 	-3.03321f, 2.96405f, -3.03321f, 
-	-3.08f, 2.2f, -3.08f, 
-	-3.08f, 2.0f, -3.08f, 
-	-3.08f, 1.75f, -3.08f, 
-	-3.08f, 1.5f, -3.08f, 
-	-3.08f, 1.25f, -3.08f, 
-	-3.08f, 1.0f, -3.08f, 
-	-3.08f, 0.75f, -3.08f, 
-	-3.08f, 0.5f, -3.08f, 
-	-3.08f, 0.25f, -3.08f, 
+	
 	-3.08f, 0.0f, -3.08f,
-
-	-3.08f, -0.25f, -3.08f, 
-	-3.08f, -0.5f, -3.08f, 
-	-3.08f, -0.75f, -3.08f, 
-	-3.08f, -1.0f, -3.08f, 
-	-3.08f, -1.25f, -3.08f, 
-	-3.08f, -1.5f, -3.08f, 
-	-3.08f, -1.75f, -3.08f, 
-	-3.08f, -2.0f, -3.08f, 
-	-3.08f, -2.2f, -3.08f, 
 	-3.03321f, -2.96405f, -3.03321f, 
 	-2.89425f, -3.70489f, -2.89425f, 
 	-2.66736f, -4.4f, -2.66736f, 
@@ -2155,7 +1223,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.54f, -6.01051f, -1.54f, 
 	-1.05342f, -6.33465f, -1.05342f, 
 	-0.534836f, -6.53315f, -0.534836f, 
-
 	0.534836f, -6.53315f, 0.534836f, 
 	1.05342f, -6.33465f, 1.05342f, 
 	1.54f, -6.01051f, 1.54f, 
@@ -2164,27 +1231,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.66736f, -4.4f, 2.66736f, 
 	2.89425f, -3.70489f, 2.89425f, 
 	3.03321f, -2.96405f, 3.03321f, 
-	3.08f, -2.2f, 3.08f, 
-	3.08f, -2.0f, 3.08f, 
-	3.08f, -1.75f, 3.08f, 
-	3.08f, -1.5f, 3.08f, 
-	3.08f, -1.25f, 3.08f, 
-	3.08f, -1.0f, 3.08f, 
-	3.08f, -0.75f, 3.08f, 
-	3.08f, -0.5f, 3.08f, 
-	3.08f, -0.25f, 3.08f, 
 
-	// Inner blue - - x - z axis
+	//Blue - - x - z axis
 	-3.08f, 0.0f, 3.08f, 
-	-3.08f, 0.25f, 3.08f, 
-	-3.08f, 0.5f, 3.08f, 
-	-3.08f, 0.75f, 3.08f, 
-	-3.08f, 1.0f, 3.08f, 
-	-3.08f, 1.25f, 3.08f, 
-	-3.08f, 1.5f, 3.08f, 
-	-3.08f, 1.75f, 3.08f, 
-	-3.08f, 2.0f, 3.08f, 
-	-3.08f, 2.2f, 3.08f, 
 	-3.03321f, 2.96405f, 3.03321f, 
 	-2.89425f, 3.70489f, 2.89425f, 
 	-2.66736f, 4.4f, 2.66736f, 
@@ -2193,7 +1242,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.54f, 6.01051f, 1.54f, 
 	-1.05342f, 6.33465f, 1.05342f, 
 	-0.534836f, 6.53315f, 0.534836f, 
-
 	0.534836f, 6.53315f, -0.534836f, 
 	1.05342f, 6.33465f, -1.05342f, 
 	1.54f, 6.01051f, -1.54f, 
@@ -2202,26 +1250,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.66736f, 4.4f, -2.66736f, 
 	2.89425f, 3.70489f, -2.89425f, 
 	3.03321f, 2.96405f, -3.03321f, 
-	3.08f, 2.2f, -3.08f, 
-	3.08f, 2.0f, -3.08f, 
-	3.08f, 1.75f, -3.08f, 
-	3.08f, 1.5f, -3.08f, 
-	3.08f, 1.25f, -3.08f, 
-	3.08f, 1.0f, -3.08f, 
-	3.08f, 0.75f, -3.08f, 
-	3.08f, 0.5f, -3.08f, 
-	3.08f, 0.25f, -3.08f, 
-	3.08f, 0.0f, -3.08f,
 	
-	3.08f, -0.25f, -3.08f, 
-	3.08f, -0.5f, -3.08f, 
-	3.08f, -0.75f, -3.08f, 
-	3.08f, -1.0f, -3.08f, 
-	3.08f, -1.25f, -3.08f, 
-	3.08f, -1.5f, -3.08f, 
-	3.08f, -1.75f, -3.08f, 
-	3.08f, -2.0f, -3.08f, 
-	3.08f, -2.2f, -3.08f, 
+	3.08f, 0.0f, -3.08f,
 	3.03321f, -2.96405f, -3.03321f, 
 	2.89425f, -3.70489f, -2.89425f, 
 	2.66736f, -4.4f, -2.66736f, 
@@ -2229,8 +1259,7 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.97979f, -5.5706f, -1.97979f, 
 	1.54f, -6.01051f, -1.54f, 
 	1.05342f, -6.33465f, -1.05342f, 
-	0.534836f, -6.53315f, -0.534836f, 
-	
+	0.534836f, -6.53315f, -0.534836f, 	
 	-0.534836f, -6.53315f, 0.534836f, 
 	-1.05342f, -6.33465f, 1.05342f, 
 	-1.54f, -6.01051f, 1.54f, 
@@ -2239,30 +1268,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.66736f, -4.4f, 2.66736f, 
 	-2.89425f, -3.70489f, 2.89425f, 
 	-3.03321f, -2.96405f, 3.03321f, 
-	-3.08f, -2.2f, 3.08f, 
-	-3.08f, -2.0f, 3.08f, 
-	-3.08f, -1.75f, 3.08f, 
-	-3.08f, -1.5f, 3.08f, 
-	-3.08f, -1.25f, 3.08f, 
-	-3.08f, -1.0f, 3.08f, 
-	-3.08f, -0.75f, 3.08f, 
-	-3.08f, -0.5f, 3.08f, 
-	-3.08f, -0.25f, 3.08f, 
 
 	//Blue 2 - x axis
-
 	5.4f, 0.0f, 0.0f, 
-	5.4f, 0.25f, 0.0f, 
-	5.4f, 0.5f, 0.0f, 
-	5.4f, 0.75f, 0.0f, 
-	5.4f, 1.0f, 0.0f, 
-	5.4f, 1.25f, 0.0f, 
-	5.4f, 1.5f, 0.0f, 
-	5.4f, 1.75f, 0.0f, 
-	5.4f, 2.0f, 0.0f, 
-	5.4f, 2.25f, 0.0f, 
-	5.4f, 2.5f, 0.0f, 
-	5.4f, 2.7f, 0.0f, 
 	5.31796f, 3.6377f, 0.0f, 
 	5.07434f, 4.54691f, 0.0f, 
 	4.67654f, 5.4f, 0.0f, 
@@ -2272,7 +1280,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.84691f, 7.77434f, 0.0f, 
 	0.9377f, 8.01796f, 0.0f, 
 	-2.36042e-007f, 8.1f, 0.0f,
-
 	-0.9377f, 8.01796f, 0.0f, 
 	-1.84691f, 7.77434f, 0.0f, 
 	-2.7f, 7.37654f, 0.0f, 
@@ -2281,30 +1288,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-4.67654f, 5.4f, 0.0f, 
 	-5.07434f, 4.54691f, 0.0f, 
 	-5.31796f, 3.6377f, 0.0f, 
-	-5.4f, 2.7f, 0.0f, 
-	-5.4f, 2.5f, 0.0f, 
-	-5.4f, 2.25f, 0.0f, 
-	-5.4f, 2.0f, 0.0f, 
-	-5.4f, 1.75f, 0.0f, 
-	-5.4f, 1.5f, 0.0f, 
-	-5.4f, 1.25f, 0.0f, 
-	-5.4f, 1.0f, 0.0f, 
-	-5.4f, 0.75f, 0.0f, 
-	-5.4f, 0.5f, 0.0f, 
-	-5.4f, 0.25f, 0.0f, 
-	-5.4f, 0.0f, 0.0f, 
-
-	-5.4f, -0.25f, 0.0f, 
-	-5.4f, -0.5f, 0.0f, 
-	-5.4f, -0.75f, 0.0f, 
-	-5.4f, -1.0f, 0.0f, 
-	-5.4f, -1.25f, 0.0f, 
-	-5.4f, -1.5f, 0.0f, 
-	-5.4f, -1.75f, 0.0f, 
-	-5.4f, -2.0f, 0.0f, 
-	-5.4f, -2.25f, 0.0f, 
-	-5.4f, -2.5f, 0.0f, 
-	-5.4f, -2.7f, 0.0f, 
+	
+	-5.4f, 0.0f, 0.0f,
 	-5.31796f, -3.6377f, 0.0f, 
 	-5.07434f, -4.54691f, 0.0f, 
 	-4.67654f, -5.4f, 0.0f, 
@@ -2314,7 +1299,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.84691f, -7.77434f, 0.0f, 
 	-0.9377f, -8.01796f, 0.0f, 
 	6.43944e-008f, -8.1f, 0.0f,
-
 	0.9377f, -8.01796f, 0.0f, 
 	1.84691f, -7.77434f, 0.0f, 
 	2.7f, -7.37654f, 0.0f, 
@@ -2323,32 +1307,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	4.67654f, -5.4f, 0.0f, 
 	5.07434f, -4.54691f, 0.0f, 
 	5.31796f, -3.6377f, 0.0f, 
-	5.4f, -2.7f, 0.0f, 
-	5.4f, -2.5f, 0.0f, 
-	5.4f, -2.25f, 0.0f, 
-	5.4f, -2.0f, 0.0f, 
-	5.4f, -1.75f, 0.0f, 
-	5.4f, -1.5f, 0.0f, 
-	5.4f, -1.25f, 0.0f, 
-	5.4f, -1.0f, 0.0f, 
-	5.4f, -0.75f, 0.0f, 
-	5.4f, -0.5f, 0.0f, 
-	5.4f, -0.25f, 0.0f, 
 
 	//Blue 2 - z axis
-
 	0.0f, 0.0f, 5.4f, 
-	0.0f, 0.25f, 5.4f, 
-	0.0f, 0.5f, 5.4f, 
-	0.0f, 0.75f, 5.4f, 
-	0.0f, 1.0f, 5.4f, 
-	0.0f, 1.25f, 5.4f, 
-	0.0f, 1.5f, 5.4f, 
-	0.0f, 1.75f, 5.4f, 
-	0.0f, 2.0f, 5.4f, 
-	0.0f, 2.25f, 5.4f, 
-	0.0f, 2.5f, 5.4f, 
-	0.0f, 2.7f, 5.4f, 
 	0.0f, 3.6377f, 5.31796f, 
 	0.0f, 4.54691f, 5.07434f, 
 	0.0f, 5.4f, 4.67654f, 
@@ -2357,7 +1318,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 7.37654f, 2.7f, 
 	0.0f, 7.77434f, 1.84691f, 
 	0.0f, 8.01796f, 0.9377f,
-
 	0.0f, 8.01796f, -0.9377f, 
 	0.0f, 7.77434f, -1.84691f, 
 	0.0f, 7.37654f, -2.7f, 
@@ -2366,30 +1326,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 5.4f, -4.67654f, 
 	0.0f, 4.54691f, -5.07434f, 
 	0.0f, 3.6377f, -5.31796f, 
-	0.0f, 2.7f, -5.4f, 
-	0.0f, 2.5f, -5.4f, 
-	0.0f, 2.25f, -5.4f, 
-	0.0f, 2.0f, -5.4f, 
-	0.0f, 1.75f, -5.4f, 
-	0.0f, 1.5f, -5.4f, 
-	0.0f, 1.25f, -5.4f, 
-	0.0f, 1.0f, -5.4f, 
-	0.0f, 0.75f, -5.4f, 
-	0.0f, 0.5f, -5.4f, 
-	0.0f, 0.25f, -5.4f, 
+	
 	0.0f, 0.0f, -5.4f, 
-
-	0.0f, -0.25f, -5.4f, 
-	0.0f, -0.5f, -5.4f, 
-	0.0f, -0.75f, -5.4f, 
-	0.0f, -1.0f, -5.4f, 
-	0.0f, -1.25f, -5.4f, 
-	0.0f, -1.5f, -5.4f, 
-	0.0f, -1.75f, -5.4f, 
-	0.0f, -2.0f, -5.4f, 
-	0.0f, -2.25f, -5.4f, 
-	0.0f, -2.5f, -5.4f, 
-	0.0f, -2.7f, -5.4f, 
 	0.0f, -3.6377f, -5.31796f, 
 	0.0f, -4.54691f, -5.07434f, 
 	0.0f, -5.4f, -4.67654f, 
@@ -2398,7 +1336,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -7.37654f, -2.7f, 
 	0.0f, -7.77434f, -1.84691f, 
 	0.0f, -8.01796f, -0.9377f,
-
 	0.0f, -8.01796f, 0.9377f, 
 	0.0f, -7.77434f, 1.84691f, 
 	0.0f, -7.37654f, 2.7f, 
@@ -2407,31 +1344,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -5.4f, 4.67654f, 
 	0.0f, -4.54691f, 5.07434f, 
 	0.0f, -3.6377f, 5.31796f, 
-	0.0f, -2.7f, 5.4f, 
-	0.0f, -2.5f, 5.4f, 
-	0.0f, -2.25f, 5.4f, 
-	0.0f, -2.0f, 5.4f, 
-	0.0f, -1.75f, 5.4f, 
-	0.0f, -1.5f, 5.4f, 
-	0.0f, -1.25f, 5.4f, 
-	0.0f, -1.0f, 5.4f, 
-	0.0f, -0.75f, 5.4f, 
-	0.0f, -0.5f, 5.4f, 
-	0.0f, -0.25f, 5.4f, 
 
 	//Blue 2 - x - z axis
-	3.78f, 0.0f, 3.78f, 
-	3.78f, 0.25f, 3.78f, 
-	3.78f, 0.5f, 3.78f, 
-	3.78f, 0.75f, 3.78f, 
-	3.78f, 1.0f, 3.78f, 
-	3.78f, 1.25f, 3.78f, 
-	3.78f, 1.5f, 3.78f, 
-	3.78f, 1.75f, 3.78f, 
-	3.78f, 2.0f, 3.78f, 
-	3.78f, 2.25f, 3.78f, 
-	3.78f, 2.5f, 3.78f, 
-	3.78f, 2.7f, 3.78f, 
+	3.78f, 0.0f, 3.78f,  
 	3.72257f, 3.6377f, 3.72257f, 
 	3.55204f, 4.54691f, 3.55204f, 
 	3.27358f, 5.4f, 3.27358f, 
@@ -2440,7 +1355,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.89f, 7.37654f, 1.89f, 
 	1.29284f, 7.77434f, 1.29284f, 
 	0.65639f, 8.01796f, 0.65639f, 
-
 	-0.65639f, 8.01796f, -0.65639f, 
 	-1.29284f, 7.77434f, -1.29284f, 
 	-1.89f, 7.37654f, -1.89f, 
@@ -2449,30 +1363,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.27358f, 5.4f, -3.27358f, 
 	-3.55204f, 4.54691f, -3.55204f, 
 	-3.72257f, 3.6377f, -3.72257f, 
-	-3.78f, 2.7f, -3.78f, 
-	-3.78f, 2.5f, -3.78f, 
-	-3.78f, 2.25f, -3.78f, 
-	-3.78f, 2.0f, -3.78f, 
-	-3.78f, 1.75f, -3.78f, 
-	-3.78f, 1.5f, -3.78f, 
-	-3.78f, 1.25f, -3.78f, 
-	-3.78f, 1.0f, -3.78f, 
-	-3.78f, 0.75f, -3.78f, 
-	-3.78f, 0.5f, -3.78f, 
-	-3.78f, 0.25f, -3.78f, 
-	-3.78f, 0.0f, -3.78f, 
 
-	-3.78f, -0.25f, -3.78f, 
-	-3.78f, -0.5f, -3.78f, 
-	-3.78f, -0.75f, -3.78f, 
-	-3.78f, -1.0f, -3.78f, 
-	-3.78f, -1.25f, -3.78f, 
-	-3.78f, -1.5f, -3.78f, 
-	-3.78f, -1.75f, -3.78f, 
-	-3.78f, -2.0f, -3.78f, 
-	-3.78f, -2.25f, -3.78f, 
-	-3.78f, -2.5f, -3.78f, 
-	-3.78f, -2.7f, -3.78f, 
+	-3.78f, 0.0f, -3.78f,
 	-3.72257f, -3.6377f, -3.72257f, 
 	-3.55204f, -4.54691f, -3.55204f, 
 	-3.27358f, -5.4f, -3.27358f, 
@@ -2481,7 +1373,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.89f, -7.37654f, -1.89f, 
 	-1.29284f, -7.77434f, -1.29284f, 
 	-0.65639f, -8.01796f, -0.65639f, 
-
 	0.65639f, -8.01796f, 0.65639f, 
 	1.29284f, -7.77434f, 1.29284f, 
 	1.89f, -7.37654f, 1.89f, 
@@ -2490,31 +1381,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.27358f, -5.4f, 3.27358f, 
 	3.55204f, -4.54691f, 3.55204f, 
 	3.72257f, -3.6377f, 3.72257f, 
-	3.78f, -2.7f, 3.78f, 
-	3.78f, -2.5f, 3.78f, 
-	3.78f, -2.25f, 3.78f, 
-	3.78f, -2.0f, 3.78f, 
-	3.78f, -1.75f, 3.78f, 
-	3.78f, -1.5f, 3.78f, 
-	3.78f, -1.25f, 3.78f, 
-	3.78f, -1.0f, 3.78f, 
-	3.78f, -0.75f, 3.78f, 
-	3.78f, -0.5f, 3.78f, 
-	3.78f, -0.25f, 3.78f, 
 
 	//Blue 2 - - x - z axis
 	-3.78f, 0.0f, 3.78f, 
-	-3.78f, 0.25f, 3.78f, 
-	-3.78f, 0.5f, 3.78f, 
-	-3.78f, 0.75f, 3.78f, 
-	-3.78f, 1.0f, 3.78f, 
-	-3.78f, 1.25f, 3.78f, 
-	-3.78f, 1.5f, 3.78f, 
-	-3.78f, 1.75f, 3.78f, 
-	-3.78f, 2.0f, 3.78f, 
-	-3.78f, 2.25f, 3.78f, 
-	-3.78f, 2.5f, 3.78f, 
-	-3.78f, 2.7f, 3.78f, 
 	-3.72257f, 3.6377f, 3.72257f, 
 	-3.55204f, 4.54691f, 3.55204f, 
 	-3.27358f, 5.4f, 3.27358f, 
@@ -2523,7 +1392,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-1.89f, 7.37654f, 1.89f, 
 	-1.29284f, 7.77434f, 1.29284f, 
 	-0.65639f, 8.01796f, 0.65639f, 
-
 	0.65639f, 8.01796f, -0.65639f, 
 	1.29284f, 7.77434f, -1.29284f, 
 	1.89f, 7.37654f, -1.89f, 
@@ -2532,30 +1400,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.27358f, 5.4f, -3.27358f, 
 	3.55204f, 4.54691f, -3.55204f, 
 	3.72257f, 3.6377f, -3.72257f, 
-	3.78f, 2.7f, -3.78f, 
-	3.78f, 2.5f, -3.78f, 
-	3.78f, 2.25f, -3.78f, 
-	3.78f, 2.0f, -3.78f, 
-	3.78f, 1.75f, -3.78f, 
-	3.78f, 1.5f, -3.78f, 
-	3.78f, 1.25f, -3.78f, 
-	3.78f, 1.0f, -3.78f, 
-	3.78f, 0.75f, -3.78f, 
-	3.78f, 0.5f, -3.78f, 
-	3.78f, 0.25f, -3.78f, 
-	3.78f, 0.0f, -3.78f, 
-
-	3.78f, -0.25f, -3.78f, 
-	3.78f, -0.5f, -3.78f, 
-	3.78f, -0.75f, -3.78f, 
-	3.78f, -1.0f, -3.78f, 
-	3.78f, -1.25f, -3.78f, 
-	3.78f, -1.5f, -3.78f, 
-	3.78f, -1.75f, -3.78f, 
-	3.78f, -2.0f, -3.78f, 
-	3.78f, -2.25f, -3.78f, 
-	3.78f, -2.5f, -3.78f, 
-	3.78f, -2.7f, -3.78f, 
+	
+	3.78f, 0.0f, -3.78f,
 	3.72257f, -3.6377f, -3.72257f, 
 	3.55204f, -4.54691f, -3.55204f, 
 	3.27358f, -5.4f, -3.27358f, 
@@ -2564,7 +1410,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	1.89f, -7.37654f, -1.89f, 
 	1.29284f, -7.77434f, -1.29284f, 
 	0.65639f, -8.01796f, -0.65639f, 
-
 	-0.65639f, -8.01796f, 0.65639f, 
 	-1.29284f, -7.77434f, 1.29284f, 
 	-1.89f, -7.37654f, 1.89f, 
@@ -2573,34 +1418,10 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.27358f, -5.4f, 3.27358f, 
 	-3.55204f, -4.54691f, 3.55204f, 
 	-3.72257f, -3.6377f, 3.72257f, 
-	-3.78f, -2.7f, 3.78f, 
-	-3.78f, -2.5f, 3.78f, 
-	-3.78f, -2.25f, 3.78f, 
-	-3.78f, -2.0f, 3.78f, 
-	-3.78f, -1.75f, 3.78f, 
-	-3.78f, -1.5f, 3.78f, 
-	-3.78f, -1.25f, 3.78f, 
-	-3.78f, -1.0f, 3.78f, 
-	-3.78f, -0.75f, 3.78f, 
-	-3.78f, -0.5f, 3.78f, 
-	-3.78f, -0.25f, 3.78f, 
 
  
 	//Blue 3 - x axis
 	6.4f, 0.0f, 0.0f, 
-	6.4f, 0.25f, 0.0f, 
-	6.4f, 0.5f, 0.0f, 
-	6.4f, 0.75f, 0.0f, 
-	6.4f, 1.0f, 0.0f, 
-	6.4f, 1.25f, 0.0f, 
-	6.4f, 1.5f, 0.0f, 
-	6.4f, 1.75f, 0.0f, 
-	6.4f, 2.0f, 0.0f, 
-	6.4f, 2.25f, 0.0f, 
-	6.4f, 2.5f, 0.0f, 
-	6.4f, 2.75f, 0.0f, 
-	6.4f, 3.0f, 0.0f, 
-	6.4f, 3.2f, 0.0f, 
 	6.30277f, 4.31135f, 0.0f, 
 	6.01403f, 5.38893f, 0.0f, 
 	5.54256f, 6.4f, 0.0f, 
@@ -2610,7 +1431,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.18893f, 9.21403f, 0.0f, 
 	1.11135f, 9.50277f, 0.0f, 
 	-2.79753e-007f, 9.6f, 0.0f,
-
 	-1.11135f, 9.50277f, 0.0f, 
 	-2.18893f, 9.21403f, 0.0f, 
 	-3.2f, 8.74256f, 0.0f, 
@@ -2619,34 +1439,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-5.54256f, 6.4f, 0.0f, 
 	-6.01403f, 5.38893f, 0.0f, 
 	-6.30277f, 4.31135f, 0.0f, 
-	-6.4f, 3.2f, 0.0f, 
-	-6.4f, 3.0f, 0.0f, 
-	-6.4f, 2.75f, 0.0f, 
-	-6.4f, 2.5f, 0.0f, 
-	-6.4f, 2.25f, 0.0f, 
-	-6.4f, 2.0f, 0.0f, 
-	-6.4f, 1.75f, 0.0f, 
-	-6.4f, 1.5f, 0.0f, 
-	-6.4f, 1.25f, 0.0f, 
-	-6.4f, 1.0f, 0.0f, 
-	-6.4f, 0.75f, 0.0f, 
-	-6.4f, 0.5f, 0.0f, 
-	-6.4f, 0.25f, 0.0f, 
+	 
 	-6.4f, 0.0f, 0.0f, 
-
-	-6.4f, -0.25f, 0.0f, 
-	-6.4f, -0.5f, 0.0f, 
-	-6.4f, -0.75f, 0.0f, 
-	-6.4f, -1.0f, 0.0f, 
-	-6.4f, -1.25f, 0.0f, 
-	-6.4f, -1.5f, 0.0f, 
-	-6.4f, -1.75f, 0.0f, 
-	-6.4f, -2.0f, 0.0f, 
-	-6.4f, -2.25f, 0.0f, 
-	-6.4f, -2.5f, 0.0f, 
-	-6.4f, -2.75f, 0.0f, 
-	-6.4f, -3.0f, 0.0f, 
-	-6.4f, -3.2f, 0.0f, 
 	-6.30277f, -4.31135f, 0.0f, 
 	-6.01403f, -5.38893f, 0.0f, 
 	-5.54256f, -6.4f, 0.0f, 
@@ -2656,7 +1450,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.18893f, -9.21403f, 0.0f, 
 	-1.11135f, -9.50277f, 0.0f, 
 	7.63192e-008f, -9.6f, 0.0f, 
-
 	1.11135f, -9.50277f, 0.0f, 
 	2.18893f, -9.21403f, 0.0f, 
 	3.2f, -8.74256f, 0.0f, 
@@ -2665,35 +1458,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	5.54256f, -6.4f, 0.0f, 
 	6.01403f, -5.38893f, 0.0f, 
 	6.30277f, -4.31135f, 0.0f, 
-	6.4f, -3.2f, 0.0f, 
-	6.4f, -3.0f, 0.0f, 
-	6.4f, -2.75f, 0.0f, 
-	6.4f, -2.5f, 0.0f, 
-	6.4f, -2.25f, 0.0f, 
-	6.4f, -2.0f, 0.0f, 
-	6.4f, -1.75f, 0.0f, 
-	6.4f, -1.5f, 0.0f, 
-	6.4f, -1.25f, 0.0f, 
-	6.4f, -1.0f, 0.0f, 
-	6.4f, -0.75f, 0.0f, 
-	6.4f, -0.5f, 0.0f, 
-	6.4f, -0.25f, 0.0f,
 
 	//Blue 3 - z axis
-	0.0f, 0.0f, 6.4f, 
-	0.0f, 0.25f, 6.4f, 
-	0.0f, 0.5f, 6.4f, 
-	0.0f, 0.75f, 6.4f, 
-	0.0f, 1.0f, 6.4f, 
-	0.0f, 1.25f, 6.4f, 
-	0.0f, 1.5f, 6.4f, 
-	0.0f, 1.75f, 6.4f, 
-	0.0f, 2.0f, 6.4f, 
-	0.0f, 2.25f, 6.4f, 
-	0.0f, 2.5f, 6.4f, 
-	0.0f, 2.75f, 6.4f, 
-	0.0f, 3.0f, 6.4f, 
-	0.0f, 3.2f, 6.4f, 
+	0.0f, 0.0f, 6.4f,  
 	0.0f, 4.31135f, 6.30277f, 
 	0.0f, 5.38893f, 6.01403f, 
 	0.0f, 6.4f, 5.54256f, 
@@ -2702,7 +1469,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 8.74256f, 3.2f, 
 	0.0f, 9.21403f, 2.18893f, 
 	0.0f, 9.50277f, 1.11135f, 
-
 	0.0f, 9.50277f, -1.11135f, 
 	0.0f, 9.21403f, -2.18893f, 
 	0.0f, 8.74256f, -3.2f, 
@@ -2711,34 +1477,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 6.4f, -5.54256f, 
 	0.0f, 5.38893f, -6.01403f, 
 	0.0f, 4.31135f, -6.30277f, 
-	0.0f, 3.2f, -6.4f, 
-	0.0f, 3.0f, -6.4f, 
-	0.0f, 2.75f, -6.4f, 
-	0.0f, 2.5f, -6.4f, 
-	0.0f, 2.25f, -6.4f, 
-	0.0f, 2.0f, -6.4f, 
-	0.0f, 1.75f, -6.4f, 
-	0.0f, 1.5f, -6.4f, 
-	0.0f, 1.25f, -6.4f, 
-	0.0f, 1.0f, -6.4f, 
-	0.0f, 0.75f, -6.4f, 
-	0.0f, 0.5f, -6.4f, 
-	0.0f, 0.25f, -6.4f, 
+	
 	0.0f, 0.0f, -6.4f, 
-
-	0.0f, -0.25f, -6.4f, 
-	0.0f, -0.5f, -6.4f, 
-	0.0f, -0.75f, -6.4f, 
-	0.0f, -1.0f, -6.4f, 
-	0.0f, -1.25f, -6.4f, 
-	0.0f, -1.5f, -6.4f, 
-	0.0f, -1.75f, -6.4f, 
-	0.0f, -2.0f, -6.4f, 
-	0.0f, -2.25f, -6.4f, 
-	0.0f, -2.5f, -6.4f, 
-	0.0f, -2.75f, -6.4f, 
-	0.0f, -3.0f, -6.4f, 
-	0.0f, -3.2f, -6.4f, 
 	0.0f, -4.31135f, -6.30277f, 
 	0.0f, -5.38893f, -6.01403f, 
 	0.0f, -6.4f, -5.54256f, 
@@ -2747,7 +1487,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -8.74256f, -3.2f, 
 	0.0f, -9.21403f, -2.18893f, 
 	0.0f, -9.50277f, -1.11135f, 
-
 	0.0f, -9.50277f, 1.11135f, 
 	0.0f, -9.21403f, 2.18893f, 
 	0.0f, -8.74256f, 3.2f, 
@@ -2756,35 +1495,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -6.4f, 5.54256f, 
 	0.0f, -5.38893f, 6.01403f, 
 	0.0f, -4.31135f, 6.30277f, 
-	0.0f, -3.2f, 6.4f, 
-	0.0f, -3.0f, 6.4f, 
-	0.0f, -2.75f, 6.4f, 
-	0.0f, -2.5f, 6.4f, 
-	0.0f, -2.25f, 6.4f, 
-	0.0f, -2.0f, 6.4f, 
-	0.0f, -1.75f, 6.4f, 
-	0.0f, -1.5f, 6.4f, 
-	0.0f, -1.25f, 6.4f, 
-	0.0f, -1.0f, 6.4f, 
-	0.0f, -0.75f, 6.4f, 
-	0.0f, -0.5f, 6.4f, 
-	0.0f, -0.25f, 6.4f,
 
 	//Blue 3 - x - z axis
-	4.48f, 0.0f, 4.48f, 
-	4.48f, 0.25f, 4.48f, 
-	4.48f, 0.5f, 4.48f, 
-	4.48f, 0.75f, 4.48f, 
-	4.48f, 1.0f, 4.48f, 
-	4.48f, 1.25f, 4.48f, 
-	4.48f, 1.5f, 4.48f, 
-	4.48f, 1.75f, 4.48f, 
-	4.48f, 2.0f, 4.48f, 
-	4.48f, 2.25f, 4.48f, 
-	4.48f, 2.5f, 4.48f, 
-	4.48f, 2.75f, 4.48f, 
-	4.48f, 3.0f, 4.48f, 
-	4.48f, 3.2f, 4.48f, 
+	4.48f, 0.0f, 4.48f,
 	4.41194f, 4.31135f, 4.41194f, 
 	4.20982f, 5.38893f, 4.20982f, 
 	3.87979f, 6.4f, 3.87979f, 
@@ -2793,7 +1506,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.24f, 8.74256f, 2.24f, 
 	1.53225f, 9.21403f, 1.53225f, 
 	0.777943f, 9.50277f, 0.777943f, 
-
 	-0.777944f, 9.50277f, -0.777944f, 
 	-1.53225f, 9.21403f, -1.53225f, 
 	-2.24f, 8.74256f, -2.24f, 
@@ -2802,34 +1514,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.87979f, 6.4f, -3.87979f, 
 	-4.20982f, 5.38893f, -4.20982f, 
 	-4.41194f, 4.31135f, -4.41194f, 
-	-4.48f, 3.2f, -4.48f, 
-	-4.48f, 3.0f, -4.48f, 
-	-4.48f, 2.75f, -4.48f, 
-	-4.48f, 2.5f, -4.48f, 
-	-4.48f, 2.25f, -4.48f, 
-	-4.48f, 2.0f, -4.48f, 
-	-4.48f, 1.75f, -4.48f, 
-	-4.48f, 1.5f, -4.48f, 
-	-4.48f, 1.25f, -4.48f, 
-	-4.48f, 1.0f, -4.48f, 
-	-4.48f, 0.75f, -4.48f, 
-	-4.48f, 0.5f, -4.48f, 
-	-4.48f, 0.25f, -4.48f, 
-	-4.48f, 0.0f, -4.48f, 
-
-	-4.48f, -0.25f, -4.48f, 
-	-4.48f, -0.5f, -4.48f, 
-	-4.48f, -0.75f, -4.48f, 
-	-4.48f, -1.0f, -4.48f, 
-	-4.48f, -1.25f, -4.48f, 
-	-4.48f, -1.5f, -4.48f, 
-	-4.48f, -1.75f, -4.48f, 
-	-4.48f, -2.0f, -4.48f, 
-	-4.48f, -2.25f, -4.48f, 
-	-4.48f, -2.5f, -4.48f, 
-	-4.48f, -2.75f, -4.48f, 
-	-4.48f, -3.0f, -4.48f, 
-	-4.48f, -3.2f, -4.48f, 
+	
+	-4.48f, 0.0f, -4.48f,  
 	-4.41194f, -4.31135f, -4.41194f, 
 	-4.20982f, -5.38893f, -4.20982f, 
 	-3.87979f, -6.4f, -3.87979f, 
@@ -2838,7 +1524,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.24f, -8.74256f, -2.24f, 
 	-1.53225f, -9.21403f, -1.53225f, 
 	-0.777944f, -9.50277f, -0.777944f, 
-
 	0.777944f, -9.50277f, 0.777944f, 
 	1.53225f, -9.21403f, 1.53225f, 
 	2.24f, -8.74256f, 2.24f, 
@@ -2846,36 +1531,10 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.43188f, -7.31384f, 3.43188f, 
 	3.87979f, -6.4f, 3.87979f, 
 	4.20982f, -5.38893f, 4.20982f, 
-	4.41194f, -4.31135f, 4.41194f, 
-	4.48f, -3.2f, 4.48f, 
-	4.48f, -3.0f, 4.48f, 
-	4.48f, -2.75f, 4.48f, 
-	4.48f, -2.5f, 4.48f, 
-	4.48f, -2.25f, 4.48f, 
-	4.48f, -2.0f, 4.48f, 
-	4.48f, -1.75f, 4.48f, 
-	4.48f, -1.5f, 4.48f, 
-	4.48f, -1.25f, 4.48f, 
-	4.48f, -1.0f, 4.48f, 
-	4.48f, -0.75f, 4.48f, 
-	4.48f, -0.5f, 4.48f, 
-	4.48f, -0.25f, 4.48f, 
+	4.41194f, -4.31135f, 4.41194f,  
 
 	//Blue 3 - - x - z axis
 	-4.48f, 0.0f, 4.48f, 
-	-4.48f, 0.25f, 4.48f, 
-	-4.48f, 0.5f, 4.48f, 
-	-4.48f, 0.75f, 4.48f, 
-	-4.48f, 1.0f, 4.48f, 
-	-4.48f, 1.25f, 4.48f, 
-	-4.48f, 1.5f, 4.48f, 
-	-4.48f, 1.75f, 4.48f, 
-	-4.48f, 2.0f, 4.48f, 
-	-4.48f, 2.25f, 4.48f, 
-	-4.48f, 2.5f, 4.48f, 
-	-4.48f, 2.75f, 4.48f, 
-	-4.48f, 3.0f, 4.48f, 
-	-4.48f, 3.2f, 4.48f, 
 	-4.41194f, 4.31135f, 4.41194f, 
 	-4.20982f, 5.38893f, 4.20982f, 
 	-3.87979f, 6.4f, 3.87979f, 
@@ -2884,7 +1543,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.24f, 8.74256f, 2.24f, 
 	-1.53225f, 9.21403f, 1.53225f, 
 	-0.777943f, 9.50277f, 0.777943f, 
-
 	0.777944f, 9.50277f, -0.777944f, 
 	1.53225f, 9.21403f, -1.53225f, 
 	2.24f, 8.74256f, -2.24f, 
@@ -2893,34 +1551,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.87979f, 6.4f, -3.87979f, 
 	4.20982f, 5.38893f, -4.20982f, 
 	4.41194f, 4.31135f, -4.41194f, 
-	4.48f, 3.2f, -4.48f, 
-	4.48f, 3.0f, -4.48f, 
-	4.48f, 2.75f, -4.48f, 
-	4.48f, 2.5f, -4.48f, 
-	4.48f, 2.25f, -4.48f, 
-	4.48f, 2.0f, -4.48f, 
-	4.48f, 1.75f, -4.48f, 
-	4.48f, 1.5f, -4.48f, 
-	4.48f, 1.25f, -4.48f, 
-	4.48f, 1.0f, -4.48f, 
-	4.48f, 0.75f, -4.48f, 
-	4.48f, 0.5f, -4.48f, 
-	4.48f, 0.25f, -4.48f, 
+	
 	4.48f, 0.0f, -4.48f, 
-
-	4.48f, -0.25f, -4.48f, 
-	4.48f, -0.5f, -4.48f, 
-	4.48f, -0.75f, -4.48f, 
-	4.48f, -1.0f, -4.48f, 
-	4.48f, -1.25f, -4.48f, 
-	4.48f, -1.5f, -4.48f, 
-	4.48f, -1.75f, -4.48f, 
-	4.48f, -2.0f, -4.48f, 
-	4.48f, -2.25f, -4.48f, 
-	4.48f, -2.5f, -4.48f, 
-	4.48f, -2.75f, -4.48f, 
-	4.48f, -3.0f, -4.48f, 
-	4.48f, -3.2f, -4.48f, 
 	4.41194f, -4.31135f, -4.41194f, 
 	4.20982f, -5.38893f, -4.20982f, 
 	3.87979f, -6.4f, -3.87979f, 
@@ -2929,7 +1561,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.24f, -8.74256f, -2.24f, 
 	1.53225f, -9.21403f, -1.53225f, 
 	0.777944f, -9.50277f, -0.777944f, 
-	
 	-0.777944f, -9.50277f, 0.777944f, 
 	-1.53225f, -9.21403f, 1.53225f, 
 	-2.24f, -8.74256f, 2.24f, 
@@ -2938,37 +1569,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-3.87979f, -6.4f, 3.87979f, 
 	-4.20982f, -5.38893f, 4.20982f, 
 	-4.41194f, -4.31135f, 4.41194f, 
-	-4.48f, -3.2f, 4.48f, 
-	-4.48f, -3.0f, 4.48f, 
-	-4.48f, -2.75f, 4.48f, 
-	-4.48f, -2.5f, 4.48f, 
-	-4.48f, -2.25f, 4.48f, 
-	-4.48f, -2.0f, 4.48f, 
-	-4.48f, -1.75f, 4.48f, 
-	-4.48f, -1.5f, 4.48f, 
-	-4.48f, -1.25f, 4.48f, 
-	-4.48f, -1.0f, 4.48f, 
-	-4.48f, -0.75f, 4.48f, 
-	-4.48f, -0.5f, 4.48f, 
-	-4.48f, -0.25f, 4.48f, 
 
 	//Blue 4 - x axis
 	7.4f, 0.0f, 0.0f, 
-	7.4f, 0.25f, 0.0f, 
-	7.4f, 0.5f, 0.0f, 
-	7.4f, 0.75f, 0.0f, 
-	7.4f, 1.0f, 0.0f, 
-	7.4f, 1.25f, 0.0f, 
-	7.4f, 1.5f, 0.0f, 
-	7.4f, 1.75f, 0.0f, 
-	7.4f, 2.0f, 0.0f, 
-	7.4f, 2.25f, 0.0f, 
-	7.4f, 2.5f, 0.0f, 
-	7.4f, 2.75f, 0.0f, 
-	7.4f, 3.0f, 0.0f, 
-	7.4f, 3.25f, 0.0f, 
-	7.4f, 3.5f, 0.0f, 
-	7.4f, 3.7f, 0.0f, 
 	7.28758f, 4.985f, 0.0f, 
 	6.95373f, 6.23095f, 0.0f, 
 	6.40859f, 7.4f, 0.0f, 
@@ -2978,7 +1581,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.53095f, 10.6537f, 0.0f, 
 	1.285f, 10.9876f, 0.0f, 
 	-3.23464e-007f, 11.1f, 0.0f, 
-
 	-1.285f, 10.9876f, 0.0f, 
 	-2.53095f, 10.6537f, 0.0f, 
 	-3.7f, 10.1086f, 0.0f, 
@@ -2987,38 +1589,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-6.40859f, 7.4f, 0.0f, 
 	-6.95373f, 6.23095f, 0.0f, 
 	-7.28758f, 4.985f, 0.0f, 
-	-7.4f, 3.7f, 0.0f, 
-	-7.4f, 3.5f, 0.0f, 
-	-7.4f, 3.25f, 0.0f, 
-	-7.4f, 3.0f, 0.0f, 
-	-7.4f, 2.75f, 0.0f, 
-	-7.4f, 2.5f, 0.0f, 
-	-7.4f, 2.25f, 0.0f, 
-	-7.4f, 2.0f, 0.0f, 
-	-7.4f, 1.75f, 0.0f, 
-	-7.4f, 1.5f, 0.0f, 
-	-7.4f, 1.25f, 0.0f, 
-	-7.4f, 1.0f, 0.0f, 
-	-7.4f, 0.75f, 0.0f, 
-	-7.4f, 0.5f, 0.0f, 
-	-7.4f, 0.25f, 0.0f, 
+	 
 	-7.4f, 0.0f, 0.0f, 
-
-	-7.4f, -0.25f, 0.0f, 
-	-7.4f, -0.5f, 0.0f, 
-	-7.4f, -0.75f, 0.0f, 
-	-7.4f, -1.0f, 0.0f, 
-	-7.4f, -1.25f, 0.0f, 
-	-7.4f, -1.5f, 0.0f, 
-	-7.4f, -1.75f, 0.0f, 
-	-7.4f, -2.0f, 0.0f, 
-	-7.4f, -2.25f, 0.0f, 
-	-7.4f, -2.5f, 0.0f, 
-	-7.4f, -2.75f, 0.0f, 
-	-7.4f, -3.0f, 0.0f, 
-	-7.4f, -3.25f, 0.0f, 
-	-7.4f, -3.5f, 0.0f, 
-	-7.4f, -3.7f, 0.0f, 
 	-7.28758f, -4.985f, 0.0f, 
 	-6.95373f, -6.23095f, 0.0f, 
 	-6.40859f, -7.4f, 0.0f, 
@@ -3028,7 +1600,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.53095f, -10.6537f, 0.0f, 
 	-1.285f, -10.9876f, 0.0f, 
 	8.82441e-008f, -11.1f, 0.0f, 
-
 	1.285f, -10.9876f, 0.0f, 
 	2.53095f, -10.6537f, 0.0f, 
 	3.7f, -10.1086f, 0.0f, 
@@ -3037,39 +1608,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	6.40859f, -7.4f, 0.0f, 
 	6.95373f, -6.23095f, 0.0f, 
 	7.28758f, -4.985f, 0.0f, 
-	7.4f, -3.7f, 0.0f, 
-	7.4f, -3.5f, 0.0f, 
-	7.4f, -3.25f, 0.0f, 
-	7.4f, -3.0f, 0.0f, 
-	7.4f, -2.75f, 0.0f, 
-	7.4f, -2.5f, 0.0f, 
-	7.4f, -2.25f, 0.0f, 
-	7.4f, -2.0f, 0.0f, 
-	7.4f, -1.75f, 0.0f, 
-	7.4f, -1.5f, 0.0f, 
-	7.4f, -1.25f, 0.0f, 
-	7.4f, -1.0f, 0.0f, 
-	7.4f, -0.75f, 0.0f, 
-	7.4f, -0.5f, 0.0f, 
-	7.4f, -0.25f, 0.0f,
 
 	//Blue 4 - z axis
 	0.0f, 0.0f, 7.4f, 
-	0.0f, 0.25f, 7.4f, 
-	0.0f, 0.5f, 7.4f, 
-	0.0f, 0.75f, 7.4f, 
-	0.0f, 1.0f, 7.4f, 
-	0.0f, 1.25f, 7.4f, 
-	0.0f, 1.5f, 7.4f, 
-	0.0f, 1.75f, 7.4f, 
-	0.0f, 2.0f, 7.4f, 
-	0.0f, 2.25f, 7.4f, 
-	0.0f, 2.5f, 7.4f, 
-	0.0f, 2.75f, 7.4f, 
-	0.0f, 3.0f, 7.4f, 
-	0.0f, 3.25f, 7.4f, 
-	0.0f, 3.5f, 7.4f, 
-	0.0f, 3.7f, 7.4f, 
 	0.0f, 4.985f, 7.28758f, 
 	0.0f, 6.23095f, 6.95373f, 
 	0.0f, 7.4f, 6.40859f, 
@@ -3078,7 +1619,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 10.1086f, 3.7f, 
 	0.0f, 10.6537f, 2.53095f, 
 	0.0f, 10.9876f, 1.285f,  
-
 	0.0f, 10.9876f, -1.285f, 
 	0.0f, 10.6537f, -2.53095f, 
 	0.0f, 10.1086f, -3.7f, 
@@ -3087,38 +1627,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 7.4f, -6.40859f, 
 	0.0f, 6.23095f, -6.95373f, 
 	0.0f, 4.985f, -7.28758f, 
-	0.0f, 3.7f, -7.4f, 
-	0.0f, 3.5f, -7.4f, 
-	0.0f, 3.25f, -7.4f, 
-	0.0f, 3.0f, -7.4f, 
-	0.0f, 2.75f, -7.4f, 
-	0.0f, 2.5f, -7.4f, 
-	0.0f, 2.25f, -7.4f, 
-	0.0f, 2.0f, -7.4f, 
-	0.0f, 1.75f, -7.4f, 
-	0.0f, 1.5f, -7.4f, 
-	0.0f, 1.25f, -7.4f, 
-	0.0f, 1.0f, -7.4f, 
-	0.0f, 0.75f, -7.4f, 
-	0.0f, 0.5f, -7.4f, 
-	0.0f, 0.25f, -7.4f, 
+	
 	0.0f, 0.0f, -7.4f, 
-
-	0.0f, -0.25f, -7.4f, 
-	0.0f, -0.5f, -7.4f, 
-	0.0f, -0.75f, -7.4f, 
-	0.0f, -1.0f, -7.4f, 
-	0.0f, -1.25f, -7.4f, 
-	0.0f, -1.5f, -7.4f, 
-	0.0f, -1.75f, -7.4f, 
-	0.0f, -2.0f, -7.4f, 
-	0.0f, -2.25f, -7.4f, 
-	0.0f, -2.5f, -7.4f, 
-	0.0f, -2.75f, -7.4f, 
-	0.0f, -3.0f, -7.4f, 
-	0.0f, -3.25f, -7.4f, 
-	0.0f, -3.5f, -7.4f, 
-	0.0f, -3.7f, -7.4f, 
 	0.0f, -4.985f, -7.28758f, 
 	0.0f, -6.23095f, -6.95373f, 
 	0.0f, -7.4f, -6.40859f, 
@@ -3126,8 +1636,7 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -9.36873f, -4.75663f, 
 	0.0f, -10.1086f, -3.7f, 
 	0.0f, -10.6537f, -2.53095f, 
-	0.0f, -10.9876f, -1.285f,  
-	
+	0.0f, -10.9876f, -1.285f,  	
 	0.0f, -10.9876f, 1.285f, 
 	0.0f, -10.6537f, 2.53095f, 
 	0.0f, -10.1086f, 3.7f, 
@@ -3136,39 +1645,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -7.4f, 6.40859f, 
 	0.0f, -6.23095f, 6.95373f, 
 	0.0f, -4.985f, 7.28758f, 
-	0.0f, -3.7f, 7.4f, 
-	0.0f, -3.5f, 7.4f, 
-	0.0f, -3.25f, 7.4f, 
-	0.0f, -3.0f, 7.4f, 
-	0.0f, -2.75f, 7.4f, 
-	0.0f, -2.5f, 7.4f, 
-	0.0f, -2.25f, 7.4f, 
-	0.0f, -2.0f, 7.4f, 
-	0.0f, -1.75f, 7.4f, 
-	0.0f, -1.5f, 7.4f, 
-	0.0f, -1.25f, 7.4f, 
-	0.0f, -1.0f, 7.4f, 
-	0.0f, -0.75f, 7.4f, 
-	0.0f, -0.5f, 7.4f, 
-	0.0f, -0.25f, 7.4f,
 	
 	//Blue 4 - x - z axis
 	5.18f, 0.0f, 5.18f, 
-	5.18f, 0.25f, 5.18f, 
-	5.18f, 0.5f, 5.18f, 
-	5.18f, 0.75f, 5.18f, 
-	5.18f, 1.0f, 5.18f, 
-	5.18f, 1.25f, 5.18f, 
-	5.18f, 1.5f, 5.18f, 
-	5.18f, 1.75f, 5.18f, 
-	5.18f, 2.0f, 5.18f, 
-	5.18f, 2.25f, 5.18f, 
-	5.18f, 2.5f, 5.18f, 
-	5.18f, 2.75f, 5.18f, 
-	5.18f, 3.0f, 5.18f, 
-	5.18f, 3.25f, 5.18f, 
-	5.18f, 3.5f, 5.18f, 
-	5.18f, 3.7f, 5.18f, 
 	5.1013f, 4.985f, 5.1013f, 
 	4.86761f, 6.23095f, 4.86761f, 
 	4.48601f, 7.4f, 4.48601f, 
@@ -3177,7 +1656,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.59f, 10.1086f, 2.59f, 
 	1.77166f, 10.6537f, 1.77166f, 
 	0.899497f, 10.9876f, 0.899497f, 
-
 	-0.899498f, 10.9876f, -0.899498f, 
 	-1.77166f, 10.6537f, -1.77166f, 
 	-2.59f, 10.1086f, -2.59f, 
@@ -3186,38 +1664,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-4.48601f, 7.4f, -4.48601f, 
 	-4.86761f, 6.23095f, -4.86761f, 
 	-5.1013f, 4.985f, -5.1013f, 
-	-5.18f, 3.7f, -5.18f, 
-	-5.18f, 3.5f, -5.18f, 
-	-5.18f, 3.25f, -5.18f, 
-	-5.18f, 3.0f, -5.18f, 
-	-5.18f, 2.75f, -5.18f, 
-	-5.18f, 2.5f, -5.18f, 
-	-5.18f, 2.25f, -5.18f, 
-	-5.18f, 2.0f, -5.18f, 
-	-5.18f, 1.75f, -5.18f, 
-	-5.18f, 1.5f, -5.18f, 
-	-5.18f, 1.25f, -5.18f, 
-	-5.18f, 1.0f, -5.18f, 
-	-5.18f, 0.75f, -5.18f, 
-	-5.18f, 0.5f, -5.18f, 
-	-5.18f, 0.25f, -5.18f, 
-	-5.18f, 0.0f, -5.18f, 
-
-	-5.18f, -0.25f, -5.18f, 
-	-5.18f, -0.5f, -5.18f, 
-	-5.18f, -0.75f, -5.18f, 
-	-5.18f, -1.0f, -5.18f, 
-	-5.18f, -1.25f, -5.18f, 
-	-5.18f, -1.5f, -5.18f, 
-	-5.18f, -1.75f, -5.18f, 
-	-5.18f, -2.0f, -5.18f, 
-	-5.18f, -2.25f, -5.18f, 
-	-5.18f, -2.5f, -5.18f, 
-	-5.18f, -2.75f, -5.18f, 
-	-5.18f, -3.0f, -5.18f, 
-	-5.18f, -3.25f, -5.18f, 
-	-5.18f, -3.5f, -5.18f, 
-	-5.18f, -3.7f, -5.18f, 
+	
+	-5.18f, 0.0f, -5.18f,  
 	-5.1013f, -4.985f, -5.1013f, 
 	-4.86761f, -6.23095f, -4.86761f, 
 	-4.48601f, -7.4f, -4.48601f, 
@@ -3226,7 +1674,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.59f, -10.1086f, -2.59f, 
 	-1.77166f, -10.6537f, -1.77166f, 
 	-0.899497f, -10.9876f, -0.899497f, 
-
 	0.899497f, -10.9876f, 0.899497f, 
 	1.77166f, -10.6537f, 1.77166f, 
 	2.59f, -10.1086f, 2.59f, 
@@ -3234,40 +1681,10 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	3.96811f, -8.45663f, 3.96811f, 
 	4.48601f, -7.4f, 4.48601f, 
 	4.86761f, -6.23095f, 4.86761f, 
-	5.1013f, -4.985f, 5.1013f, 
-	5.18f, -3.7f, 5.18f, 
-	5.18f, -3.5f, 5.18f, 
-	5.18f, -3.25f, 5.18f, 
-	5.18f, -3.0f, 5.18f, 
-	5.18f, -2.75f, 5.18f, 
-	5.18f, -2.5f, 5.18f, 
-	5.18f, -2.25f, 5.18f, 
-	5.18f, -2.0f, 5.18f, 
-	5.18f, -1.75f, 5.18f, 
-	5.18f, -1.5f, 5.18f, 
-	5.18f, -1.25f, 5.18f, 
-	5.18f, -1.0f, 5.18f, 
-	5.18f, -0.75f, 5.18f, 
-	5.18f, -0.5f, 5.18f, 
-	5.18f, -0.25f, 5.18f, 
+	5.1013f, -4.985f, 5.1013f,  
 
 	//Blue 4 - - x - z axis
-	-5.18f, 0.0f, 5.18f, 
-	-5.18f, 0.25f, 5.18f, 
-	-5.18f, 0.5f, 5.18f, 
-	-5.18f, 0.75f, 5.18f, 
-	-5.18f, 1.0f, 5.18f, 
-	-5.18f, 1.25f, 5.18f, 
-	-5.18f, 1.5f, 5.18f, 
-	-5.18f, 1.75f, 5.18f, 
-	-5.18f, 2.0f, 5.18f, 
-	-5.18f, 2.25f, 5.18f, 
-	-5.18f, 2.5f, 5.18f, 
-	-5.18f, 2.75f, 5.18f, 
-	-5.18f, 3.0f, 5.18f, 
-	-5.18f, 3.25f, 5.18f, 
-	-5.18f, 3.5f, 5.18f, 
-	-5.18f, 3.7f, 5.18f, 
+	-5.18f, 0.0f, 5.18f,  
 	-5.1013f, 4.985f, 5.1013f, 
 	-4.86761f, 6.23095f, 4.86761f, 
 	-4.48601f, 7.4f, 4.48601f, 
@@ -3276,7 +1693,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.59f, 10.1086f, 2.59f, 
 	-1.77166f, 10.6537f, 1.77166f, 
 	-0.899497f, 10.9876f, 0.899497f, 
-
 	0.899498f, 10.9876f, -0.899498f, 
 	1.77166f, 10.6537f, -1.77166f, 
 	2.59f, 10.1086f, -2.59f, 
@@ -3285,38 +1701,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	4.48601f, 7.4f, -4.48601f, 
 	4.86761f, 6.23095f, -4.86761f, 
 	5.1013f, 4.985f, -5.1013f, 
-	5.18f, 3.7f, -5.18f, 
-	5.18f, 3.5f, -5.18f, 
-	5.18f, 3.25f, -5.18f, 
-	5.18f, 3.0f, -5.18f, 
-	5.18f, 2.75f, -5.18f, 
-	5.18f, 2.5f, -5.18f, 
-	5.18f, 2.25f, -5.18f, 
-	5.18f, 2.0f, -5.18f, 
-	5.18f, 1.75f, -5.18f, 
-	5.18f, 1.5f, -5.18f, 
-	5.18f, 1.25f, -5.18f, 
-	5.18f, 1.0f, -5.18f, 
-	5.18f, 0.75f, -5.18f, 
-	5.18f, 0.5f, -5.18f, 
-	5.18f, 0.25f, -5.18f, 
-	5.18f, 0.0f, -5.18f, 
-
-	5.18f, -0.25f, -5.18f, 
-	5.18f, -0.5f, -5.18f, 
-	5.18f, -0.75f, -5.18f, 
-	5.18f, -1.0f, -5.18f, 
-	5.18f, -1.25f, -5.18f, 
-	5.18f, -1.5f, -5.18f, 
-	5.18f, -1.75f, -5.18f, 
-	5.18f, -2.0f, -5.18f, 
-	5.18f, -2.25f, -5.18f, 
-	5.18f, -2.5f, -5.18f, 
-	5.18f, -2.75f, -5.18f, 
-	5.18f, -3.0f, -5.18f, 
-	5.18f, -3.25f, -5.18f, 
-	5.18f, -3.5f, -5.18f, 
-	5.18f, -3.7f, -5.18f, 
+	
+	5.18f, 0.0f, -5.18f,  
 	5.1013f, -4.985f, -5.1013f, 
 	4.86761f, -6.23095f, -4.86761f, 
 	4.48601f, -7.4f, -4.48601f, 
@@ -3325,7 +1711,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.59f, -10.1086f, -2.59f, 
 	1.77166f, -10.6537f, -1.77166f, 
 	0.899497f, -10.9876f, -0.899497f, 
-
 	-0.899497f, -10.9876f, 0.899497f, 
 	-1.77166f, -10.6537f, 1.77166f, 
 	-2.59f, -10.1086f, 2.59f, 
@@ -3334,41 +1719,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-4.48601f, -7.4f, 4.48601f, 
 	-4.86761f, -6.23095f, 4.86761f, 
 	-5.1013f, -4.985f, 5.1013f, 
-	-5.18f, -3.7f, 5.18f, 
-	-5.18f, -3.5f, 5.18f, 
-	-5.18f, -3.25f, 5.18f, 
-	-5.18f, -3.0f, 5.18f, 
-	-5.18f, -2.75f, 5.18f, 
-	-5.18f, -2.5f, 5.18f, 
-	-5.18f, -2.25f, 5.18f, 
-	-5.18f, -2.0f, 5.18f, 
-	-5.18f, -1.75f, 5.18f, 
-	-5.18f, -1.5f, 5.18f, 
-	-5.18f, -1.25f, 5.18f, 
-	-5.18f, -1.0f, 5.18f, 
-	-5.18f, -0.75f, 5.18f, 
-	-5.18f, -0.5f, 5.18f, 
-	-5.18f, -0.25f, 5.18f, 
 
 	//Blue 5 - x axis
-	8.4f, 0.0f, 0.0f, 
-	8.4f, 0.25f, 0.0f, 
-	8.4f, 0.5f, 0.0f, 
-	8.4f, 0.75f, 0.0f, 
-	8.4f, 1.0f, 0.0f, 
-	8.4f, 1.25f, 0.0f, 
-	8.4f, 1.5f, 0.0f, 
-	8.4f, 1.75f, 0.0f, 
-	8.4f, 2.0f, 0.0f, 
-	8.4f, 2.25f, 0.0f, 
-	8.4f, 2.5f, 0.0f, 
-	8.4f, 2.75f, 0.0f, 
-	8.4f, 3.0f, 0.0f, 
-	8.4f, 3.25f, 0.0f, 
-	8.4f, 3.5f, 0.0f, 
-	8.4f, 3.75f, 0.0f, 
-	8.4f, 4.0f, 0.0f, 
-	8.4f, 4.2f, 0.0f, 
+	8.4f, 0.0f, 0.0f,  
 	8.27238f, 5.65865f, 0.0f, 
 	7.89342f, 7.07297f, 0.0f, 
 	7.27461f, 8.4f, 0.0f, 
@@ -3378,7 +1731,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.87297f, 12.0934f, 0.0f, 
 	1.45864f, 12.4724f, 0.0f, 
 	-3.67176e-007f, 12.6f, 0.0f,
-
 	-1.45864f, 12.4724f, 0.0f, 
 	-2.87297f, 12.0934f, 0.0f, 
 	-4.2f, 11.4746f, 0.0f, 
@@ -3387,42 +1739,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-7.27461f, 8.4f, 0.0f, 
 	-7.89342f, 7.07297f, 0.0f, 
 	-8.27238f, 5.65864f, 0.0f, 
-	-8.4f, 4.2f, 0.0f, 
-	-8.4f, 4.0f, 0.0f, 
-	-8.4f, 3.75f, 0.0f, 
-	-8.4f, 3.5f, 0.0f, 
-	-8.4f, 3.25f, 0.0f, 
-	-8.4f, 3.0f, 0.0f, 
-	-8.4f, 2.75f, 0.0f, 
-	-8.4f, 2.5f, 0.0f, 
-	-8.4f, 2.25f, 0.0f, 
-	-8.4f, 2.0f, 0.0f, 
-	-8.4f, 1.75f, 0.0f, 
-	-8.4f, 1.5f, 0.0f, 
-	-8.4f, 1.25f, 0.0f, 
-	-8.4f, 1.0f, 0.0f, 
-	-8.4f, 0.75f, 0.0f, 
-	-8.4f, 0.5f, 0.0f, 
-	-8.4f, 0.25f, 0.0f, 
+	
 	-8.4f, 0.0f, 0.0f,
-
-	-8.4f, -0.25f, 0.0f, 
-	-8.4f, -0.5f, 0.0f, 
-	-8.4f, -0.75f, 0.0f, 
-	-8.4f, -1.0f, 0.0f, 
-	-8.4f, -1.25f, 0.0f, 
-	-8.4f, -1.5f, 0.0f, 
-	-8.4f, -1.75f, 0.0f, 
-	-8.4f, -2.0f, 0.0f, 
-	-8.4f, -2.25f, 0.0f, 
-	-8.4f, -2.5f, 0.0f, 
-	-8.4f, -2.75f, 0.0f, 
-	-8.4f, -3.0f, 0.0f, 
-	-8.4f, -3.25f, 0.0f, 
-	-8.4f, -3.5f, 0.0f, 
-	-8.4f, -3.75f, 0.0f, 
-	-8.4f, -4.0f, 0.0f, 
-	-8.4f, -4.2f, 0.0f, 
 	-8.27238f, -5.65865f, 0.0f, 
 	-7.89342f, -7.07297f, 0.0f, 
 	-7.27461f, -8.4f, 0.0f, 
@@ -3432,7 +1750,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.87297f, -12.0934f, 0.0f, 
 	-1.45864f, -12.4724f, 0.0f, 
 	1.00169e-007f, -12.6f, 0.0f,
-
 	1.45864f, -12.4724f, 0.0f, 
 	2.87297f, -12.0934f, 0.0f, 
 	4.2f, -11.4746f, 0.0f, 
@@ -3441,43 +1758,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	7.27461f, -8.4f, 0.0f, 
 	7.89342f, -7.07297f, 0.0f, 
 	8.27238f, -5.65864f, 0.0f, 
-	8.4f, -4.2f, 0.0f, 
-	8.4f, -4.0f, 0.0f, 
-	8.4f, -3.75f, 0.0f, 
-	8.4f, -3.5f, 0.0f, 
-	8.4f, -3.25f, 0.0f, 
-	8.4f, -3.0f, 0.0f, 
-	8.4f, -2.75f, 0.0f, 
-	8.4f, -2.5f, 0.0f, 
-	8.4f, -2.25f, 0.0f, 
-	8.4f, -2.0f, 0.0f, 
-	8.4f, -1.75f, 0.0f, 
-	8.4f, -1.5f, 0.0f, 
-	8.4f, -1.25f, 0.0f, 
-	8.4f, -1.0f, 0.0f, 
-	8.4f, -0.75f, 0.0f, 
-	8.4f, -0.5f, 0.0f, 
-	8.4f, -0.25f, 0.0f, 
 
 	//Blue 5 - z axis
 	0.0f, 0.0f, 8.4f, 
-	0.0f, 0.25f, 8.4f, 
-	0.0f, 0.5f, 8.4f, 
-	0.0f, 0.75f, 8.4f, 
-	0.0f, 1.0f, 8.4f, 
-	0.0f, 1.25f, 8.4f, 
-	0.0f, 1.5f, 8.4f, 
-	0.0f, 1.75f, 8.4f, 
-	0.0f, 2.0f, 8.4f, 
-	0.0f, 2.25f, 8.4f, 
-	0.0f, 2.5f, 8.4f, 
-	0.0f, 2.75f, 8.4f, 
-	0.0f, 3.0f, 8.4f, 
-	0.0f, 3.25f, 8.4f, 
-	0.0f, 3.5f, 8.4f, 
-	0.0f, 3.75f, 8.4f, 
-	0.0f, 4.0f, 8.4f, 
-	0.0f, 4.2f, 8.4f, 
 	0.0f, 5.65865f, 8.27238f, 
 	0.0f, 7.07297f, 7.89342f, 
 	0.0f, 8.4f, 7.27461f, 
@@ -3486,7 +1769,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 11.4746f, 4.2f, 
 	0.0f, 12.0934f, 2.87297f, 
 	0.0f, 12.4724f, 1.45864f, 
-
 	0.0f, 12.4724f, -1.45864f, 
 	0.0f, 12.0934f, -2.87297f, 
 	0.0f, 11.4746f, -4.2f, 
@@ -3495,42 +1777,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, 8.4f, -7.27461f, 
 	0.0f, 7.07297f, -7.89342f, 
 	0.0f, 5.65864f, -8.27238f, 
-	0.0f, 4.2f, -8.4f, 
-	0.0f, 4.0f, -8.4f, 
-	0.0f, 3.75f, -8.4f, 
-	0.0f, 3.5f, -8.4f, 
-	0.0f, 3.25f, -8.4f, 
-	0.0f, 3.0f, -8.4f, 
-	0.0f, 2.75f, -8.4f, 
-	0.0f, 2.5f, -8.4f, 
-	0.0f, 2.25f, -8.4f, 
-	0.0f, 2.0f, -8.4f, 
-	0.0f, 1.75f, -8.4f, 
-	0.0f, 1.5f, -8.4f, 
-	0.0f, 1.25f, -8.4f, 
-	0.0f, 1.0f, -8.4f, 
-	0.0f, 0.75f, -8.4f, 
-	0.0f, 0.5f, -8.4f, 
-	0.0f, 0.25f, -8.4f, 
+	
 	0.0f, 0.0f, -8.4f,
-
-	0.0f, -0.25f, -8.4f, 
-	0.0f, -0.5f, -8.4f, 
-	0.0f, -0.75f, -8.4f, 
-	0.0f, -1.0f, -8.4f, 
-	0.0f, -1.25f, -8.4f, 
-	0.0f, -1.5f, -8.4f, 
-	0.0f, -1.75f, -8.4f, 
-	0.0f, -2.0f, -8.4f, 
-	0.0f, -2.25f, -8.4f, 
-	0.0f, -2.5f, -8.4f, 
-	0.0f, -2.75f, -8.4f, 
-	0.0f, -3.0f, -8.4f, 
-	0.0f, -3.25f, -8.4f, 
-	0.0f, -3.5f, -8.4f, 
-	0.0f, -3.75f, -8.4f, 
-	0.0f, -4.0f, -8.4f, 
-	0.0f, -4.2f, -8.4f, 
 	0.0f, -5.65865f, -8.27238f, 
 	0.0f, -7.07297f, -7.89342f, 
 	0.0f, -8.4f, -7.27461f, 
@@ -3539,7 +1787,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -11.4746f, -4.2f, 
 	0.0f, -12.0934f, -2.87297f, 
 	0.0f, -12.4724f, -1.45864f, 
-
 	0.0f, -12.4724f, 1.45864f, 
 	0.0f, -12.0934f, 2.87297f, 
 	0.0f, -11.4746f, 4.2f, 
@@ -3548,43 +1795,9 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	0.0f, -8.4f, 7.27461f, 
 	0.0f, -7.07297f, 7.89342f, 
 	0.0f, -5.65864f, 8.27238f, 
-	0.0f, -4.2f, 8.4f, 
-	0.0f, -4.0f, 8.4f, 
-	0.0f, -3.75f, 8.4f, 
-	0.0f, -3.5f, 8.4f, 
-	0.0f, -3.25f, 8.4f, 
-	0.0f, -3.0f, 8.4f, 
-	0.0f, -2.75f, 8.4f, 
-	0.0f, -2.5f, 8.4f, 
-	0.0f, -2.25f, 8.4f, 
-	0.0f, -2.0f, 8.4f, 
-	0.0f, -1.75f, 8.4f, 
-	0.0f, -1.5f, 8.4f, 
-	0.0f, -1.25f, 8.4f, 
-	0.0f, -1.0f, 8.4f, 
-	0.0f, -0.75f, 8.4f, 
-	0.0f, -0.5f, 8.4f, 
-	0.0f, -0.25f, 8.4f, 
 
 	//Blue 5 - x - z axis
 	5.88f, 0.0f, 5.88f, 
-	5.88f, 0.25f, 5.88f, 
-	5.88f, 0.5f, 5.88f, 
-	5.88f, 0.75f, 5.88f, 
-	5.88f, 1.0f, 5.88f, 
-	5.88f, 1.25f, 5.88f, 
-	5.88f, 1.5f, 5.88f, 
-	5.88f, 1.75f, 5.88f, 
-	5.88f, 2.0f, 5.88f, 
-	5.88f, 2.25f, 5.88f, 
-	5.88f, 2.5f, 5.88f, 
-	5.88f, 2.75f, 5.88f, 
-	5.88f, 3.0f, 5.88f, 
-	5.88f, 3.25f, 5.88f, 
-	5.88f, 3.5f, 5.88f, 
-	5.88f, 3.75f, 5.88f, 
-	5.88f, 4.0f, 5.88f, 
-	5.88f, 4.2f, 5.88f, 
 	5.79067f, 5.65865f, 5.79067f, 
 	5.52539f, 7.07297f, 5.52539f, 
 	5.09223f, 8.4f, 5.09223f, 
@@ -3593,7 +1806,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.94f, 11.4746f, 2.94f, 
 	2.01108f, 12.0934f, 2.01108f, 
 	1.02105f, 12.4724f, 1.02105f, 
-
 	-1.02105f, 12.4724f, -1.02105f, 
 	-2.01108f, 12.0934f, -2.01108f, 
 	-2.94f, 11.4746f, -2.94f, 
@@ -3602,42 +1814,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-5.09223f, 8.4f, -5.09223f, 
 	-5.52539f, 7.07297f, -5.52539f, 
 	-5.79067f, 5.65864f, -5.79067f, 
-	-5.88f, 4.2f, -5.88f, 
-	-5.88f, 4.0f, -5.88f, 
-	-5.88f, 3.75f, -5.88f, 
-	-5.88f, 3.5f, -5.88f, 
-	-5.88f, 3.25f, -5.88f, 
-	-5.88f, 3.0f, -5.88f, 
-	-5.88f, 2.75f, -5.88f, 
-	-5.88f, 2.5f, -5.88f, 
-	-5.88f, 2.25f, -5.88f, 
-	-5.88f, 2.0f, -5.88f, 
-	-5.88f, 1.75f, -5.88f, 
-	-5.88f, 1.5f, -5.88f, 
-	-5.88f, 1.25f, -5.88f, 
-	-5.88f, 1.0f, -5.88f, 
-	-5.88f, 0.75f, -5.88f, 
-	-5.88f, 0.5f, -5.88f, 
-	-5.88f, 0.25f, -5.88f, 
+	 
 	-5.88f, 0.0f, -5.88f, 
-
-	-5.88f, -0.25f, -5.88f, 
-	-5.88f, -0.5f, -5.88f, 
-	-5.88f, -0.75f, -5.88f, 
-	-5.88f, -1.0f, -5.88f, 
-	-5.88f, -1.25f, -5.88f, 
-	-5.88f, -1.5f, -5.88f, 
-	-5.88f, -1.75f, -5.88f, 
-	-5.88f, -2.0f, -5.88f, 
-	-5.88f, -2.25f, -5.88f, 
-	-5.88f, -2.5f, -5.88f, 
-	-5.88f, -2.75f, -5.88f, 
-	-5.88f, -3.0f, -5.88f, 
-	-5.88f, -3.25f, -5.88f, 
-	-5.88f, -3.5f, -5.88f, 
-	-5.88f, -3.75f, -5.88f, 
-	-5.88f, -4.0f, -5.88f, 
-	-5.88f, -4.2f, -5.88f, 
 	-5.79067f, -5.65865f, -5.79067f, 
 	-5.52539f, -7.07297f, -5.52539f, 
 	-5.09223f, -8.4f, -5.09223f, 
@@ -3646,7 +1824,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.94f, -11.4746f, -2.94f, 
 	-2.01108f, -12.0934f, -2.01108f, 
 	-1.02105f, -12.4724f, -1.02105f, 
-
 	1.02105f, -12.4724f, 1.02105f, 
 	2.01108f, -12.0934f, 2.01108f, 
 	2.94f, -11.4746f, 2.94f, 
@@ -3654,45 +1831,11 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	4.50434f, -9.59941f, 4.50434f, 
 	5.09223f, -8.4f, 5.09223f, 
 	5.52539f, -7.07297f, 5.52539f, 
-	5.79067f, -5.65864f, 5.79067f, 
-	5.88f, -4.2f, 5.88f, 
-	5.88f, -4.0f, 5.88f, 
-	5.88f, -3.75f, 5.88f, 
-	5.88f, -3.5f, 5.88f, 
-	5.88f, -3.25f, 5.88f, 
-	5.88f, -3.0f, 5.88f, 
-	5.88f, -2.75f, 5.88f, 
-	5.88f, -2.5f, 5.88f, 
-	5.88f, -2.25f, 5.88f, 
-	5.88f, -2.0f, 5.88f, 
-	5.88f, -1.75f, 5.88f, 
-	5.88f, -1.5f, 5.88f, 
-	5.88f, -1.25f, 5.88f, 
-	5.88f, -1.0f, 5.88f, 
-	5.88f, -0.75f, 5.88f, 
-	5.88f, -0.5f, 5.88f, 
-	5.88f, -0.25f, 5.88f, 
+	5.79067f, -5.65864f, 5.79067f,  
 
 
 	//Blue 5 - - x - z axis
 	-5.88f, 0.0f, 5.88f, 
-	-5.88f, 0.25f, 5.88f, 
-	-5.88f, 0.5f, 5.88f, 
-	-5.88f, 0.75f, 5.88f, 
-	-5.88f, 1.0f, 5.88f, 
-	-5.88f, 1.25f, 5.88f, 
-	-5.88f, 1.5f, 5.88f, 
-	-5.88f, 1.75f, 5.88f, 
-	-5.88f, 2.0f, 5.88f, 
-	-5.88f, 2.25f, 5.88f, 
-	-5.88f, 2.5f, 5.88f, 
-	-5.88f, 2.75f, 5.88f, 
-	-5.88f, 3.0f, 5.88f, 
-	-5.88f, 3.25f, 5.88f, 
-	-5.88f, 3.5f, 5.88f, 
-	-5.88f, 3.75f, 5.88f, 
-	-5.88f, 4.0f, 5.88f, 
-	-5.88f, 4.2f, 5.88f, 
 	-5.79067f, 5.65865f, 5.79067f, 
 	-5.52539f, 7.07297f, 5.52539f, 
 	-5.09223f, 8.4f, 5.09223f, 
@@ -3701,7 +1844,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-2.94f, 11.4746f, 2.94f, 
 	-2.01108f, 12.0934f, 2.01108f, 
 	-1.02105f, 12.4724f, 1.02105f, 
-
 	1.02105f, 12.4724f, -1.02105f, 
 	2.01108f, 12.0934f, -2.01108f, 
 	2.94f, 11.4746f, -2.94f, 
@@ -3710,42 +1852,8 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	5.09223f, 8.4f, -5.09223f, 
 	5.52539f, 7.07297f, -5.52539f, 
 	5.79067f, 5.65864f, -5.79067f, 
-	5.88f, 4.2f, -5.88f, 
-	5.88f, 4.0f, -5.88f, 
-	5.88f, 3.75f, -5.88f, 
-	5.88f, 3.5f, -5.88f, 
-	5.88f, 3.25f, -5.88f, 
-	5.88f, 3.0f, -5.88f, 
-	5.88f, 2.75f, -5.88f, 
-	5.88f, 2.5f, -5.88f, 
-	5.88f, 2.25f, -5.88f, 
-	5.88f, 2.0f, -5.88f, 
-	5.88f, 1.75f, -5.88f, 
-	5.88f, 1.5f, -5.88f, 
-	5.88f, 1.25f, -5.88f, 
-	5.88f, 1.0f, -5.88f, 
-	5.88f, 0.75f, -5.88f, 
-	5.88f, 0.5f, -5.88f, 
-	5.88f, 0.25f, -5.88f, 
-	5.88f, 0.0f, -5.88f, 
-
-	5.88f, -0.25f, -5.88f, 
-	5.88f, -0.5f, -5.88f, 
-	5.88f, -0.75f, -5.88f, 
-	5.88f, -1.0f, -5.88f, 
-	5.88f, -1.25f, -5.88f, 
-	5.88f, -1.5f, -5.88f, 
-	5.88f, -1.75f, -5.88f, 
-	5.88f, -2.0f, -5.88f, 
-	5.88f, -2.25f, -5.88f, 
-	5.88f, -2.5f, -5.88f, 
-	5.88f, -2.75f, -5.88f, 
-	5.88f, -3.0f, -5.88f, 
-	5.88f, -3.25f, -5.88f, 
-	5.88f, -3.5f, -5.88f, 
-	5.88f, -3.75f, -5.88f, 
-	5.88f, -4.0f, -5.88f, 
-	5.88f, -4.2f, -5.88f, 
+	
+	5.88f, 0.0f, -5.88f,  
 	5.79067f, -5.65865f, -5.79067f, 
 	5.52539f, -7.07297f, -5.52539f, 
 	5.09223f, -8.4f, -5.09223f, 
@@ -3754,7 +1862,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	2.94f, -11.4746f, -2.94f, 
 	2.01108f, -12.0934f, -2.01108f, 
 	1.02105f, -12.4724f, -1.02105f, 
-	
 	-1.02105f, -12.4724f, 1.02105f, 
 	-2.01108f, -12.0934f, 2.01108f, 
 	-2.94f, -11.4746f, 2.94f, 
@@ -3763,23 +1870,6 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-5.09223f, -8.4f, 5.09223f, 
 	-5.52539f, -7.07297f, 5.52539f, 
 	-5.79067f, -5.65864f, 5.79067f, 
-	-5.88f, -4.2f, 5.88f, 
-	-5.88f, -4.0f, 5.88f, 
-	-5.88f, -3.75f, 5.88f, 
-	-5.88f, -3.5f, 5.88f, 
-	-5.88f, -3.25f, 5.88f, 
-	-5.88f, -3.0f, 5.88f, 
-	-5.88f, -2.75f, 5.88f, 
-	-5.88f, -2.5f, 5.88f, 
-	-5.88f, -2.25f, 5.88f, 
-	-5.88f, -2.0f, 5.88f, 
-	-5.88f, -1.75f, 5.88f, 
-	-5.88f, -1.5f, 5.88f, 
-	-5.88f, -1.25f, 5.88f, 
-	-5.88f, -1.0f, 5.88f, 
-	-5.88f, -0.75f, 5.88f, 
-	-5.88f, -0.5f, 5.88f, 
-	-5.88f, -0.25f, 5.88f,
 
 
 	//Blue 6 - x axis
@@ -3877,25 +1967,25 @@ float const CGALInterpolationSimulator::m_Initialization3DPointList[NUM_INITIALI
 	-9.6f, -0.5f, 9.6f,
 };
 
-double const CGALInterpolationSimulator::m_InitializationMagForceList[NUM_INITIALIZATION_POINTS] = 
+double const CGALInterpolationSimulator::m_InitializationMagForceList [NUM_SETS][NUM_INITIALIZATION_POINTS] = 
 {	
 	// In magnet
-	14.2f, 14.4f, 14.4f, 14.4f, 14.4f, 14.4f, 14.4f, 14.4f, 14.4f,
-	13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
-	13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
-	13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f,
-	13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f,
+{	13.6f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
+	13.8f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f,
+	14.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
+	13.8f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f, 14.2f,
+	13.6f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
 
 	// Inner magnet  half 0.5//
 	13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
-	13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
+	14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f,
 	13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f, 13.8f,
 
 
 	//Between coil and magnet
+	14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f,
 	15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
-	15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
-	15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
+	14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f, 14.5f,
 
 	//Around the loop of the coil
 	15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
@@ -3915,408 +2005,254 @@ double const CGALInterpolationSimulator::m_InitializationMagForceList[NUM_INITIA
 	15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f, 15.0f,
 
 	// Top Magnet Yellow
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
 
 	// Bot Magnet Yellow
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
-	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
+	12.5f, 12.5f, 12.5f, 12.5f, 12.5f, 12.5f,
 
 	//Green - x axis
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	13.0f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	11.5f, 12.0f, 13.0f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	11.5f, 11.5f, 11.5f, 12.0f,
 
 	//Green - z axis
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	11.5f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	12.0f, 11.5f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	11.5f, 12.0f,
 
 	//Green - +x -z axis
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f,
+	11.5f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	12.0f, 11.5f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	11.5f, 12.0f,
 
 	//Green - -x -z axis
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
-	9.0f, 9.0f,
+	11.5f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	12.0f, 11.5f, 12.0f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f, 11.5f,
+	11.5f, 12.0f,
 
 	//Green 2 - x axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
 
 	//Green 2 - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f,
 
 	//Green 2 - x - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f,
 
-	//Inner green 2 - -x - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f,
+	//Green 2 - -x - z axis
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f, 9.1f,
+	9.1f, 9.1f, 9.1f, 9.1f,
 
 	//Green 3 - x axis
-
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 
 
 	//Green 3 - z axis
-
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f,
 
 	//Green 3 - x - z axis
-
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f,
 
 	//Green 3 - -x - z axis
-
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f,
 
 	//Green 4 - x axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
 
 	//Green 4 - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f,
 
 	//Green 4 - x - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f,
 
 	//Green 4 - - x  - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f, 7.0f,
+	7.0f, 7.0f, 7.0f, 7.0f,
 
 	//Green 5 - x axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
 
 	//Green 5 - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f,
 
 	//Green 5 - x - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 
 
 	//Green 5 - -x - z axis
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
-	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f,
 
 	//Blue - x axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
 
 	//Blue - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f,
 
 	//Blue - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f,
 
 	//Blue - - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f,
 
 	//Blue 2 - x axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
 
 	//Blue 2 - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f,
 
 	//Blue 2 - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f,
 
 	//Blue 2 - - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f,
 
 	//Blue 3 - x axis
 
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
 
 	//Blue 3 - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
 
 	//Blue 3 - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
 
 	//Blue 3 - - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
 
-	//Blue 3 - x axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
+	//Blue 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-	//Blue 3 - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f,
+	//Blue 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
 
-	//Blue 3 - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f,
+	//Blue 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
 
-	//Blue 3 - - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f,
+	//Blue 4 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
 
 	//Blue 5 - x axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
 	//Blue 5 - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
 
 	//Blue 5 - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
 
 	//Blue 5 - - x - z axis
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f, 1.8f,
-	1.8f, 1.8f,
-	
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
 	//Blue 6 - x axis
 	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -4331,1097 +2267,1212 @@ double const CGALInterpolationSimulator::m_InitializationMagForceList[NUM_INITIA
 
 	//Blue 6 - - x - z axis
 	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+
+
+		// In magnet
+{	12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f,
+	13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f,
+	13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f,
+	13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f,
+	12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f,
+
+	// Inner magnet  half 0.5//
+	12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f,
+	13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f, 13.0f,
+	12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f,
+
+
+	//Between coil and magnet
+	12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f,
+	13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f, 13.2f,
+	12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f, 12.2f,
+
+	//Around the loop of the coil
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+	13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f, 13.5f,
+
+
+	// Top Magnet Yellow
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+
+	// Bot Magnet Yellow
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+	11.3f, 11.3f, 11.3f, 11.3f, 11.3f, 11.3f,
+
+	//Green - x axis
+	11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	10.0f, 11.0f, 11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	10.0f, 10.0f, 10.0f, 11.0f,
+
+	//Green - z axis
+	11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	11.0f, 11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	10.0f, 11.0f,
+
+	//Green - +x -z axis
+	11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	11.0f, 11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	10.0f, 11.0f,
+
+	//Green - -x -z axis
+	11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	11.0f, 11.6f, 11.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	10.0f, 11.0f,
+
+	//Green 2 - x axis
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 
+
+	//Green 2 - z axis
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f,
+
+	//Green 2 - x - z axis
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f,
+
+	//Green 2 - -x - z axis
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f, 8.5f,
+	8.5f, 8.5f, 8.5f, 8.5f,
+
+	//Green 3 - x axis
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+
+	//Green 3 - z axis
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f,
+
+	//Green 3 - x - z axis
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f,
+
+	//Green 3 - -x - z axis
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f, 6.0f,
+	6.0f, 6.0f, 6.0f, 6.0f,
+
+	//Green 4 - x axis
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+
+	//Green 4 - z axis
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f,
+
+	//Green 4 - x - z axis
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f,
+
+	//Green 4 - - x  - z axis
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f, 4.5f,
+	4.5f, 4.5f, 4.5f, 4.5f,
+
+	//Green 5 - x axis
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+
+	//Green 5 - z axis
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f,
+
+	//Green 5 - x - z axis
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 
+
+	//Green 5 - -x - z axis
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f,
+
+	//Blue - x axis
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+
+	//Blue - z axis
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f,
+
+	//Blue - x - z axis
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f,
+
+	//Blue - - x - z axis
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	2.5f, 2.5f, 2.5f, 2.5f,
+
+	//Blue 2 - x axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 2 - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 2 - x - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 2 - - x - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 
+
+	//Blue 3 - x axis
+
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 3 - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 3 - x - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 3 - - x - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Blue 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+
+
+		// In magnet
+{	
+	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f, 10.5f,
+	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+
+	// Inner magnet  half 0.5//
+	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+
+
+	//Between coil and magnet
+	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f, 10.0f,
+
+	//Around the loop of the coil
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+	11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f, 11.0f,
+
+	// Top Magnet Yellow
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+
+	// Bot Magnet Yellow
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+	9.0f, 9.0f, 9.0f, 9.0f, 9.0f, 9.0f,
+
+	//Green - x axis
+	15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	8.0f, 14.0f, 15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	8.0f, 8.0f, 8.0f, 14.0f,
+
+	//Green - z axis
+	15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	8.0f, 14.0f, 15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	8.0f, 14.0f,
+
+	//Green - +x -z axis
+	15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	14.0f, 15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	8.0f, 14.0f,
+
+	//Green - -x -z axis
+	15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	14.0f, 15.0f, 14.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f, 8.0f,
+	8.0f, 14.0f,
+
+	//Green 2 - x axis
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+
+	//Green 2 - z axis
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f,
+
+	//Green 2 - x - z axis
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f,
+
+	//Green 2 - -x - z axis
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f, 3.5f,
+	3.5f, 3.5f, 3.5f, 3.5f,
+
+	//Green 3 - x axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 3 - z axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 3 - x - z axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 3 - -x - z axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 4 - x axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Green 4 - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Green 4 - x - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Green 4 - - x  - z axis
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,
+	0.5f, 0.5f, 0.5f, 0.5f,
+
+	//Green 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - -x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 
+
+	//Blue 3 - x axis
+
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+
+
+	// In magnet
+{	5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f,
+	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f, 6.6f,
+	5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f,
+
+	// Inner magnet  half 0.5//
+	5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f,
+
+
+	//Between coil and magnet
+	5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f, 5.5f,
+
+	//Around the loop of the coil
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+	7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f, 7.6f,
+
+	// Top Magnet Yellow
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+
+	// Bot Magnet Yellow
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+
+	//Green - x axis
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f,
+
+	//Green - z axis
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f,
+
+	//Green - +x -z axis
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f,
+
+	//Green - -x -z axis
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f, 3.8f,
+	3.8f, 3.8f,
+
+	//Green 2 - x axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 2 - z axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 2 - x - z axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 2 - -x - z axis
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f,
+	1.5f, 1.5f, 1.5f, 1.5f,
+
+	//Green 3 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - -x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - - x  - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - -x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 
+
+	//Blue 3 - x axis
+
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f },
+
+
+	{	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+
+	// Inner magnet  half 0.5//
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+
+
+	//Between coil and magnet
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f, 2.5f,
+
+	//Around the loop of the coil
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+	4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f, 4.0f,
+
+
+	// Top Magnet Yellow
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	// Bot Magnet Yellow
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green - x axis
+	2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f,
+
+	//Green - +x -z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f,
+
+	//Green - -x -z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f,
+
+	//Green 2 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 2 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 2 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 2 - -x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 3 - -x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 4 - - x  - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Green 5 - -x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 2 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 
+
+	//Blue 3 - x axis
+
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 3 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 4 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 5 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+
+	//Blue 6 - - x - z axis
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }
+
 };
-/*
-float const CGALInterpolationSimulator::m_InitializationDirVecList[NUM_INITIALIZATION_POINTS] = 
-{
-	// Inner magnet middle//
-	90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f,	90.0f,
-
-	// Inner magnet mid top//
-	90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f,	90.0f,
-
-	// Inner magnet mid bot//
-	90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f,	90.0f,
-
-	// Inner magnet top//
-	90.0f, 85.0f, 85.0f, 85.0f, 85.0f, 85.0f, 85.0f, 85.0f,	85.0f,
-
-	// Inner magnet bot//
-	90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f, 90.0f,	90.0f,
-
-	// Inner magnet  half middle//
-	80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f,
-
-	// Inner magnet half top//
-	80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f,
-
-	// Inner magnet half bot//
-	80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f, 80.0f,
-	
-
-	// Between coil and magnet mid//
-	90.0f, 90.0f, 90.0f, 90.0f,	90.0f, 90.0f, 90.0f, 90.0f,
-
-	// Between coil and magnet bot//
-	110.0f,	110.0f,	110.0f,	110.0f,	110.0f,	110.0f,	110.0f,	110.0f,
-
-	// Between coil and magnet top//
-	70.0f, 70.0f, 70.0f, 70.0f,	70.0f, 70.0f, 70.0f, 70.0f,
-
-	//////Near the coil///////
-	
-	330.0f, 60.0f, 0.0f, 330.0f,
-
-	325.7f,	60.0f,	0.0f, 325.7f,
-
-	321.4f,	60.0f, 0.0f, 321.4f,
-
-	317.1f,	60.0f, 0.0f, 317.1f,
-
-	312.8f,	70.0f, 0.0f, 312.8f,
-
-	325.0f,	75.0f, 7.5f, 180.0f,
-
-	304.2f, 70.0f, 0.0f, 304.2f,
-
-	299.9f, 70.0f, 0.0f, 299.9f,
-
-	295.6f, 80.0f, 0.0f, 295.6f,
-
-	291.3f,	80.0f, 0.0f, 291.3f,
-
-	287.0f,	80.0f, 0.0f, 287.0f,
-
-	282.7f,	80.0f, 0.0f, 282.7f,
-
-	270.0f,	90.0f, 0.0f, 180.0f,
-
-	325.0f,	90.0f, 0.0f, 180.0f,
-
-	270.0f,	90.0f, 0.0f, 180.0f,
-	
-	270.0f,	90.0f, 0.0f, 180.0f,
-
-	265.7f,	90.0f, 0.0f, 180.0f,
-
-	261.4f,	95.0f, 354.0f, 261.4f,
-
-	257.1f,	100.0f, 352.0f,	257.1f,
-
-	252.8f,	100.0f,	350.0f,	252.8f,
-
-	270.0f,	90.0f, 0.0f, 180.0f,
-	
-	65.1f,	100.0f,	346.0f,	244.2f,
-
-	239.9f,	100.0f,	344.0f,	239.9f,
-
-	235.6f,	110.0f,	342.0f,	235.6f,
-
-	231.3f,	110.0f,	340.0f,	231.3f,
-
-	227.0f,	110.0f,	338.0f,	227.0f,
-
-	222.7f,	110.0f,	336.0f,	170.7f,
-
-	218.4f,	120.0f,	334.0f,	170.4f,
-
-	270.0f,	90.0f, 0.0f, 180.0f,
-
-	270.0f,	120.0f,	0.0f, 180.0f,*/
-
-	//Between the loops of the coil//
-	/*330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	330.0f,
-	30.0f,
-
-	0.0f,
-	0.0f,
-
-	0.0f,
-	0.0f,
-
-	0.0f,
-	0.0f,
-
-	0.0f,
-	0.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	240.0f,
-	150.0f,
-
-	//Near coil green
-
-	340.0f,
-	336.0f,
-	332.0f,
-	328.0f,
-	
-	324.0f,
-	320.0f,
-	316.0f,
-	312.0f,
-	
-	308.0f,
-	304.0f,
-	300.0f,
-	296.0f,
-
-	292.0f,
-	280.0f,	
-	270.0f,
-	270.0f,
-	
-	260.0f,
-	258.0f,	
-	254.0f,	
-	250.0f,
-	
-	246.0f,	
-	242.0f,	
-	238.0f,	
-	234.0f,
-	
-	230.0f,	
-	226.0f,	
-	222.0f,
-	218.0f,
-
-	214.0f,
-	210.0f,*/
-/*
-	// Up Magnet Yellow
-	60.0f, 
-	90.0f, 
-	80.0f, 
-	90.0f, 
-	100.0f,
-	110.0f,
-	125.0f,
-	// Inner green//
-
-270.0f, 
-290.0f, 
-300.0f, 
-320.0f, 
-340.0f,
-15.0f,
-20.0f,
-25.0f,
-41.0f,
-58.0f,
-69.0f,
-80.0f,
-90.0f, 
-
-95.0f, 
-100.0f, 
-115.0f, 
-125.0f, 
-135.0f,
-150.0f,
-160.0f,
-180.0f,
-220.0f,
-225.0f,
-250.0f,
-270.0f,
-
- 
-290.0f, 
-315.0f, 
-320.0f, 
-0.0f,
-20.0f,
-30.0f,
-45.0f,
-55.0f,
-65.0f,
-80.0f,
-85.0f,
-90.0f, 
-
-100.0f, 
-115.0f, 
-120.0f, 
-130.0f, 
-140.0f,
-170.0f,
-175.0f,
-180.0f,
-202.5f,
-225.0f,
-247.5f,
-
-
-	// Middle 1 Inner green//
-
-270.0f,
-302.4f, 
-304.0f, 
-20.0f, 
-335.0f,
-355.0f,
-0.0f,
-20.0f,
-52.0f,
-2.0f, 
-48.0f,
-56.0f, 
-64.0f, 
-72.0f, 
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-
-// Middle 2 Inner green//
-
-270.0f,
-322.0f, 
-335.0f, 
-315.0f, 
-335.5f,
-2.0f,
-12.5f,
-15.5f,
-24.0f,
-46.0f,
-6.0f, 
-43.0f,
-51.0f, 
-59.0f, 
-67.0f, 
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-// Middle 3 Inner green//
-
-270.0f,
-300.0f, 
-308.0f, 
-322.0f, 
-348.0f,
-358.0f,
-7.5f,
-7.5f,
-12.5f,
-23.0f,
-40.0f,
-0.0f, 
-38.0f,
-46.0f, 
-54.0f, 
-62.0f, 
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-
-	// Outer green//
-
-270.0f,
-332.4f, 
-310.0f, 
-323.5f, 
-344.0f,
-354.0f,
-2.5f,
-9.0f,
-8.0f,
-12.5f,
-17.0f,
-34.0f,
-0.0f, 
-33.0f,
-41.0f, 
-49.0f, 
-57.0f, 
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-90.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-90.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-
-	// Inner blue//
-
-270.0f,
-342.4f, 
-275.0f, 
-297.5f, 
-340.0f,
-350.0f,
-357.5f,
-6.0f,
-9.5f,
-5.0f,
-9.0f,
-10.0f,
-28.0f,
-28.0f, 
-33.0f,
-41.0f, 
-49.0f, 
-57.0f, 
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-90.0f,
-90.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-90.0f,
-90.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-
-
-// Middle 1 Inner Blue
-
-270.0f,
-275.0f, 
-282.0f, 
-292.5f, 
-300.0f,
-315.0f,
-325.0f,
-0.0f,
-332.0f,
-334.0f,
-354.0f,
-2.0f,
-6.0f,
-25.0f, 
-33.0f,
-41.0f, 
-49.0f, 
-57.0f, 
-90.0f,
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-90.0f,
-90.0f,
-90.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-90.0f,
-90.0f,
-90.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-
-// Middle 2 Inner Blue
-
-270.0f,
-275.0f, 
-282.0f, 
-289.5f, 
-297.0f,
-306.0f,
-314.0f,
-315.0f,
-337.0f,
-0.0f,
-348.0f,
-350.0f,
-17.0f,
-25.0f, 
-33.0f,
-41.0f, 
-49.0f, 
-57.0f, 
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-// Middle 3 Inner Blue
-
- 270.0f,
-278.0f, 
-285.0f, 
-295.5f, 
-304.0f,
-313.0f,
-322.0f,
-315.0f,
-330.0f,
-335.0f,
-340.0f,
-0.0f,
-17.0f,
-25.0f, 
-33.0f,
-41.0f, 
-49.0f, 
-57.0f, 
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-// Middle 4 Inner Blue
-
-270.0f,
-273.0f, 
-280.0f, 
-287.5f, 
-293.0f,
-300.0f,
-305.0f,
-315.0f,
-330.0f,
-335.0f,
-340.0f,
-9.0f,
-17.0f,
-25.0f, 
-33.0f,
-41.0f, 
-49.0f, 
-57.0f, 
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-340.0f,
-340.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-55.0f,
-270.0f,
-280.0f, 
-280.0f, 
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-280.0f,
-280.0f,
-280.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-280.0f, 
-300.0f,
-310.0f,
-320.0f,
-330.0f,
-340.0f,
-55.0f,
-270.0f,
-280.0f, 
-192.5f, 
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-211.8f, 
-231.2f,
-250.6f,
-250.6f,
-250.6f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-90.0f,
-
-	// Outer blue//
-	90.0f,
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-	90.0f,
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-
-
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-	60.0f,
-	358.0f,
-	340.0f,
-	325.0f,
-	270.0f,
-	215.0f,
-	200.0f,
-	175.0f,
-	120.0f,
-};*/

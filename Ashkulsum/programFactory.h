@@ -1,7 +1,6 @@
 #ifndef PROGRAM_FACTORY_H
 #define PROGRAM_FACTORY_H
 
-//#include "ShaderFactory.h"
 #include "program.h"
 #include <string>
 #include <sstream>

@@ -26,7 +26,6 @@ void OGLReflection::ReflectUniformBlocks (std::vector<DataBlock>& uniformBlock)
 		GLenum properties[] =
 		{
 			GL_NAME_LENGTH,
-            //GL_BUFFER_BINDING,
             GL_BUFFER_DATA_SIZE,
             GL_REFERENCED_BY_VERTEX_SHADER,
             GL_REFERENCED_BY_FRAGMENT_SHADER
@@ -54,8 +53,6 @@ void OGLReflection::ReflectUniformBlocks (std::vector<DataBlock>& uniformBlock)
 			delete[] name;
 
 			block.bufferBinding = glGetProgramResourceIndex(m_Handle, GL_UNIFORM_BLOCK, block.name.c_str());
-			//block.bufferBinding = results[1];
-			//block.bufferBinding = glGetUniformBlockIndex(m_Handle, block.name.c_str ());
 			block.bufferDataSize = results[1];
 			block.referencedBy[ST_VERTEX] = results[2];
 			block.referencedBy[ST_FRAGMENT] = results[3];

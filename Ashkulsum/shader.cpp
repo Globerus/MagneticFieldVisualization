@@ -1,10 +1,7 @@
 #include "stdafx.h"
 #include "shader.h"
 
-//Shader::Shader (std::string const& sName, std::string const& sSource)
 Shader::Shader ()
-	//:	m_Name (sName),
-	//	m_Source (sSource)
 {
 	m_Type = DP_SHADER;
 }
@@ -36,6 +33,12 @@ Shader::Shader (OGLReflection const& reflector, int type)
 						m_Data[SamplerState::shaderLookUp].push_back(Data(DP_SAMPLER_STATE, uniform->name, uniform->location, 0));
 						break;
 					}
+				case GL_SAMPLER_2D_ARRAY:
+                case GL_INT_SAMPLER_2D_ARRAY:
+                case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
+                    m_Data[TextureArray::shaderLookUp].push_back(Data(DP_TEXTURE_ARRAY, uniform->name, uniform->location, 0));
+                    m_Data[SamplerState::shaderLookUp].push_back(Data(DP_SAMPLER_STATE, uniform->name, uniform->location, 0));
+                    break;
 			}
 		}
 	}
@@ -54,14 +57,6 @@ Shader::Shader (OGLReflection const& reflector, int type)
 	if (numReferences > 0)
 	{
 		int index = UniformBuffer::shaderLookUp;
-
-		/*for (auto block = uniformBlocks.begin (); block != uniformBlocks.end (); block ++)
-		{
-			if (block->referencedBy[type])
-			{
-				m_Data[index].push_back (Data (DP_UNIFORM_BUFFER, block->name, block->bufferBinding, block->bufferDataSize));
-			}
-		}*/
 		
 		m_VLayout.resize (numReferences);
 		auto & uniforms = reflector.GetUniforms ();
@@ -99,34 +94,9 @@ Shader::Shader (OGLReflection const& reflector, int type)
 
 	m_Type = static_cast<DrawObjectType> (DP_SHADER + type + 1);
 }
-/*
-std::string Shader::GetSource () const
-{
-	return m_Source;
-}
 
-std::string Shader::GetName () const
-{
-	return m_Name;
-}
-
-void Shader::SetSource (std::string const sSource)
-{
-	m_Source = sSource;
-}
-
-void Shader::SetName (std::string const sName)
-{
-	m_Name = sName;
-}
-*/
 bool Shader::IsValid () const
 {
-	//if (m_Name == "" || m_Source == "")
-	//{
-	//	return false;
-	//}
-
 	return true;
 }
 

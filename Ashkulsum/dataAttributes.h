@@ -61,10 +61,6 @@ enum ElementType
 		DP_MAX_CONTAINER_TYPE,
 	};
 
-//namespace DataAttributes {
-
-	
-
 class DataAttributes
 {
 public:

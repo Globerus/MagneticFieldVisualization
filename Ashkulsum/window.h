@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "trackBall.h"
 #include "timer.h"
+#include "mainLoopTimer.h"
 #include <string>
 
 class Window
@@ -35,6 +36,7 @@ public:
 	PVWUpdater m_PVWUpdater;
 	TrackBall m_TrackBall;
 	Timer m_Timer;
+	MainLoopTimer m_MainLoopTimer;
 	int m_WindowContext;
 	WindowSize m_WindowSize;
 	std::string m_Title;

@@ -6,12 +6,12 @@
 #include "layout.h"
 #include "texture1.h"
 #include "texture2.h"
+#include "texture2Array.h"
 #include "samplerState.h"
 
 class Shader : public DrawObject
 {
 public:
-	//Shader (std::string const& sName, std::string const& sSource);
 	Shader ();
 	Shader (OGLReflection const& reflector, int type);
 
@@ -22,11 +22,6 @@ public:
 		TextureArrayShaderDataLookup = 3,
         NUM_LOOKUP_INDICES = 4
 	};
-	//std::string GetSource () const;
-	//std::string GetName () const;
-	
-	//void SetSource (std::string const sSource);
-	//void SetName (std::string const sName);
 	
 	bool IsValid () const;
 
@@ -50,8 +45,6 @@ protected:
 	std::vector<Data> m_Data[NUM_LOOKUP_INDICES];
 
 private:
-	//std::string m_Name;
-	//std::string m_Source;
 
 	std::vector<std::vector<Layout>> m_VLayout;
 

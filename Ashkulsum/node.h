@@ -3,8 +3,6 @@
 
 #include "animatedObject.h"
 #include "transformation.h"
-//#include "glm\glm.hpp"
-//#include "boost\shared_ptr.hpp"
 
 class Node : public AnimatedObject
 {

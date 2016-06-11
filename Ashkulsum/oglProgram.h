@@ -9,7 +9,6 @@ class OGLProgram : public Program
 {
 public:
 	virtual ~OGLProgram();
-	//OGLProgram (GLuint programHandle, GLuint vShaderHandle, GLuint fShaderHandle);
 	OGLProgram (GLuint programHandle);
 
 	GLuint GetProgramHandle () const;
