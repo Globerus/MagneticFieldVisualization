@@ -1,0 +1,719 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="files">
+      <UniqueIdentifier>{46927d21-958a-4925-8d69-45cca857e1a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Loader">
+      <UniqueIdentifier>{2ec17e1d-0938-4d12-86a3-f7da37e5a603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine">
+      <UniqueIdentifier>{5b896a67-13e2-456b-953b-3855f956a89d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\OGL">
+      <UniqueIdentifier>{cc929dcd-d167-4e41-8524-1461ffce6750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\OGL\Shaders">
+      <UniqueIdentifier>{85ac2cf5-e565-4439-809c-8a736b0002aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\OGL\Buffers">
+      <UniqueIdentifier>{40930043-e91d-4912-a9eb-7bb12eb2e2ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\Resource">
+      <UniqueIdentifier>{acaa57ec-f472-4f08-a621-ad42a9b8c4fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\Resource\Buffers">
+      <UniqueIdentifier>{7453e790-4305-4fbb-9c2b-0a9dba94a6cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\Resource\Texture">
+      <UniqueIdentifier>{ec190499-36b1-4155-b898-85b52328e14a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\scene">
+      <UniqueIdentifier>{da56e49b-336c-4f9d-a208-f4cbbd3953d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\Shaders">
+      <UniqueIdentifier>{5b323a58-c331-4f83-bad4-d66aaa55e6ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\VisualEffects">
+      <UniqueIdentifier>{98a29ee1-f034-4fd9-b51a-825b4420fc35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\States">
+      <UniqueIdentifier>{0a34bad1-2ae6-4e45-a23f-be82cfbea6c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\OGL\Textures">
+      <UniqueIdentifier>{fcd65319-17fa-4dc4-b385-02d1bbd070ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\OGL\States">
+      <UniqueIdentifier>{7cfaa082-f64c-4d50-a89d-29f8487eb698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Loader\WICFileLoader">
+      <UniqueIdentifier>{340c2c7e-a38e-4bdb-8647-50e448cf5105}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\scene\spatial">
+      <UniqueIdentifier>{bc4a9a5e-a212-4ad1-b5e4-b85bc85fe202}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\scene\camera">
+      <UniqueIdentifier>{22b7f069-9971-4139-83cf-551c62dbc271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\scene\culling">
+      <UniqueIdentifier>{d68ebb20-c911-458a-ac20-1587b16a63aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\scene\animation">
+      <UniqueIdentifier>{8b54a4c5-9efc-490f-945d-583d03594a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\Timer">
+      <UniqueIdentifier>{ffe380d5-7f82-42d4-9015-c00fa790b1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\VisualEffects\Font">
+      <UniqueIdentifier>{6e88a97b-85b8-48e1-a8b6-21dd8c922a2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\VisualEffects\Lighting">
+      <UniqueIdentifier>{6e162842-4653-4ca1-a49e-25707c6914e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\CGAL Interpolation">
+      <UniqueIdentifier>{43fa6a1d-8e60-4d7a-8876-241bad43a414}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Engine\VisualEffects\Non-lighting">
+      <UniqueIdentifier>{d2b503b0-f181-4090-a5ba-5c9d525f4d52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Mathematics">
+      <UniqueIdentifier>{4f24ba6a-70a4-46f9-b0e5-3893ebb03587}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="transformation.h">
+      <Filter>files\Engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="oglProgramFactory.h">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="programFactory.h">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="oglProgramManager.h">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="oglProgram.h">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="program.h">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="oglReflection.h">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="vertexShader.h">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="oglUniformBuffer.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="uniformBuffer.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="buffer.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="drawObject.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="oglDrawObject.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="layout.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="visualeffect.h">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="oglEngine.h">
+      <Filter>files\Engine\OGL</Filter>
+    </ClInclude>
+    <ClInclude Include="fragmentShader.h">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="vertexAttributes.h">
+      <Filter>files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="indexAttributes.h">
+      <Filter>files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="dataAttributes.h">
+      <Filter>files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="customMap.h">
+      <Filter>files\Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="oglInclude.h">
+      <Filter>files\Engine\OGL</Filter>
+    </ClInclude>
+    <ClInclude Include="oglVertexBuffer.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="oglIndexBuffer.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="resourceO.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="vertexBuffer.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="indexBuffer.h">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="oglContainerObject.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="oglVertexArrayObject.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="window.h">
+      <Filter>files</Filter>
+    </ClInclude>
+    <ClInclude Include="load.h">
+      <Filter>files\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="pvwUpdater.h">
+      <Filter>files\Engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="programBlockIndexMap.h">
+      <Filter>files\Engine\OGL</Filter>
+    </ClInclude>
+    <ClInclude Include="textureO.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="bitWiseHack.h">
+      <Filter>files</Filter>
+    </ClInclude>
+    <ClInclude Include="texture1.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="texture2.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="drawingState.h">
+      <Filter>files\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="samplerState.h">
+      <Filter>files\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="textureSolo.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTexture.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTextureSolo.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTexture1.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTexture2.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglResource.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="oglBuffer.h">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="oglSamplerState.h">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClInclude>
+    <ClInclude Include="oglDrawingState.h">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClInclude>
+    <ClInclude Include="pathEnvironment.h">
+      <Filter>files\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="wicImageLoader.h">
+      <Filter>files\Loader\WICFileLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="include.h">
+      <Filter>files</Filter>
+    </ClInclude>
+    <ClInclude Include="lightCameraInfo.h">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="drawTarget.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="textureDS.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="textureRT.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="oglDrawTarget.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTextureDS.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTextureRT.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="geometryNode.h">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="groupNode.h">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="sceneGraph.h">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>files\Engine\scene\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="cameraNode.h">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="lightCamera.h">
+      <Filter>files\Engine\scene\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="billBoardNode.h">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClInclude>
+    <ClInclude Include="cullingPlane.h">
+      <Filter>files\Engine\scene\culling</Filter>
+    </ClInclude>
+    <ClInclude Include="culler.h">
+      <Filter>files\Engine\scene\culling</Filter>
+    </ClInclude>
+    <ClInclude Include="trackBall.h">
+      <Filter>files\Engine\scene\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="animatedObject.h">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="animator.h">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="transformAnimator.h">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>files\Engine\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="keyframeAnimator.h">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClInclude>
+    <ClInclude Include="fontO.h">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="textEffect.h">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="blendState.h">
+      <Filter>files\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="depthStencilState.h">
+      <Filter>files\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="rasterizerState.h">
+      <Filter>files\Engine\States</Filter>
+    </ClInclude>
+    <ClInclude Include="oglBlendState.h">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClInclude>
+    <ClInclude Include="oglDepthStencilState.h">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClInclude>
+    <ClInclude Include="oglRasterizerState.h">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClInclude>
+    <ClInclude Include="lightingEffect.h">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="directionalLightingEffect.h">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="directionalLightingTextureEffect.h">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="directionalLightingTextureWithShadowEffect.h">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="lighting.h">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="shadowMapEffect.h">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="fontArialW400H16.h">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="fontArialW400H16Bold.h">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="cgalInterpolationSimulator.h">
+      <Filter>files\CGAL Interpolation</Filter>
+    </ClInclude>
+    <ClInclude Include="texture2Effect.h">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="normalEffect.h">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="particlesEffect.h">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="volumetricLineEffect.h">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="bezierCurve.h">
+      <Filter>files\Mathematics</Filter>
+    </ClInclude>
+    <ClInclude Include="maths.h">
+      <Filter>files\Mathematics</Filter>
+    </ClInclude>
+    <ClInclude Include="textureArray.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="texture2Array.h">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTextureArray.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="oglTexture2Array.h">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="magneticFieldEffect.h">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="mainLoopTimer.h">
+      <Filter>files\Engine\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="MagneticFieldSimulator.h">
+      <Filter>files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="visualEffect.cpp">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="programFactory.cpp">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="oglProgramFactory.cpp">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="oglProgramManager.cpp">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="oglProgram.cpp">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="program.cpp">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="oglReflection.cpp">
+      <Filter>files\Engine\OGL\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="vertexShader.cpp">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="oglUniformBuffer.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="uniformBuffer.cpp">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="buffer.cpp">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="drawObject.cpp">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglDrawObject.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="transformation.cpp">
+      <Filter>files\Engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="oglEngine.cpp">
+      <Filter>files\Engine\OGL</Filter>
+    </ClCompile>
+    <ClCompile Include="fragmentShader.cpp">
+      <Filter>files\Engine\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="vertexAttributes.cpp">
+      <Filter>files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="dataAttributes.cpp">
+      <Filter>files\Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="resourceO.cpp">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="vertexBuffer.cpp">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="indexBuffer.cpp">
+      <Filter>files\Engine\Resource\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglVertexArrayObject.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglIndexBuffer.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglVertexBuffer.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglContainerObject.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cpp">
+      <Filter>files</Filter>
+    </ClCompile>
+    <ClCompile Include="load.cpp">
+      <Filter>files\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="pvwUpdater.cpp">
+      <Filter>files\Engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="textureO.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="texture1.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="texture2.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="drawingState.cpp">
+      <Filter>files\Engine\States</Filter>
+    </ClCompile>
+    <ClCompile Include="textureSolo.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="samplerState.cpp">
+      <Filter>files\Engine\States</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTextureSolo.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTexture1.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTexture2.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglResource.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglBuffer.cpp">
+      <Filter>files\Engine\OGL\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTexture.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglSamplerState.cpp">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClCompile>
+    <ClCompile Include="oglDrawingState.cpp">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClCompile>
+    <ClCompile Include="pathEnvironment.cpp">
+      <Filter>files\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="wicImageLoader.cpp">
+      <Filter>files\Loader\WICFileLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="programBlockIndexMap.cpp">
+      <Filter>files\Engine\OGL</Filter>
+    </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="lighting.cpp">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="lightCameraInfo.cpp">
+      <Filter>files\Engine\VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="drawTarget.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="textureDS.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="textureRT.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="oglDrawTarget.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTextureDS.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTextureRT.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="geometryNode.cpp">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="groupNode.cpp">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="node.cpp">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneGraph.cpp">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>files\Engine\scene\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="cameraNode.cpp">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="lightCamera.cpp">
+      <Filter>files\Engine\scene\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="billBoardNode.cpp">
+      <Filter>files\Engine\scene\spatial</Filter>
+    </ClCompile>
+    <ClCompile Include="cullingPlane.cpp">
+      <Filter>files\Engine\scene\culling</Filter>
+    </ClCompile>
+    <ClCompile Include="culler.cpp">
+      <Filter>files\Engine\scene\culling</Filter>
+    </ClCompile>
+    <ClCompile Include="trackBall.cpp">
+      <Filter>files\Engine\scene\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="animatedObject.cpp">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="animator.cpp">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="transformAnimator.cpp">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>files\Engine\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="keyframeAnimator.cpp">
+      <Filter>files\Engine\scene\animation</Filter>
+    </ClCompile>
+    <ClCompile Include="fontO.cpp">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="textEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="blendState.cpp">
+      <Filter>files\Engine\States</Filter>
+    </ClCompile>
+    <ClCompile Include="depthStencilState.cpp">
+      <Filter>files\Engine\States</Filter>
+    </ClCompile>
+    <ClCompile Include="rasterizerState.cpp">
+      <Filter>files\Engine\States</Filter>
+    </ClCompile>
+    <ClCompile Include="oglBlendState.cpp">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClCompile>
+    <ClCompile Include="oglDepthStencilState.cpp">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClCompile>
+    <ClCompile Include="oglRasterizerState.cpp">
+      <Filter>files\Engine\OGL\States</Filter>
+    </ClCompile>
+    <ClCompile Include="lightingEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="directionalLightingTextureEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="directionalLightingTextureWithShadowEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="directionLightingEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="shadowMapEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="fontArialW400H16.cpp">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="fontArialW400H16Bold.cpp">
+      <Filter>files\Engine\VisualEffects\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="cgalInterpolationSimulator.cpp">
+      <Filter>files\CGAL Interpolation</Filter>
+    </ClCompile>
+    <ClCompile Include="texture2Effect.cpp">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="normalEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="particlesEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="volumetricLineEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="bezierCurve.cpp">
+      <Filter>files\Mathematics</Filter>
+    </ClCompile>
+    <ClCompile Include="textureArray.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="texture2Array.cpp">
+      <Filter>files\Engine\Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTextureArray.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="oglTexture2Array.cpp">
+      <Filter>files\Engine\OGL\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="magneticFieldEffect.cpp">
+      <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="mainLoopTimer.cpp">
+      <Filter>files\Engine\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="MagneticFieldSimulator.cpp">
+      <Filter>files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

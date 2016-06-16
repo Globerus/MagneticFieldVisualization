@@ -1,0 +1,311 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A2044639-BB6C-4000-BC25-524782095E9A}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Ashkulsum</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\glsdk\glload\include;..\boost;..\glsdk\glm;..\glsdk\freeglut\include;..\CGAL;..\CGAL\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\glsdk\glload\lib;..\glsdk\freeglut\lib;..\CGAL\lib;..\boost\lib32-msvc-10.0;..\CGAL\gmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libgmp-10.lib;glloadD.lib;opengl32.lib;freeglutD.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\glsdk\glload\include;..\boost;..\glsdk\glm;..\freeglut\include;..\CGAL;..\CGAL\gmp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\glsdk\glload\lib;..\freeglut\lib;..\CGAL\lib;..\boost\lib32-msvc-10.0;..\CGAL\gmp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libgmp-10.lib;glload.lib;opengl32.lib;freeglut.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="animatedObject.h" />
+    <ClInclude Include="animator.h" />
+    <ClInclude Include="MagneticFieldSimulator.h" />
+    <ClInclude Include="bezierCurve.h" />
+    <ClInclude Include="billBoardNode.h" />
+    <ClInclude Include="bitWiseHack.h" />
+    <ClInclude Include="blendState.h" />
+    <ClInclude Include="buffer.h" />
+    <ClInclude Include="cameraNode.h" />
+    <ClInclude Include="cgalInterpolationSimulator.h" />
+    <ClInclude Include="culler.h" />
+    <ClInclude Include="cullingPlane.h" />
+    <ClInclude Include="depthStencilState.h" />
+    <ClInclude Include="directionalLightingEffect.h" />
+    <ClInclude Include="directionalLightingTextureEffect.h" />
+    <ClInclude Include="directionalLightingTextureWithShadowEffect.h" />
+    <ClInclude Include="drawingState.h" />
+    <ClInclude Include="drawTarget.h" />
+    <ClInclude Include="magneticFieldEffect.h" />
+    <ClInclude Include="fontArialW400H16Bold.h" />
+    <ClInclude Include="fontO.h" />
+    <ClInclude Include="keyframeAnimator.h" />
+    <ClInclude Include="layout.h" />
+    <ClInclude Include="lightCamera.h" />
+    <ClInclude Include="lightCameraInfo.h" />
+    <ClInclude Include="lighting.h" />
+    <ClInclude Include="lightingEffect.h" />
+    <ClInclude Include="load.h" />
+    <ClInclude Include="fontArialW400H16.h" />
+    <ClInclude Include="mainLoopTimer.h" />
+    <ClInclude Include="maths.h" />
+    <ClInclude Include="normalEffect.h" />
+    <ClInclude Include="oglBlendState.h" />
+    <ClInclude Include="oglBuffer.h" />
+    <ClInclude Include="oglContainerObject.h" />
+    <ClInclude Include="oglDepthStencilState.h" />
+    <ClInclude Include="oglDrawingState.h" />
+    <ClInclude Include="oglDrawTarget.h" />
+    <ClInclude Include="oglProgram.h" />
+    <ClInclude Include="oglProgramFactory.h" />
+    <ClInclude Include="oglProgramManager.h" />
+    <ClInclude Include="oglRasterizerState.h" />
+    <ClInclude Include="oglReflection.h" />
+    <ClInclude Include="oglResource.h" />
+    <ClInclude Include="oglSamplerState.h" />
+    <ClInclude Include="oglTexture.h" />
+    <ClInclude Include="oglTexture1.h" />
+    <ClInclude Include="oglTexture2.h" />
+    <ClInclude Include="oglTexture2Array.h" />
+    <ClInclude Include="oglTextureArray.h" />
+    <ClInclude Include="oglTextureDS.h" />
+    <ClInclude Include="oglTextureRT.h" />
+    <ClInclude Include="oglTextureSolo.h" />
+    <ClInclude Include="oglUniformBuffer.h" />
+    <ClInclude Include="particlesEffect.h" />
+    <ClInclude Include="pathEnvironment.h" />
+    <ClInclude Include="programBlockIndexMap.h" />
+    <ClInclude Include="pvwUpdater.h" />
+    <ClInclude Include="rasterizerState.h" />
+    <ClInclude Include="resourceO.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="customMap.h" />
+    <ClInclude Include="dataAttributes.h" />
+    <ClInclude Include="drawObject.h" />
+    <ClInclude Include="fragmentShader.h" />
+    <ClInclude Include="geometryNode.h" />
+    <ClInclude Include="program.h" />
+    <ClInclude Include="programFactory.h" />
+    <ClInclude Include="indexAttributes.h" />
+    <ClInclude Include="oglEngine.h" />
+    <ClInclude Include="groupNode.h" />
+    <ClInclude Include="include.h" />
+    <ClInclude Include="indexBuffer.h" />
+    <ClInclude Include="node.h" />
+    <ClInclude Include="oglDrawObject.h" />
+    <ClInclude Include="oglInclude.h" />
+    <ClInclude Include="oglIndexBuffer.h" />
+    <ClInclude Include="oglVertexArrayObject.h" />
+    <ClInclude Include="oglVertexBuffer.h" />
+    <ClInclude Include="material.h" />
+    <ClInclude Include="samplerState.h" />
+    <ClInclude Include="sceneGraph.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="shadowMapEffect.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="textEffect.h" />
+    <ClInclude Include="texture1.h" />
+    <ClInclude Include="texture2.h" />
+    <ClInclude Include="texture2Array.h" />
+    <ClInclude Include="texture2Effect.h" />
+    <ClInclude Include="textureArray.h" />
+    <ClInclude Include="textureDS.h" />
+    <ClInclude Include="textureO.h" />
+    <ClInclude Include="textureRT.h" />
+    <ClInclude Include="textureSolo.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="trackBall.h" />
+    <ClInclude Include="transformAnimator.h" />
+    <ClInclude Include="transformation.h" />
+    <ClInclude Include="uniformBuffer.h" />
+    <ClInclude Include="vertexAttributes.h" />
+    <ClInclude Include="vertexBuffer.h" />
+    <ClInclude Include="vertexShader.h" />
+    <ClInclude Include="visualeffect.h" />
+    <ClInclude Include="volumetricLineEffect.h" />
+    <ClInclude Include="wicImageLoader.h" />
+    <ClInclude Include="window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="animatedObject.cpp" />
+    <ClCompile Include="animator.cpp" />
+    <ClCompile Include="MagneticFieldSimulator.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="bezierCurve.cpp" />
+    <ClCompile Include="billBoardNode.cpp" />
+    <ClCompile Include="blendState.cpp" />
+    <ClCompile Include="buffer.cpp" />
+    <ClCompile Include="cameraNode.cpp" />
+    <ClCompile Include="cgalInterpolationSimulator.cpp" />
+    <ClCompile Include="culler.cpp" />
+    <ClCompile Include="cullingPlane.cpp" />
+    <ClCompile Include="depthStencilState.cpp" />
+    <ClCompile Include="directionalLightingTextureEffect.cpp" />
+    <ClCompile Include="directionalLightingTextureWithShadowEffect.cpp" />
+    <ClCompile Include="directionLightingEffect.cpp" />
+    <ClCompile Include="drawingState.cpp" />
+    <ClCompile Include="drawTarget.cpp" />
+    <ClCompile Include="magneticFieldEffect.cpp" />
+    <ClCompile Include="fontArialW400H16Bold.cpp" />
+    <ClCompile Include="fontO.cpp" />
+    <ClCompile Include="fragmentShader.cpp" />
+    <ClCompile Include="keyframeAnimator.cpp" />
+    <ClCompile Include="lightCamera.cpp" />
+    <ClCompile Include="lightCameraInfo.cpp" />
+    <ClCompile Include="lighting.cpp" />
+    <ClCompile Include="lightingEffect.cpp" />
+    <ClCompile Include="load.cpp" />
+    <ClCompile Include="fontArialW400H16.cpp" />
+    <ClCompile Include="mainLoopTimer.cpp" />
+    <ClCompile Include="normalEffect.cpp" />
+    <ClCompile Include="oglBlendState.cpp" />
+    <ClCompile Include="oglBuffer.cpp" />
+    <ClCompile Include="oglContainerObject.cpp" />
+    <ClCompile Include="oglDepthStencilState.cpp" />
+    <ClCompile Include="oglDrawingState.cpp" />
+    <ClCompile Include="oglDrawTarget.cpp" />
+    <ClCompile Include="oglProgram.cpp" />
+    <ClCompile Include="oglProgramFactory.cpp" />
+    <ClCompile Include="oglProgramManager.cpp" />
+    <ClCompile Include="oglRasterizerState.cpp" />
+    <ClCompile Include="oglReflection.cpp" />
+    <ClCompile Include="oglResource.cpp" />
+    <ClCompile Include="oglSamplerState.cpp" />
+    <ClCompile Include="oglTexture.cpp" />
+    <ClCompile Include="oglTexture1.cpp" />
+    <ClCompile Include="oglTexture2.cpp" />
+    <ClCompile Include="oglTexture2Array.cpp" />
+    <ClCompile Include="oglTextureArray.cpp" />
+    <ClCompile Include="oglTextureDS.cpp" />
+    <ClCompile Include="oglTextureRT.cpp" />
+    <ClCompile Include="oglTextureSolo.cpp" />
+    <ClCompile Include="oglUniformBuffer.cpp" />
+    <ClCompile Include="particlesEffect.cpp" />
+    <ClCompile Include="pathEnvironment.cpp" />
+    <ClCompile Include="program.cpp" />
+    <ClCompile Include="programBlockIndexMap.cpp" />
+    <ClCompile Include="pvwUpdater.cpp" />
+    <ClCompile Include="rasterizerState.cpp" />
+    <ClCompile Include="resourceO.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="dataAttributes.cpp" />
+    <ClCompile Include="drawObject.cpp" />
+    <ClCompile Include="programFactory.cpp" />
+    <ClCompile Include="oglEngine.cpp" />
+    <ClCompile Include="geometryNode.cpp" />
+    <ClCompile Include="groupNode.cpp" />
+    <ClCompile Include="indexBuffer.cpp" />
+    <ClCompile Include="node.cpp" />
+    <ClCompile Include="oglDrawObject.cpp" />
+    <ClCompile Include="oglIndexBuffer.cpp" />
+    <ClCompile Include="oglVertexArrayObject.cpp">
+      <DeploymentContent>true</DeploymentContent>
+    </ClCompile>
+    <ClCompile Include="oglVertexBuffer.cpp" />
+    <ClCompile Include="material.cpp" />
+    <ClCompile Include="samplerState.cpp" />
+    <ClCompile Include="sceneGraph.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="shadowMapEffect.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="textEffect.cpp" />
+    <ClCompile Include="texture1.cpp" />
+    <ClCompile Include="texture2.cpp" />
+    <ClCompile Include="texture2Array.cpp" />
+    <ClCompile Include="texture2Effect.cpp" />
+    <ClCompile Include="textureArray.cpp" />
+    <ClCompile Include="textureDS.cpp" />
+    <ClCompile Include="textureO.cpp" />
+    <ClCompile Include="textureRT.cpp" />
+    <ClCompile Include="textureSolo.cpp" />
+    <ClCompile Include="timer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="trackBall.cpp" />
+    <ClCompile Include="transformAnimator.cpp" />
+    <ClCompile Include="transformation.cpp" />
+    <ClCompile Include="uniformBuffer.cpp" />
+    <ClCompile Include="vertexAttributes.cpp" />
+    <ClCompile Include="vertexBuffer.cpp" />
+    <ClCompile Include="vertexShader.cpp" />
+    <ClCompile Include="visualEffect.cpp" />
+    <ClCompile Include="volumetricLineEffect.cpp" />
+    <ClCompile Include="wicImageLoader.cpp" />
+    <ClCompile Include="window.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
