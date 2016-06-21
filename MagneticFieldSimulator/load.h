@@ -5,7 +5,6 @@
 #include "oglProgramFactory.h"
 #include "pathEnvironment.h"
 #include "visualEffect.h"
-#include "cgalInterpolationSimulator.h"
 #include "bezierCurve.h"
 #include <string>
 #include <fstream>

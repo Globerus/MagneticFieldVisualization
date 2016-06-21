@@ -44,7 +44,7 @@ InterpolationSimulation::InterpolationSimulation (std::string title, int xOrigin
 	m_RasterizerStateShadow = std::make_shared<RasterizerState> ();
 	m_RasterizerStateShadow->m_CullMode = RasterizerState::CULL_FRONT;
 
-	m_CGALInterpolator = std::make_shared<CGALInterpolationSimulator> ();
+	m_Interpolator = std::make_shared<InterpolationSimulator> ();
 
 	InitializeLightNode ();
 	ParametrizeField ();
@@ -104,20 +104,41 @@ void InterpolationSimulation::InterpolatePoints ()
 	float heightStartPoint = - heightWorld/2;
 	float depthStartPoint = - depthWorld/2;
 
-	int numSteps = m_CGALInterpolator->GetNumSegments ();
-	m_CGALInterpolator->SetInterpolationDone (false);
-	for (int step = 0; step < numSteps; step++)
+	int numSteps = m_Interpolator->GetNumSegments ();
+	m_Interpolator->SetInterpolationDone (false);
+	if (m_Interpolator->IsCGALEngine ())
 	{
-		m_CGALInterpolator->InitializeMagForceValues (step);
-		for (int depth = 0; depth < depthResolution; depth++)
-			for (int height = 0; height < heightResolution; height++)
-				for (int width = 0; width < widthResolution; width++)
-				{
-					glm::vec3 point (widthStartPoint + xPixel*width, heightStartPoint + yPixel*height, depthStartPoint + zPixel*depth);
-					m_CGALInterpolator->InterpolateMagForce (step, point);
-				}
+		m_Interpolator->InitDelaunayTriangulationCGAL ();
+		for (int step = 0; step < numSteps; step++)
+		{
+			m_Interpolator->InitializeMagForceValuesCGAL (step);
+			for (int depth = 0; depth < depthResolution; depth++)
+				for (int height = 0; height < heightResolution; height++)
+					for (int width = 0; width < widthResolution; width++)
+					{
+						glm::vec3 point (widthStartPoint + xPixel*width, heightStartPoint + yPixel*height, depthStartPoint + zPixel*depth);
+						m_Interpolator->InterpolateMagForceCGAL (step, point);
+					}
+		}
 	}
-	m_CGALInterpolator->SetInterpolationDone (true);
+	else
+	{
+		for (int step = 0; step < numSteps; step++)
+		{
+			m_Interpolator->InitDelaunayTriangulationEmbedded (step);
+			for (int depth = 0; depth < depthResolution; depth++)
+			{	for (int height = 0; height < heightResolution; height++)
+					for (int width = 0; width < widthResolution; width++)
+					{
+						glm::vec3 point (widthStartPoint + xPixel*width, heightStartPoint + yPixel*height, depthStartPoint + zPixel*depth);
+						m_Interpolator->InterpolateMagForceEmbedded (step, point);
+					}
+			}
+			m_Interpolator->DeleteDelaunayTriangulationEmbedded ();
+		}
+	}
+
+	m_Interpolator->SetInterpolationDone (true);
 }
 
 void InterpolationSimulation::UpdateFieldVisualization ()
@@ -164,7 +185,7 @@ void InterpolationSimulation::UpdateFieldVisualization ()
 
 void InterpolationSimulation::UpdateFieldScreenXAxis ()
 {
-	auto interpolatedPointMagForceVector = m_CGALInterpolator->GetInterpolatedGLMPointMagForceVector ();
+	auto interpolatedPointMagForceVector = m_Interpolator->GetInterpolatedGLMPointMagForceVector ();
 
 	int widthResolution = m_FieldParam.m_WidthResolution;
 	int heightResolution = m_FieldParam.m_HeightResolution;
@@ -172,7 +193,7 @@ void InterpolationSimulation::UpdateFieldScreenXAxis ()
 	
 	float widthWorld = m_FieldParam.m_WorldWidth;
 
-	int numSteps = m_CGALInterpolator->GetNumSegments ();
+	int numSteps = m_Interpolator->GetNumSegments ();
 
 	float texDelta = 1.0f / numSteps;
 	float x0 = 0.0f, x1 = 0.0f;
@@ -244,7 +265,7 @@ void InterpolationSimulation::UpdateFieldScreenXAxis ()
 
 void InterpolationSimulation::UpdateFieldScreenZAxis ()
 {
-	auto interpolatedPointMagForceVector = m_CGALInterpolator->GetInterpolatedGLMPointMagForceVector ();
+	auto interpolatedPointMagForceVector = m_Interpolator->GetInterpolatedGLMPointMagForceVector ();
 
 	int widthResolution = m_FieldParam.m_WidthResolution;
 	int heightResolution = m_FieldParam.m_HeightResolution;
@@ -252,7 +273,7 @@ void InterpolationSimulation::UpdateFieldScreenZAxis ()
 	
 	float depthWorld = m_FieldParam.m_WorldDepth;
 
-	int numSteps = m_CGALInterpolator->GetNumSegments ();
+	int numSteps = m_Interpolator->GetNumSegments ();
 
 	float texDelta = 1.0f / numSteps;
 	float x0 = 0.0f, x1 = 0.0f;
@@ -332,7 +353,7 @@ void InterpolationSimulation::ParametrizeFieldXAxisMovementAnimation ()
 	glm::mat4 startRotation = m_FieldScreenXAxis->m_WorldT.GetRotation ();
 	float width = m_FieldParam.m_WorldWidth;
 	
-	int numTranslations = 320;
+	int numTranslations = 160;
 	int numRotations = 0;
 	int numScales = 0;
 
@@ -370,7 +391,7 @@ void InterpolationSimulation::ParametrizeFieldXAxisMovementAnimation ()
 	m_FieldMovementXAxisAnimation->m_MinTime = 0.0;
 	m_FieldMovementXAxisAnimation->m_MaxTime = 1.0;
 	m_FieldMovementXAxisAnimation->m_Phase = 0.0;
-	m_FieldMovementXAxisAnimation->m_Frequency = 0.3;
+	m_FieldMovementXAxisAnimation->m_Frequency = 0.2;
 	m_FieldMovementXAxisAnimation->m_Active = true;
 }
 
@@ -387,7 +408,7 @@ void InterpolationSimulation::ParametrizeFieldXAxisCorrectionMovementAnimation (
 
 	float distance = halfWidth - startTranslation.x;
 
-	int numTranslations = 320;
+	int numTranslations = 160;
 	int numRotations = 0;
 	int numScales = 0;
 
@@ -445,7 +466,7 @@ void InterpolationSimulation::ParametrizeFieldZAxisMovementAnimation ()
 	glm::mat4 startRotation = m_FieldScreenZAxis->m_WorldT.GetRotation ();
 	float depth = m_FieldParam.m_WorldDepth;
 	
-	int numTranslations = 320;
+	int numTranslations = 160;
 	int numRotations = 0;
 	int numScales = 0;
 
@@ -483,7 +504,7 @@ void InterpolationSimulation::ParametrizeFieldZAxisMovementAnimation ()
 	m_FieldMovementZAxisAnimation->m_MinTime = 0.0;
 	m_FieldMovementZAxisAnimation->m_MaxTime = 1.0;
 	m_FieldMovementZAxisAnimation->m_Phase = 0.0;
-	m_FieldMovementZAxisAnimation->m_Frequency = 0.3;
+	m_FieldMovementZAxisAnimation->m_Frequency = 0.2;
 	m_FieldMovementZAxisAnimation->m_Active = true;
 }
 
@@ -500,7 +521,7 @@ void InterpolationSimulation::ParametrizeFieldZAxisCorrectionMovementAnimation (
 
 	float distance = halfDepth - startTranslation.z;
 
-	int numTranslations = 320;
+	int numTranslations = 160;
 	int numRotations = 0;
 	int numScales = 0;
 
@@ -564,7 +585,6 @@ void InterpolationSimulation::InitializeLightNode ()
 		std::vector<std::pair <std::shared_ptr<Node>, std::shared_ptr<DirectionalLightingTextureWithShadowEffect>>> m_NodesEffects;
 		m_NodesEffects.push_back (std::make_pair (m_Cylinder, m_CylinderEffect));
 		m_NodesEffects.push_back (std::make_pair (m_Spring, m_SpringEffect));
-		m_NodesEffects.push_back (std::make_pair (m_Plane, m_PlaneEffect));
 		m_NodesEffects.push_back (std::make_pair (m_Cube, m_CubeEffect));
 
 		auto const lightPVMatrix = m_LightNode->GetCamera ()->GetProjectionViewMatrix ();
@@ -957,21 +977,6 @@ void InterpolationSimulation::CreateScene ()
 	m_FieldScreenXAxis->m_LocalT.SetScale (glm::vec3 (10.0f, 10.0f, 1.0f));
 	m_FieldScreenXAxis->m_LocalT.SetTranslation (glm::vec4 (4.0f, 0.0f, 0.0f, 0.0f));
 	m_Scene->AttachChild (m_FieldScreenXAxis);
-
-	m_Plane = LoadMesh ("data\\objects\\plane.obj");
-	m_Plane->m_LocalT.SetUniformScale (25.0f);
-	m_Plane->m_LocalT.SetTranslation (glm::vec4 (0.0f, -18.0f, 0.0f, 0.0f));
-
-	m_PlaneEffect = std::make_shared<DirectionalLightingTextureWithShadowEffect> (m_Factory, m_Updater, material, lighting, lightCameraInfo, cylinderTexture, m_ShadowTexture, SamplerState::MIN_L_MAG_L_MIP_L, SamplerState::CLAMP);
-	m_PlaneEffect->GetLightInfo ()->m_LightDirection = m_LightWorldDirection;
-	m_Plane->SetVisualEffect (m_PlaneEffect);
-
-	m_PlaneShadowMapEffect = std::make_shared<ShadowMapEffect> (m_Factory);
-
-	m_PVWUpdater.Subscribe (m_PlaneEffect->GetPVWMatrixUniformBuffer (), m_Plane->m_WorldT);
-	m_ShadowPVWUpdater.Subscribe (m_PlaneEffect->GetLightPVWMatrixUniformBuffer (), m_Plane->m_WorldT, "lightPVWMatrix");
-	m_ShadowPVWUpdater.Subscribe (m_PlaneShadowMapEffect->GetPVWMatrixUniformBuffer (), m_Plane->m_WorldT);
-	m_Scene->AttachChild (m_Plane);
 	
 	m_Cube = LoadMesh ("data\\objects\\cube.obj");
 	m_Cube->m_LocalT.SetUniformScale (10.0f);
@@ -992,7 +997,6 @@ void InterpolationSimulation::DrawShadowPass ()
 {
 	m_Cylinder->SetVisualEffect (m_CylinderShadowMapEffect);
 	m_Spring->SetVisualEffect (m_SpringShadowMapEffect);
-	m_Plane->SetVisualEffect (m_PlaneShadowMapEffect);
 	m_Cube->SetVisualEffect (m_CubeShadowMapEffect);
 
 	m_Engine->Enable (m_CylinderDrawTarget);
@@ -1001,7 +1005,6 @@ void InterpolationSimulation::DrawShadowPass ()
 
 	if(m_SolenoidVisible)
 	{	
-		m_Engine->Draw (m_Plane);
 		m_Engine->Draw (m_Cylinder);
 		m_Engine->Draw (m_Spring);
 	}
@@ -1012,13 +1015,12 @@ void InterpolationSimulation::DrawShadowPass ()
 	m_Engine->SetDefaultRasterizerState ();
 	m_Cylinder->SetVisualEffect (m_CylinderEffect);
 	m_Spring->SetVisualEffect (m_SpringEffect);
-	m_Plane->SetVisualEffect (m_PlaneEffect);
 	m_Cube->SetVisualEffect (m_CubeEffect);
 }
 
 void InterpolationSimulation::Update ()
 {
-	if(m_CGALInterpolator->GetInterpolationDone ())
+	if(m_Interpolator->GetInterpolationDone ())
 	{
 		UpdateFieldVisualization ();
 	}
@@ -1049,7 +1051,7 @@ void InterpolationSimulation::Render ()
 
 	m_Engine->ClearBuffers ();
 
-	if (!m_CGALInterpolator->GetInterpolationDone ())
+	if (!m_Interpolator->GetInterpolationDone ())
 	{
 		m_Engine->SetViewport (glm::vec4 (0.0f, 0.0f, width, height));
 		m_Engine->Draw (m_LoadingScreen);
@@ -1072,7 +1074,6 @@ void InterpolationSimulation::Render ()
 		}
 
 		m_Engine->Draw (m_Cube);
-		m_Engine->Draw(m_Plane);
 
 		m_Engine->SetBlendState (m_BlendState);
 		
@@ -1121,7 +1122,7 @@ void InterpolationSimulation::RenderCallback ()
 
 int _tmain(int argc, char* argv[])
 {
-	InterpolationSimulation* interp = new InterpolationSimulation ("Ashkulsum", 0, 0, 800, 600);
+	InterpolationSimulation* interp = new InterpolationSimulation ("MagneticFieldSimulator", 0, 0, 800, 600);
 	interp->SetCurrentInstance ();
 	
 	glutIdleFunc (InterpolationSimulation::OnIdleCallback);

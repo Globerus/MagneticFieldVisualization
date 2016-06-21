@@ -78,14 +78,29 @@
     <Filter Include="files\Engine\VisualEffects\Lighting">
       <UniqueIdentifier>{6e162842-4653-4ca1-a49e-25707c6914e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="files\CGAL Interpolation">
-      <UniqueIdentifier>{43fa6a1d-8e60-4d7a-8876-241bad43a414}</UniqueIdentifier>
-    </Filter>
     <Filter Include="files\Engine\VisualEffects\Non-lighting">
       <UniqueIdentifier>{d2b503b0-f181-4090-a5ba-5c9d525f4d52}</UniqueIdentifier>
     </Filter>
-    <Filter Include="files\Mathematics">
+    <Filter Include="files\Custom Utilities">
+      <UniqueIdentifier>{f8c701c7-26ba-49be-b384-ca9894237e4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Custom Utilities\Mathematics">
       <UniqueIdentifier>{4f24ba6a-70a4-46f9-b0e5-3893ebb03587}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Custom Utilities\Containers">
+      <UniqueIdentifier>{9ef6266a-f6e9-4974-adec-7574b2fb1593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Custom Utilities\Containers\LinkedList">
+      <UniqueIdentifier>{1dbdf996-44c5-435e-833b-968104f56509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Custom Utilities\Containers\Stack">
+      <UniqueIdentifier>{181cbf49-6545-4edf-9195-2843b350cfda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Custom Utilities\Containers\ArrayList">
+      <UniqueIdentifier>{58c520c2-d40b-4536-9553-22928445aa18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files\Interpolation">
+      <UniqueIdentifier>{43fa6a1d-8e60-4d7a-8876-241bad43a414}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -199,9 +214,6 @@
     </ClInclude>
     <ClInclude Include="textureO.h">
       <Filter>files\Engine\Resource\Texture</Filter>
-    </ClInclude>
-    <ClInclude Include="bitWiseHack.h">
-      <Filter>files</Filter>
     </ClInclude>
     <ClInclude Include="texture1.h">
       <Filter>files\Engine\Resource\Texture</Filter>
@@ -371,9 +383,6 @@
     <ClInclude Include="fontArialW400H16Bold.h">
       <Filter>files\Engine\VisualEffects\Font</Filter>
     </ClInclude>
-    <ClInclude Include="cgalInterpolationSimulator.h">
-      <Filter>files\CGAL Interpolation</Filter>
-    </ClInclude>
     <ClInclude Include="texture2Effect.h">
       <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
     </ClInclude>
@@ -387,10 +396,10 @@
       <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
     </ClInclude>
     <ClInclude Include="bezierCurve.h">
-      <Filter>files\Mathematics</Filter>
+      <Filter>files\Custom Utilities\Mathematics</Filter>
     </ClInclude>
     <ClInclude Include="maths.h">
-      <Filter>files\Mathematics</Filter>
+      <Filter>files\Custom Utilities\Mathematics</Filter>
     </ClInclude>
     <ClInclude Include="textureArray.h">
       <Filter>files\Engine\Resource\Texture</Filter>
@@ -412,6 +421,30 @@
     </ClInclude>
     <ClInclude Include="MagneticFieldSimulator.h">
       <Filter>files</Filter>
+    </ClInclude>
+    <ClInclude Include="delaunayTriangulation.h">
+      <Filter>files\Interpolation</Filter>
+    </ClInclude>
+    <ClInclude Include="naturalNeighbourInterpolation.h">
+      <Filter>files\Interpolation</Filter>
+    </ClInclude>
+    <ClInclude Include="predicates.h">
+      <Filter>files\Interpolation</Filter>
+    </ClInclude>
+    <ClInclude Include="interpolationSimulator.h">
+      <Filter>files\Interpolation</Filter>
+    </ClInclude>
+    <ClInclude Include="bitWiseHack.h">
+      <Filter>files</Filter>
+    </ClInclude>
+    <ClInclude Include="linkedList.h">
+      <Filter>files\Custom Utilities\Containers\LinkedList</Filter>
+    </ClInclude>
+    <ClInclude Include="stack.h">
+      <Filter>files\Custom Utilities\Containers\Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="arrayList.h">
+      <Filter>files\Custom Utilities\Containers\ArrayList</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -676,9 +709,6 @@
     <ClCompile Include="fontArialW400H16Bold.cpp">
       <Filter>files\Engine\VisualEffects\Font</Filter>
     </ClCompile>
-    <ClCompile Include="cgalInterpolationSimulator.cpp">
-      <Filter>files\CGAL Interpolation</Filter>
-    </ClCompile>
     <ClCompile Include="texture2Effect.cpp">
       <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
     </ClCompile>
@@ -692,7 +722,7 @@
       <Filter>files\Engine\VisualEffects\Non-lighting</Filter>
     </ClCompile>
     <ClCompile Include="bezierCurve.cpp">
-      <Filter>files\Mathematics</Filter>
+      <Filter>files\Custom Utilities\Mathematics</Filter>
     </ClCompile>
     <ClCompile Include="textureArray.cpp">
       <Filter>files\Engine\Resource\Texture</Filter>
@@ -714,6 +744,27 @@
     </ClCompile>
     <ClCompile Include="MagneticFieldSimulator.cpp">
       <Filter>files</Filter>
+    </ClCompile>
+    <ClCompile Include="delaunayTriangulation.cpp">
+      <Filter>files\Interpolation</Filter>
+    </ClCompile>
+    <ClCompile Include="naturalNeighbourInterpolation.cpp">
+      <Filter>files\Interpolation</Filter>
+    </ClCompile>
+    <ClCompile Include="predicates.cpp">
+      <Filter>files\Interpolation</Filter>
+    </ClCompile>
+    <ClCompile Include="interpolationSimulator.cpp">
+      <Filter>files\Interpolation</Filter>
+    </ClCompile>
+    <ClCompile Include="linkedList.cpp">
+      <Filter>files\Custom Utilities\Containers\LinkedList</Filter>
+    </ClCompile>
+    <ClCompile Include="stack.cpp">
+      <Filter>files\Custom Utilities\Containers\Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="arrayList.cpp">
+      <Filter>files\Custom Utilities\Containers\ArrayList</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -83,6 +83,9 @@
   <ItemGroup>
     <ClInclude Include="animatedObject.h" />
     <ClInclude Include="animator.h" />
+    <ClInclude Include="arrayList.h" />
+    <ClInclude Include="delaunayTriangulation.h" />
+    <ClInclude Include="linkedList.h" />
     <ClInclude Include="MagneticFieldSimulator.h" />
     <ClInclude Include="bezierCurve.h" />
     <ClInclude Include="billBoardNode.h" />
@@ -90,7 +93,7 @@
     <ClInclude Include="blendState.h" />
     <ClInclude Include="buffer.h" />
     <ClInclude Include="cameraNode.h" />
-    <ClInclude Include="cgalInterpolationSimulator.h" />
+    <ClInclude Include="interpolationSimulator.h" />
     <ClInclude Include="culler.h" />
     <ClInclude Include="cullingPlane.h" />
     <ClInclude Include="depthStencilState.h" />
@@ -112,6 +115,7 @@
     <ClInclude Include="fontArialW400H16.h" />
     <ClInclude Include="mainLoopTimer.h" />
     <ClInclude Include="maths.h" />
+    <ClInclude Include="naturalNeighbourInterpolation.h" />
     <ClInclude Include="normalEffect.h" />
     <ClInclude Include="oglBlendState.h" />
     <ClInclude Include="oglBuffer.h" />
@@ -137,6 +141,7 @@
     <ClInclude Include="oglUniformBuffer.h" />
     <ClInclude Include="particlesEffect.h" />
     <ClInclude Include="pathEnvironment.h" />
+    <ClInclude Include="predicates.h" />
     <ClInclude Include="programBlockIndexMap.h" />
     <ClInclude Include="pvwUpdater.h" />
     <ClInclude Include="rasterizerState.h" />
@@ -167,6 +172,7 @@
     </ClInclude>
     <ClInclude Include="shader.h" />
     <ClInclude Include="shadowMapEffect.h" />
+    <ClInclude Include="stack.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="textEffect.h" />
@@ -195,6 +201,9 @@
   <ItemGroup>
     <ClCompile Include="animatedObject.cpp" />
     <ClCompile Include="animator.cpp" />
+    <ClCompile Include="arrayList.cpp" />
+    <ClCompile Include="delaunayTriangulation.cpp" />
+    <ClCompile Include="linkedList.cpp" />
     <ClCompile Include="MagneticFieldSimulator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
     </ClCompile>
@@ -203,7 +212,7 @@
     <ClCompile Include="blendState.cpp" />
     <ClCompile Include="buffer.cpp" />
     <ClCompile Include="cameraNode.cpp" />
-    <ClCompile Include="cgalInterpolationSimulator.cpp" />
+    <ClCompile Include="interpolationSimulator.cpp" />
     <ClCompile Include="culler.cpp" />
     <ClCompile Include="cullingPlane.cpp" />
     <ClCompile Include="depthStencilState.cpp" />
@@ -224,6 +233,7 @@
     <ClCompile Include="load.cpp" />
     <ClCompile Include="fontArialW400H16.cpp" />
     <ClCompile Include="mainLoopTimer.cpp" />
+    <ClCompile Include="naturalNeighbourInterpolation.cpp" />
     <ClCompile Include="normalEffect.cpp" />
     <ClCompile Include="oglBlendState.cpp" />
     <ClCompile Include="oglBuffer.cpp" />
@@ -249,6 +259,7 @@
     <ClCompile Include="oglUniformBuffer.cpp" />
     <ClCompile Include="particlesEffect.cpp" />
     <ClCompile Include="pathEnvironment.cpp" />
+    <ClCompile Include="predicates.cpp" />
     <ClCompile Include="program.cpp" />
     <ClCompile Include="programBlockIndexMap.cpp" />
     <ClCompile Include="pvwUpdater.cpp" />
@@ -276,6 +287,7 @@
     </ClCompile>
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="shadowMapEffect.cpp" />
+    <ClCompile Include="stack.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

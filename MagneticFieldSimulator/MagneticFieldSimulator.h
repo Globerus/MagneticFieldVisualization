@@ -2,7 +2,7 @@
 #include "pvwUpdater.h"
 #include "load.h"
 #include <boost/thread.hpp>
-#include <boost/thread/scoped_thread.hpp>
+//#include <boost/thread/scoped_thread.hpp>
 #include "wicImageLoader.h"
 #include "keyframeAnimator.h"
 #include "lightCamera.h"
@@ -19,6 +19,7 @@
 #include "textEffect.h"
 #include "fontArialW400H16.h"
 #include "fontArialW400H16Bold.h"
+#include "interpolationSimulator.h"
 
 
 class InterpolationSimulation : public Window
@@ -36,10 +37,6 @@ public:
 		int m_WidthResolution;
 		int m_HeightResolution;
 		int m_DepthResolution;
-
-		int m_NumInterpolatedPoints;
-		int m_NumAnimSteps;
-		int m_StepTime;
 	};
 
 	
@@ -92,7 +89,7 @@ private:
 	float m_XAccel, m_ZAccel;
 	bool m_XCorrection, m_ZCorrection, m_SolenoidVisible;
 
-	std::shared_ptr<CGALInterpolationSimulator> m_CGALInterpolator;
+	std::shared_ptr<InterpolationSimulator> m_Interpolator;
 
 	float m_AppTime, m_AppTimeDelta;
 
@@ -131,10 +128,6 @@ private:
 	std::shared_ptr<MagneticFieldEffect> m_FieldScreenZAxisEffect;
 	std::shared_ptr<KeyframeAnimator> m_FieldMovementZAxisAnimation;
 
-	std::shared_ptr<GeometryNode> m_Plane;
-	std::shared_ptr<DirectionalLightingTextureWithShadowEffect> m_PlaneEffect;
-	std::shared_ptr<ShadowMapEffect> m_PlaneShadowMapEffect;
-
 	std::shared_ptr<GeometryNode> m_Cube;
 	std::shared_ptr<DirectionalLightingTextureWithShadowEffect> m_CubeEffect;
 	std::shared_ptr<ShadowMapEffect> m_CubeShadowMapEffect;
@@ -166,8 +159,6 @@ private:
 	std::shared_ptr<DirectionalLightingTextureWithShadowEffect> m_SpringEffect;
 	std::shared_ptr<ShadowMapEffect> m_SpringShadowMapEffect;
 
-	std::shared_ptr<GeometryNode> m_VolumetricLine;
-	std::shared_ptr<VolumetricLineEffect> m_VolumetricLineEffect;
 
 	std::shared_ptr<GeometryNode> m_Scale;
 	std::shared_ptr<Texture2Effect> m_ScaleEffect;
